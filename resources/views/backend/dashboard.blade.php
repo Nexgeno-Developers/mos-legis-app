@@ -9,7 +9,6 @@
     use App\Models\Post;
     use App\Models\MenuItem;
     
-    // Media count (24 hours cache, unique per user)
     $mediaCount = Cache::remember('media_count_' . (auth()->id() ?? 'guest'), 86400, function () {
         return \App\Models\Upload::when(auth()->user()?->company_id, function ($query, $companyId) {
             return $query->where('user_id', auth()->id());
