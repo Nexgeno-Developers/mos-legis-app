@@ -75,9 +75,6 @@ Route::prefix('backend')->group(function () {
             return view('backend.dashboard');
         })->name('backend.dashboard');
 
-        Route::post('/frontend-cache-clear', [CacheController::class, 'clearFrontend'])
-            ->name('backend.frontend-cache-clear');
-
         Route::post('/frontend-sitemap-generate', [CacheController::class, 'generateFrontendSitemap'])
             ->name('backend.frontend-sitemap-generate');
 

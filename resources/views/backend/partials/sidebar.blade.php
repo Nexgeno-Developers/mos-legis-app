@@ -43,14 +43,14 @@
             </a>
         </li>        
         
-        <li class="side-nav-item">
+        <!-- <li class="side-nav-item">
             <a href="{{ route('pages.index') }}" class="side-nav-link">
                 <span class="menu-icon"><i class="ti ti-pencil"></i></span>
                 <span class="menu-text"> Pages </span>
             </a>
-        </li> 
+        </li>  -->
 
-        <li class="side-nav-item">
+        <!-- <li class="side-nav-item">
             <a data-bs-toggle="collapse" href="#sidebarPosts" aria-expanded="false" aria-controls="sidebarPosts"
                 class="side-nav-link">
                 <span class="menu-icon"><i class="ti ti-article"></i></span>
@@ -81,32 +81,32 @@
                     </li>
                 </ul>
             </div>
-        </li>
+        </li> -->
         
         @can('seo-meta view')
-        <li class="side-nav-item">
+        <!--<li class="side-nav-item">
             <a href="{{ route('seo-meta.index') }}" class="side-nav-link">
                 <span class="menu-icon"><i class="ti ti-search"></i></span>
                 <span class="menu-text"> SEO Meta </span>
             </a>
-        </li>
+        </li>-->
         @endcan
 
         @can('seo-settings view')
-        <li class="side-nav-item">
+        <!-- <li class="side-nav-item">
             <a href="{{ route('seo-settings.index') }}" class="side-nav-link">
                 <span class="menu-icon"><i class="ti ti-settings"></i></span>
                 <span class="menu-text"> SEO Settings </span>
             </a>
-        </li>
+        </li>-->
         @endcan
         
-        <li class="side-nav-item">
+        <!-- <li class="side-nav-item">
             <a href="{{ route('forms.by', ['form_name' => 'contact']) }}" class="side-nav-link">
                 <span class="menu-icon"><i class="ti ti-message-question"></i></span>
                 <span class="menu-text"> Form Submissions </span>
             </a>
-        </li> 
+        </li>-->
 
         <li class="side-nav-item">
             <a data-bs-toggle="collapse" href="#sidebarUploads" aria-expanded="false" aria-controls="sidebarTables"
@@ -132,21 +132,21 @@
         </li>        
           
 
-        <li class="side-nav-item">
+        <!-- <li class="side-nav-item">
             <a href="{{ route('backend.menus') }}" class="side-nav-link">
                 <span class="menu-icon"><i class="ti ti-menu"></i></span>
                 <span class="menu-text"> Menus </span>
             </a>
-        </li>        
+        </li>-->
 
-        {{--<li class="side-nav-item">
+        <li class="side-nav-item">
             <a href="{{ route('visitors.index') }}" class="side-nav-link">
                 <span class="menu-icon"><i class="ti ti-world"></i></span>
                 <span class="menu-text"> Visitors </span>
             </a>
-        </li>--}} 
+        </li> 
         
-        {{--<li class="side-nav-item">
+        <li class="side-nav-item">
             <a data-bs-toggle="collapse" href="#sidebarUsers" aria-expanded="false" aria-controls="sidebarUsers"
                 class="side-nav-link">
                 <span class="menu-icon"><i class="ti ti-users"></i></span>
@@ -167,35 +167,28 @@
                     </li>   
                 </ul>
             </div>
-        </li>--}}        
+        </li>       
 
         <li class="side-nav-item">
             <a target="_blank" href="{{ url('') . '/command/optimize-clear?back=true' }}" class="side-nav-link text-danger fw-bold">
                 <span class="menu-icon"><i class="ti ti-refresh"></i></span>
-                <span class="menu-text"> CMS Clear Cache </span>
+                <span class="menu-text">Clear Cache </span>
             </a>
         </li>
 
-        <li class="side-nav-item">
-            <a href="javascript:void(0)" id="frontend-cache-clear" class="side-nav-link text-warning fw-bold" data-url="{{ route('backend.frontend-cache-clear') }}">
-                <span class="menu-icon"><i class="ti ti-world"></i></span>
-                <span class="menu-text"> Website Cache Clear </span>
-            </a>
-        </li>
-
-        <li class="side-nav-item">
+        <!-- <li class="side-nav-item">
             <a href="javascript:void(0)" id="frontend-sitemap-generate" class="side-nav-link text-success fw-bold" data-url="{{ route('backend.frontend-sitemap-generate') }}">
                 <span class="menu-icon"><i class="ti ti-sitemap"></i></span>
                 <span class="menu-text"> Generate Sitemap </span>
             </a>
-        </li>
+        </li> -->
 
-        <li class="side-nav-item">
+        <!-- <li class="side-nav-item">
             <a href="javascript:void(0)" id="frontend-robots-generate" class="side-nav-link text-success fw-bold" data-url="{{ route('backend.frontend-robots-generate') }}">
                 <span class="menu-icon"><i class="ti ti-file-text"></i></span>
                 <span class="menu-text"> Generate Robots.txt </span>
             </a>
-        </li>
+        </li> -->
        
 
     </ul>
