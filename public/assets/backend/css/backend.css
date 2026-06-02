@@ -1,0 +1,14 @@
+label.error {
+    color: red;
+    font-size: 12px;
+}
+
+.btn-xs {
+    padding: 0.1rem 0.4rem;
+    font-size: 0.8rem;
+    border-radius: 0.3rem;
+}
+
+.tox-promotion {
+    display: none;
+}

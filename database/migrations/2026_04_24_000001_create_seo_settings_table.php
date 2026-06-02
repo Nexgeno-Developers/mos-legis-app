@@ -1,0 +1,32 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::create('seo_settings', function (Blueprint $table) {
+            $table->id();
+            // 0 = global/default (when CUSTOM.COMPANY_ID is not set).
+            $table->unsignedBigInteger('company_id')->default(0);
+            $table->longText('content')->nullable();
+            $table->timestamps();
+
+            $table->unique('company_id');
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('seo_settings');
+    }
+};
