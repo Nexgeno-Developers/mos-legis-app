@@ -43,12 +43,12 @@
             </a>
         </li>        
         
-        <!-- <li class="side-nav-item">
+        <li class="side-nav-item">
             <a href="{{ route('pages.index') }}" class="side-nav-link">
                 <span class="menu-icon"><i class="ti ti-pencil"></i></span>
                 <span class="menu-text"> Pages </span>
             </a>
-        </li>  -->
+        </li> 
 
         <!-- <li class="side-nav-item">
             <a data-bs-toggle="collapse" href="#sidebarPosts" aria-expanded="false" aria-controls="sidebarPosts"
@@ -83,14 +83,12 @@
             </div>
         </li> -->
         
-        @can('seo-meta view')
-        <!--<li class="side-nav-item">
+        <li class="side-nav-item">
             <a href="{{ route('seo-meta.index') }}" class="side-nav-link">
                 <span class="menu-icon"><i class="ti ti-search"></i></span>
                 <span class="menu-text"> SEO Meta </span>
             </a>
-        </li>-->
-        @endcan
+        </li>
 
         @can('seo-settings view')
         <!-- <li class="side-nav-item">
@@ -132,12 +130,12 @@
         </li>        
           
 
-        <!-- <li class="side-nav-item">
+        <li class="side-nav-item">
             <a href="{{ route('backend.menus') }}" class="side-nav-link">
                 <span class="menu-icon"><i class="ti ti-menu"></i></span>
                 <span class="menu-text"> Menus </span>
             </a>
-        </li>-->
+        </li>
 
         <li class="side-nav-item">
             <a href="{{ route('visitors.index') }}" class="side-nav-link">
