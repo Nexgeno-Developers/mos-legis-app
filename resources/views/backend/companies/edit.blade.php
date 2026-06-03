@@ -69,26 +69,26 @@
         <div class="col-lg-6">
             <div class="card">
                 <div class="card-body">
-                    <h5 class="text-uppercase mt-0 mb-3 bg-light p-2">Social Links</h5>
+                    <h5 class="text-uppercase mt-0 mb-3 bg-light p-2">Bank Details</h5>
                     <div class="mb-3 form-group">
-                        <label for="meta-instagram" class="form-label">Instagram URL</label>
-                        <input type="url" class="form-control" id="meta-instagram" name="meta[instagram_url]" value="{{ old('meta.instagram_url', $pageData->meta->where('meta_key', 'instagram_url')->first()->meta_value ?? '') }}" placeholder="Enter Instagram URL">
+                        <label for="meta-bank-account-holder" class="form-label">Account Holder Name</label>
+                        <input type="text" class="form-control" id="meta-bank-account-holder" name="meta[bank_account_holder_name]" value="{{ old('meta.bank_account_holder_name', $pageData->meta->where('meta_key', 'bank_account_holder_name')->first()->meta_value ?? '') }}" placeholder="e.g. WorkNest Spaces Pvt Ltd">
                     </div>
                     <div class="mb-3 form-group">
-                        <label for="meta-x" class="form-label">X URL</label>
-                        <input type="url" class="form-control" id="meta-x" name="meta[x_url]" value="{{ old('meta.x_url', $pageData->meta->where('meta_key', 'x_url')->first()->meta_value ?? '') }}" placeholder="Enter X URL">
+                        <label for="meta-bank-name" class="form-label">Bank Name</label>
+                        <input type="text" class="form-control" id="meta-bank-name" name="meta[bank_name]" value="{{ old('meta.bank_name', $pageData->meta->where('meta_key', 'bank_name')->first()->meta_value ?? '') }}" placeholder="e.g. HDFC Bank">
                     </div>
                     <div class="mb-3 form-group">
-                        <label for="meta-linkedin" class="form-label">LinkedIn URL</label>
-                        <input type="url" class="form-control" id="meta-linkedin" name="meta[linkedin_url]" value="{{ old('meta.linkedin_url', $pageData->meta->where('meta_key', 'linkedin_url')->first()->meta_value ?? '') }}" placeholder="Enter LinkedIn URL">
+                        <label for="meta-bank-account-number" class="form-label">Account Number</label>
+                        <input type="text" class="form-control" id="meta-bank-account-number" name="meta[bank_account_number]" value="{{ old('meta.bank_account_number', $pageData->meta->where('meta_key', 'bank_account_number')->first()->meta_value ?? '') }}" placeholder="e.g. 50100123456789">
                     </div>
                     <div class="mb-3 form-group">
-                        <label for="meta-facebook" class="form-label">Facebook URL</label>
-                        <input type="url" class="form-control" id="meta-facebook" name="meta[facebook_url]" value="{{ old('meta.facebook_url', $pageData->meta->where('meta_key', 'facebook_url')->first()->meta_value ?? '') }}" placeholder="Enter Facebook URL">
+                        <label for="meta-bank-ifsc" class="form-label">IFSC</label>
+                        <input type="text" class="form-control" id="meta-bank-ifsc" name="meta[bank_ifsc]" value="{{ old('meta.bank_ifsc', $pageData->meta->where('meta_key', 'bank_ifsc')->first()->meta_value ?? '') }}" placeholder="e.g. HDFC0001234">
                     </div>
                     <div class="mb-3 form-group">
-                        <label for="meta-youtube" class="form-label">YouTube URL</label>
-                        <input type="url" class="form-control" id="meta-youtube" name="meta[youtube_url]" value="{{ old('meta.youtube_url', $pageData->meta->where('meta_key', 'youtube_url')->first()->meta_value ?? '') }}" placeholder="Enter YouTube URL">
+                        <label for="meta-bank-branch" class="form-label">Branch</label>
+                        <input type="text" class="form-control" id="meta-bank-branch" name="meta[bank_branch]" value="{{ old('meta.bank_branch', $pageData->meta->where('meta_key', 'bank_branch')->first()->meta_value ?? '') }}" placeholder="e.g. Indiranagar Branch">
                     </div>
                 </div>
             </div>
