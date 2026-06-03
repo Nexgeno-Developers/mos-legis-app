@@ -22,6 +22,7 @@ class User extends Authenticatable
         'role_id',
         'name',
         'email',
+        'phone',
         'password',
         'is_active',
     ];
@@ -52,5 +53,19 @@ class User extends Authenticatable
     public function role()
     {
         return $this->belongsTo(Role::class);
-    }    
+    }
+
+    public function details()
+    {
+        return $this->hasMany(UserDetail::class);
+    }
+
+    public function detailValue(string $key, string $default = ''): string
+    {
+        $detail = $this->relationLoaded('details')
+            ? $this->details->firstWhere('detail_key', $key)
+            : $this->details()->where('detail_key', $key)->first();
+
+        return $detail?->detail_value ?? $default;
+    }
 }

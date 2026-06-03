@@ -15,6 +15,7 @@ use App\Http\Controllers\Backend\RoleController;
 use App\Http\Controllers\Backend\PropertyController;
 use App\Http\Controllers\Backend\CabinController;
 use App\Http\Controllers\Backend\SeatController;
+use App\Http\Controllers\Backend\CustomerController;
 
 
 //Command Routes
@@ -116,8 +117,9 @@ Route::prefix('backend')->group(function () {
     
     //User and Role Management Routes
     Route::middleware('auth.backend')->group(function () {
-        Route::resource('users', UserController::class);        
-    });  
+        Route::resource('users', UserController::class);
+        Route::resource('customers', CustomerController::class);
+    });
 
     Route::middleware('auth.backend')->group(function () {
         Route::resource('roles', RoleController::class);        

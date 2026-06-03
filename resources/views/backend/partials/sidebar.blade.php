@@ -97,9 +97,16 @@
                 <ul class="sub-menu">
                     <li class="side-nav-item">
                         <a href="{{ route('users.index') }}" class="side-nav-link">
-                            <span class="menu-text">Staffs</span>
+                            <span class="menu-text">Users</span>
                         </a>
                     </li>
+                    @can('customers view')
+                    <li class="side-nav-item">
+                        <a href="{{ route('customers.index') }}" class="side-nav-link">
+                            <span class="menu-text">Customers</span>
+                        </a>
+                    </li>
+                    @endcan
                     <li class="side-nav-item">
                         <a href="{{ route('roles.index') }}" class="side-nav-link">
                             <span class="menu-text">Roles</span>

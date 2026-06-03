@@ -49,6 +49,12 @@ class PermissionSeeder extends Seeder
             'users edit',
             'users delete',
 
+            // Customers
+            'customers view',
+            'customers create',
+            'customers edit',
+            'customers delete',
+
             // Role management
             'roles view',
             'roles create',
