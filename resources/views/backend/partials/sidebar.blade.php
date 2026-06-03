@@ -43,7 +43,7 @@
             </a>
         </li>
 
-        @canany(['properties view', 'cabins view'])
+        @canany(['properties view', 'cabins view', 'seats view'])
         <li class="side-nav-item">
             <a data-bs-toggle="collapse" href="#sidebarProperties" aria-expanded="false" aria-controls="sidebarProperties"
                 class="side-nav-link">
@@ -64,6 +64,13 @@
                     <li class="side-nav-item">
                         <a href="{{ route('cabins.index') }}" class="side-nav-link">
                             <span class="menu-text">Cabins</span>
+                        </a>
+                    </li>
+                    @endcan
+                    @can('seats view')
+                    <li class="side-nav-item">
+                        <a href="{{ route('seats.index') }}" class="side-nav-link">
+                            <span class="menu-text">Seats</span>
                         </a>
                     </li>
                     @endcan

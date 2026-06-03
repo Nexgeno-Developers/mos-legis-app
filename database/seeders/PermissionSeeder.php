@@ -66,6 +66,12 @@ class PermissionSeeder extends Seeder
             'cabins create',
             'cabins edit',
             'cabins delete',
+
+            // Seats
+            'seats view',
+            'seats create',
+            'seats edit',
+            'seats delete',
         ];
 
         foreach ($permissions as $permissionName) {

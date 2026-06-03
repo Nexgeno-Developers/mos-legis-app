@@ -27,5 +27,14 @@ return [
     'property' => 'Property',
     'select_property' => 'Select property',
     'all_properties' => 'All properties',
+    'seats' => 'Seats',
+    'cabin' => 'Cabin',
+    'select_cabin' => 'Select cabin',
+    'all_cabins' => 'All cabins',
+    'seat_no' => 'Seat No',
+    'pricing' => 'Pricing',
+    'daily' => 'Daily',
+    'monthly' => 'Monthly',
+    'yearly' => 'Yearly',
 ];
 

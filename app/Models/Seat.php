@@ -7,16 +7,14 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Cabin extends Model
+class Seat extends Model
 {
     use HasFactory;
 
     protected $fillable = [
         'property_id',
-        'name',
-        'type',
-        'thumbnail',
-        'images',
+        'cabin_id',
+        'seat_no',
         'status',
     ];
 
@@ -24,6 +22,7 @@ class Cabin extends Model
     {
         return [
             'property_id' => 'integer',
+            'cabin_id' => 'integer',
             'status' => 'integer',
         ];
     }
@@ -33,8 +32,20 @@ class Cabin extends Model
         return $this->belongsTo(Property::class);
     }
 
-    public function seats(): HasMany
+    public function cabin(): BelongsTo
     {
-        return $this->hasMany(Seat::class);
+        return $this->belongsTo(Cabin::class);
+    }
+
+    public function pricing(): HasMany
+    {
+        return $this->hasMany(SeatPricing::class);
+    }
+
+    public function priceFor(string $duration): ?string
+    {
+        $pricing = $this->pricing->firstWhere('duration', $duration);
+
+        return $pricing ? number_format($pricing->price, 2) : null;
     }
 }
