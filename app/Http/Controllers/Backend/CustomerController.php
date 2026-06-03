@@ -162,7 +162,7 @@ class CustomerController extends BaseController
             $emailRule .= ','.$userId;
         }
 
-        $phoneRule = 'required|string|max:50|unique:users,phone';
+        $phoneRule = 'required|digits:10|unique:users,phone';
         if ($userId) {
             $phoneRule .= ','.$userId;
         }        

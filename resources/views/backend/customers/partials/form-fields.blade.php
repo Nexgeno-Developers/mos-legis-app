@@ -36,8 +36,8 @@
 
 <div class="col-sm-6">
     <div class="form-group mb-2">
-        <label class="form-label">{{ __('labels.phone') }}</label>
-        <input name="phone" type="text" class="form-control" maxlength="50" value="{{ $user?->phone ?? '' }}">
+        <label class="form-label">{{ __('labels.phone') }} <span class="text-danger">*</span></label>
+        <input name="phone" type="tel" class="form-control" minlength="10" maxlength="10" pattern="[0-9]{10}" inputmode="numeric" value="{{ $user?->phone ?? '' }}" required>
     </div>
 </div>
 
