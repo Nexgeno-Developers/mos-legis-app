@@ -88,23 +88,34 @@
             </a>
         </li>
 
-        @can('properties view')
+        @canany(['properties view', 'cabins view'])
         <li class="side-nav-item">
-            <a href="{{ route('properties.index') }}" class="side-nav-link">
+            <a data-bs-toggle="collapse" href="#sidebarProperties" aria-expanded="false" aria-controls="sidebarProperties"
+                class="side-nav-link">
                 <span class="menu-icon"><i class="ti ti-building"></i></span>
                 <span class="menu-text"> Properties </span>
+                <span class="menu-arrow"></span>
             </a>
+            <div class="collapse" id="sidebarProperties">
+                <ul class="sub-menu">
+                    @can('properties view')
+                    <li class="side-nav-item">
+                        <a href="{{ route('properties.index') }}" class="side-nav-link">
+                            <span class="menu-text">Properties</span>
+                        </a>
+                    </li>
+                    @endcan
+                    @can('cabins view')
+                    <li class="side-nav-item">
+                        <a href="{{ route('cabins.index') }}" class="side-nav-link">
+                            <span class="menu-text">Cabins</span>
+                        </a>
+                    </li>
+                    @endcan
+                </ul>
+            </div>
         </li>
-        @endcan
-
-        @can('cabins view')
-        <li class="side-nav-item">
-            <a href="{{ route('cabins.index') }}" class="side-nav-link">
-                <span class="menu-icon"><i class="ti ti-door"></i></span>
-                <span class="menu-text"> Cabins </span>
-            </a>
-        </li>
-        @endcan
+        @endcanany
         
         <li class="side-nav-item">
             <a data-bs-toggle="collapse" href="#sidebarUsers" aria-expanded="false" aria-controls="sidebarUsers"
