@@ -28,6 +28,12 @@ class CabinController extends BaseController
         $propertyId = request()->input('property_id');
 
         $pageData = Cabin::with('property')
+            ->withSum([
+                'seatPricing as monthly_total' => fn ($query) => $query->where('seat_pricing.duration', 'monthly'),
+            ], 'price')
+            ->withSum([
+                'seatPricing as yearly_total' => fn ($query) => $query->where('seat_pricing.duration', 'yearly'),
+            ], 'price')
             ->when($propertyId, fn ($query) => $query->where('property_id', $propertyId))
             ->when($search, function ($query) use ($search) {
                 $query->where(function ($query) use ($search) {

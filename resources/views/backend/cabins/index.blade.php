@@ -57,6 +57,7 @@
                                 <th>{{ __('labels.thumbnail') }}</th>
                                 <th>{{ __('labels.name') }}</th>
                                 <th>{{ __('labels.property') }}</th>
+                                <th>{{ __('labels.pricing') }}</th>
                                 <th>{{ __('labels.status') }}</th>
                                 <th>{{ __('labels.created') }}</th>
                                 <th>{{ __('labels.actions') }}</th>
@@ -73,6 +74,12 @@
                                 </td>
                                 <td>{{ $row->name }}</td>
                                 <td>{{ $row->property?->name }}</td>
+                                <td>
+                                    <small>
+                                        {{ __('labels.monthly') }}: {{ $row->formattedPriceSum($row->monthly_total) }}<br>
+                                        {{ __('labels.yearly') }}: {{ $row->formattedPriceSum($row->yearly_total) }}
+                                    </small>
+                                </td>
                                 <td>
                                     <span class="badge {{ $row->status ? 'bg-success' : 'bg-danger' }}">
                                         {{ $row->status ? 'Active' : 'Inactive' }}
@@ -95,7 +102,7 @@
                             </tr>
                             @empty
                             <tr>
-                                <td colspan="7" class="text-center text-muted">{{ __('labels.no_records') }}</td>
+                                <td colspan="8" class="text-center text-muted">{{ __('labels.no_records') }}</td>
                             </tr>
                             @endforelse
                         </tbody>
