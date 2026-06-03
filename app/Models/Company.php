@@ -8,8 +8,7 @@ class Company extends Model
 {
     protected $fillable = [
         'name', 'logo', 'email', 'phone', 'whatsapp',
-        'address', 'website', 'google_map', 'is_active',
-        'footer_logo_image', 'short_description',
+        'address', 'website', 'google_map', 'is_active'
     ];
 
     public function meta()

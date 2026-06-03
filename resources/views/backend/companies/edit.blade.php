@@ -25,18 +25,7 @@
                     <div class="mb-3 form-group">
                         <label for="company-name" class="form-label">Company Name <span class="text-danger">*</span></label>
                         <input type="text" id="company-name" name="name" value="{{ old('name', $pageData->name) }}" class="form-control" placeholder="e.g : Sample Company" required>
-                    </div>
-                    <div class="mb-2 form-group clearfix">
-                        <label for="company-logo" class="form-label">{{ __('Breadcrumb') }} <span class="text-danger">*</span></label>
-                        <div class="input-group" data-toggle="aizuploader" data-type="image" data-multiple="false">
-                            <div class="input-group-prepend">
-                                <div class="input-group-text bg-soft-secondary font-weight-medium">{{ __('Browse') }}</div>
-                            </div>
-                            <div class="form-control file-amount">{{ __('Choose File') }}</div>
-                            <input type="hidden" id="company-breadcrumb" name="meta[breadcrumb]" value="{{ old('meta.breadcrumb', $pageData->meta->where('meta_key', 'breadcrumb')->first()->meta_value ?? '') }}" class="selected-files" required>
-                        </div>
-                        <div class="file-preview box sm"></div>
-                    </div>  
+                    </div> 
                     <div class="clearfix"></div>                   
                     <div class="mb-2 form-group clearfix">
                         <label for="company-logo" class="form-label">{{ __('Logo') }} <span class="text-danger">*</span></label>
@@ -51,34 +40,6 @@
                     </div>     
                     <div class="clearfix"></div>               
 
-                    <div class="mb-2 form-group clearfix">
-                        <label for="company-footer-logo" class="form-label">{{ __('Footer Logo Image') }}</label>
-                        <div class="input-group" data-toggle="aizuploader" data-type="image" data-multiple="false">
-                            <div class="input-group-prepend">
-                                <div class="input-group-text bg-soft-secondary font-weight-medium">{{ __('Browse') }}</div>
-                            </div>
-                            <div class="form-control file-amount">{{ __('Choose File') }}</div>
-                            <input
-                                type="hidden"
-                                id="company-footer-logo"
-                                name="footer_logo_image"
-                                value="{{ old('footer_logo_image', $pageData->footer_logo_image) }}"
-                                class="selected-files"
-                            >
-                        </div>
-                        <div class="file-preview box sm"></div>
-                    </div>
-                    <div class="clearfix"></div>
-
-                    <div class="mb-3 form-group">
-                        <label for="company-short-description" class="form-label">{{ __('Short Description') }}</label>
-                        <textarea
-                            id="company-short-description"
-                            name="short_description"
-                            class="form-control"
-                            rows="3"
-                        >{{ old('short_description', $pageData->short_description) }}</textarea>
-                    </div>
 
                     <div class="mb-3 mt-1 form-group">
                         <label for="company-website" class="form-label">Website <span class="text-danger">*</span></label>

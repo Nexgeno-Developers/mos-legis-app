@@ -57,8 +57,6 @@ class CompanyController extends Controller
             $company = Company::create([
                 'name' => $request->input('name'),
                 'logo' => $request->input('logo'),
-                'footer_logo_image' => $request->input('footer_logo_image'),
-                'short_description' => $request->input('short_description'),
                 'email' => $request->input('email'),
                 'phone' => $request->input('phone'),
                 'address' => $request->input('address'),
@@ -130,8 +128,6 @@ class CompanyController extends Controller
             // Use input defaults to avoid wiping existing values if a field isn't sent.
             $company->name = $request->input('name', $company->name);
             $company->logo = $request->input('logo', $company->logo);
-            $company->footer_logo_image = $request->input('footer_logo_image', $company->footer_logo_image);
-            $company->short_description = $request->input('short_description', $company->short_description);
             $company->email = $request->input('email', $company->email);
             $company->phone = $request->input('phone', $company->phone);
             $company->address = $request->input('address', $company->address);
