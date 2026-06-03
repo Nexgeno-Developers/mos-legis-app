@@ -6,7 +6,7 @@
     <h6 class="text-primary text-uppercase mb-2">{{ __('labels.personal_information') }}</h6>
 </div>
 
-<div class="col-sm-12">
+<div class="col-sm-6">
     <label class="form-label">{{ __('labels.profile_photo') }}</label>
     <div class="form-group mb-2">
         <div class="input-group" data-toggle="aizuploader" data-type="image" data-multiple="false">
@@ -38,15 +38,6 @@
     <div class="form-group mb-2">
         <label class="form-label">{{ __('labels.phone') }}</label>
         <input name="phone" type="text" class="form-control" maxlength="50" value="{{ $user?->phone ?? '' }}">
-    </div>
-</div>
-
-<div class="col-sm-6">
-    <div class="form-group mb-2">
-        <label class="form-label">{{ isset($user) ? __('labels.password_optional') : __('labels.password') }}
-            @if(!isset($user))<span class="text-danger">*</span>@endif
-        </label>
-        <input name="password" type="password" class="form-control" minlength="6" {{ isset($user) ? '' : 'required' }}>
     </div>
 </div>
 

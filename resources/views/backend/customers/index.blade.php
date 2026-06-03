@@ -44,11 +44,9 @@
                         <thead>
                             <tr>
                                 <th>{{ __('labels.#') }}</th>
-                                <th>{{ __('labels.profile_photo') }}</th>
                                 <th>{{ __('labels.name') }}</th>
                                 <th>{{ __('labels.email') }}</th>
                                 <th>{{ __('labels.phone') }}</th>
-                                <th>{{ __('labels.company_name') }}</th>
                                 <th>{{ __('labels.status') }}</th>
                                 <th>{{ __('labels.created') }}</th>
                                 <th>{{ __('labels.actions') }}</th>
@@ -58,15 +56,9 @@
                             @forelse ($pageData as $index => $row)
                             <tr>
                                 <td>{{ $pageData->firstItem() + $index }}</td>
-                                <td>
-                                    @if($row->detailValue('profile_photo'))
-                                    <img src="{{ uploaded_asset($row->detailValue('profile_photo'), 'small') }}" alt="{{ $row->name }}" class="rounded-circle" width="40" height="40" style="object-fit: cover;">
-                                    @endif
-                                </td>
                                 <td>{{ $row->name }}</td>
                                 <td>{{ $row->email }}</td>
                                 <td>{{ $row->phone }}</td>
-                                <td>{{ $row->detailValue('company_name') }}</td>
                                 <td>
                                     <span class="badge {{ $row->is_active ? 'bg-success' : 'bg-danger' }}">
                                         {{ $row->is_active ? 'Active' : 'Inactive' }}
@@ -84,7 +76,7 @@
                             </tr>
                             @empty
                             <tr>
-                                <td colspan="9" class="text-center text-muted">{{ __('labels.no_records') }}</td>
+                                <td colspan="7" class="text-center text-muted">{{ __('labels.no_records') }}</td>
                             </tr>
                             @endforelse
                         </tbody>

@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class CustomerController extends BaseController
 {
@@ -82,7 +83,7 @@ class CustomerController extends BaseController
                 'name' => $request->name,
                 'email' => $request->email,
                 'phone' => $request->phone,
-                'password' => Hash::make($request->password),
+                'password' => Hash::make(Str::random(32)),
                 'is_active' => $request->is_active,
             ]);
 
@@ -119,10 +120,6 @@ class CustomerController extends BaseController
             $user->email = $request->email;
             $user->phone = $request->phone;
             $user->is_active = $request->is_active;
-
-            if ($request->filled('password')) {
-                $user->password = Hash::make($request->password);
-            }
 
             $user->save();
             $user->syncRoles('customer');
@@ -174,7 +171,6 @@ class CustomerController extends BaseController
             'name' => 'required|string|min:3|max:200',
             'email' => $emailRule,
             'phone' => $phoneRule,
-            'password' => $userId ? 'nullable|string|min:6' : 'required|string|min:6',
             'is_active' => 'required|boolean',
             'details.profile_photo' => 'nullable|string',
             'details.street_address' => 'nullable|string',
