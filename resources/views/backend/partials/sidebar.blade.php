@@ -86,7 +86,16 @@
                 <span class="menu-icon"><i class="ti ti-world"></i></span>
                 <span class="menu-text"> Visitors </span>
             </a>
-        </li> 
+        </li>
+
+        @can('properties view')
+        <li class="side-nav-item">
+            <a href="{{ route('properties.index') }}" class="side-nav-link">
+                <span class="menu-icon"><i class="ti ti-building"></i></span>
+                <span class="menu-text"> Properties </span>
+            </a>
+        </li>
+        @endcan
         
         <li class="side-nav-item">
             <a data-bs-toggle="collapse" href="#sidebarUsers" aria-expanded="false" aria-controls="sidebarUsers"

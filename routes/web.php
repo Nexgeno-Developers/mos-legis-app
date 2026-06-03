@@ -12,6 +12,7 @@ use App\Http\Controllers\Backend\MenuController;
 use App\Http\Controllers\Backend\VisitorController;
 use App\Http\Controllers\Backend\UserController;
 use App\Http\Controllers\Backend\RoleController;
+use App\Http\Controllers\Backend\PropertyController;
 
 
 //Command Routes
@@ -118,5 +119,9 @@ Route::prefix('backend')->group(function () {
 
     Route::middleware('auth.backend')->group(function () {
         Route::resource('roles', RoleController::class);        
+    });
+
+    Route::middleware('auth.backend')->group(function () {
+        Route::resource('properties', PropertyController::class);
     });
 });
