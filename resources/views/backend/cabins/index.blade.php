@@ -80,6 +80,11 @@
                                 </td>
                                 <td>{{ formatDatetime($row->created_at) }}</td>
                                 <td>
+                                    @can('seats view')
+                                    <a href="{{ route('seats.index', ['property_id' => $row->property_id, 'cabin_id' => $row->id]) }}" class="link-reset fs-20 p-1" title="{{ __('labels.seats') }}">
+                                        <i class="ti ti-armchair"></i>
+                                    </a>
+                                    @endcan
                                     @can('cabins edit')
                                     <a href="javascript:void(0);" onclick="smallModal('{{ url(route($module . '.edit', $row->id)) }}', '{{ __('labels.update') }}')" class="link-reset fs-20 p-1"><i class="ti ti-pencil"></i></a>
                                     @endcan

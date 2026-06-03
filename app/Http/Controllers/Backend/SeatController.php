@@ -147,7 +147,6 @@ class SeatController extends BaseController
             ],
             'seat_no' => 'required|string|max:50',
             'status' => 'required|boolean',
-            'pricing.daily' => 'required|numeric|min:0',
             'pricing.monthly' => 'required|numeric|min:0',
             'pricing.yearly' => 'required|numeric|min:0',
         ];
@@ -155,7 +154,7 @@ class SeatController extends BaseController
 
     protected function syncPricing(Seat $seat, array $pricing): void
     {
-        foreach (['daily', 'monthly', 'yearly'] as $duration) {
+        foreach (['monthly', 'yearly'] as $duration) {
             if (isset($pricing[$duration]) && $pricing[$duration] !== '') {
                 SeatPricing::updateOrCreate(
                     ['seat_id' => $seat->id, 'duration' => $duration],

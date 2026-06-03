@@ -82,7 +82,6 @@
                                 <td>{{ $row->cabin?->name }}</td>
                                 <td>
                                     <small>
-                                        {{ __('labels.daily') }}: {{ $row->priceFor('daily') ?? '—' }}<br>
                                         {{ __('labels.monthly') }}: {{ $row->priceFor('monthly') ?? '—' }}<br>
                                         {{ __('labels.yearly') }}: {{ $row->priceFor('yearly') ?? '—' }}
                                     </small>

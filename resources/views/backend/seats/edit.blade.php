@@ -47,15 +47,7 @@
             <h6 class="text-primary mb-2">{{ __('labels.pricing') }}</h6>
         </div>
 
-        <div class="col-sm-4">
-            <div class="form-group mb-2">
-                <label for="pricing_daily" class="form-label">{{ __('labels.daily') }} <span class="text-danger">*</span></label>
-                <input name="pricing[daily]" id="pricing_daily" type="number" class="form-control" min="0" step="0.01"
-                    value="{{ $pricing['daily'] ?? '' }}" required>
-            </div>
-        </div>
-
-        <div class="col-sm-4">
+        <div class="col-sm-6">
             <div class="form-group mb-2">
                 <label for="pricing_monthly" class="form-label">{{ __('labels.monthly') }} <span class="text-danger">*</span></label>
                 <input name="pricing[monthly]" id="pricing_monthly" type="number" class="form-control" min="0" step="0.01"
@@ -63,7 +55,7 @@
             </div>
         </div>
 
-        <div class="col-sm-4">
+        <div class="col-sm-6">
             <div class="form-group mb-2">
                 <label for="pricing_yearly" class="form-label">{{ __('labels.yearly') }} <span class="text-danger">*</span></label>
                 <input name="pricing[yearly]" id="pricing_yearly" type="number" class="form-control" min="0" step="0.01"
