@@ -90,7 +90,7 @@
             <a data-bs-toggle="collapse" href="#sidebarUsers" aria-expanded="false" aria-controls="sidebarUsers"
                 class="side-nav-link">
                 <span class="menu-icon"><i class="ti ti-users"></i></span>
-                <span class="menu-text"> Users </span>
+                <span class="menu-text"> Staffs </span>
                 <span class="menu-arrow"></span>
             </a>
             <div class="collapse" id="sidebarUsers">
