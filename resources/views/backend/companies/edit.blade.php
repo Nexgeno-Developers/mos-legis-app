@@ -61,6 +61,11 @@
                         <input type="email" id="company-email" name="email" value="{{ old('email', $pageData->email) }}" class="form-control" placeholder="" required>
                     </div>
 
+                    <div class="mb-3 form-group">
+                        <label for="company-gstin" class="form-label">GSTIN</label>
+                        <input type="text" id="company-gstin" name="meta[gstin]" value="{{ old('meta.gstin', $pageData->meta->where('meta_key', 'gstin')->first()->meta_value ?? '') }}" class="form-control" placeholder="e.g. 29AABCU9603R1ZX">
+                    </div>
+
                 </div>
             </div>
         </div>
