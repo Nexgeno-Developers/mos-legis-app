@@ -13,6 +13,7 @@ use App\Http\Controllers\Backend\VisitorController;
 use App\Http\Controllers\Backend\UserController;
 use App\Http\Controllers\Backend\RoleController;
 use App\Http\Controllers\Backend\PropertyController;
+use App\Http\Controllers\Backend\CabinController;
 
 
 //Command Routes
@@ -123,5 +124,9 @@ Route::prefix('backend')->group(function () {
 
     Route::middleware('auth.backend')->group(function () {
         Route::resource('properties', PropertyController::class);
+    });
+
+    Route::middleware('auth.backend')->group(function () {
+        Route::resource('cabins', CabinController::class);
     });
 });

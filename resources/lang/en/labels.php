@@ -23,5 +23,9 @@ return [
     'thumbnail' => 'Thumbnail',
     'images' => 'Images',
     'no_records' => 'No records found',
+    'cabins' => 'Cabins',
+    'property' => 'Property',
+    'select_property' => 'Select property',
+    'all_properties' => 'All properties',
 ];
 

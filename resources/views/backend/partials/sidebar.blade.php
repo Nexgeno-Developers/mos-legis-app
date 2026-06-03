@@ -96,6 +96,15 @@
             </a>
         </li>
         @endcan
+
+        @can('cabins view')
+        <li class="side-nav-item">
+            <a href="{{ route('cabins.index') }}" class="side-nav-link">
+                <span class="menu-icon"><i class="ti ti-door"></i></span>
+                <span class="menu-text"> Cabins </span>
+            </a>
+        </li>
+        @endcan
         
         <li class="side-nav-item">
             <a data-bs-toggle="collapse" href="#sidebarUsers" aria-expanded="false" aria-controls="sidebarUsers"
