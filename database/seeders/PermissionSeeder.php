@@ -33,10 +33,6 @@ class PermissionSeeder extends Seeder
             'uploads edit',
             'uploads delete',
 
-            // Form submissions
-            'forms view',
-            'forms delete',
-
             // Menus
             'menus view',
             'menus create',
@@ -58,16 +54,6 @@ class PermissionSeeder extends Seeder
             'roles create',
             'roles edit',
             'roles delete',
-
-            // SEO management
-            'seo-meta view',
-            'seo-meta create',
-            'seo-meta edit',
-            'seo-meta delete',
-
-            // SEO settings (site-level)
-            'seo-settings view',
-            'seo-settings edit',
         ];
 
         foreach ($permissions as $permissionName) {

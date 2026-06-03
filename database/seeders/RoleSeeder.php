@@ -14,7 +14,8 @@ class RoleSeeder extends Seeder
     {
         // Seed roles (single source of truth)
         $roles = [
-            ['name' => 'superadmin', 'guard_name' => 'web']
+            ['name' => 'superadmin', 'guard_name' => 'web'],
+            ['name' => 'staff', 'guard_name' => 'web'],
         ];
 
         foreach ($roles as $roleData) {

@@ -15,7 +15,7 @@ class PageSeeder extends Seeder
     public function run(): void
     {
         // Get the company
-        $company = Company::where('email', 'info@example.com')->first();
+        $company = Company::where('email', 'info@ctrlshift.co.in')->first();
 
         if (!$company) {
             return;
@@ -59,20 +59,6 @@ class PageSeeder extends Seeder
         $counts = [
             'default' => 1,
             'example' => 1,
-            'home' => 1,
-            'product_categories' => 1,
-            'product_category_detail_1' => 1,
-            'product_category_detail_2' => 1,
-            'product_category_detail_3' => 1,
-            'product_category_detail_4' => 1,
-            'product_category_detail_5' => 3,
-            'product_industries' => 1,
-            'product_industry_detail' => 9,
-            'products' => 10,
-            'marketing_services' => 1,
-            'marketing_service_detail' => 5,
-            'technical_services' => 1,
-            'technical_service_detail' => 5,
         ];
 
         return $counts[$layoutSlug] ?? 1;

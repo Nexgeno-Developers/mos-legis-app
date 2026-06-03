@@ -15,7 +15,7 @@ class UserSeeder extends Seeder
     public function run(): void
     {
         // Get the company
-        $company = Company::where('email', 'info@example.com')->first();
+        $company = Company::where('email', 'info@ctrlshift.co.in')->first();
 
         if (!$company) {
             return;
