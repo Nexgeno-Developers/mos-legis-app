@@ -6,7 +6,6 @@ use Illuminate\Support\Facades\File;
 use Intervention\Image\Drivers\Gd\Driver;
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Cache;
-use App\Models\TinyMCEKey;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
@@ -15,9 +14,6 @@ use App\Models\Upload;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Page;
 use App\Models\PageMeta;
-use App\Models\Blog;
-use App\Models\Category;
-use App\Models\Post;
 use Illuminate\Validation\Rule;
 
 if (!function_exists('truncate_text')) {
@@ -320,159 +316,5 @@ if (!function_exists('text_limit')) {
     function text_limit($text, $limit = 15)
     {
         return \Illuminate\Support\Str::limit($text, $limit);
-    }
-}
-
-if (!function_exists('normalize_ids')) {
-    function normalize_ids($ids): array
-    {
-        if (empty($ids)) return [];
-
-        // If already array
-        if (is_array($ids)) {
-            return array_map('intval', $ids);
-        }
-
-        // If JSON array string "[1,2]"
-        if (is_string($ids) && str_starts_with($ids, '[')) {
-            $decoded = json_decode($ids, true);
-            return is_array($decoded) ? array_map('intval', $decoded) : [];
-        }
-
-        // If comma separated "1,2"
-        if (is_string($ids) && str_contains($ids, ',')) {
-            return array_map('intval', explode(',', $ids));
-        }
-
-        // Single ID
-        return [(int) $ids];
-    }
-}
-
-if (!function_exists('page_details_from_ids')) {
-    function page_details_from_ids($ids, bool $returnSingleWhenOne = true)
-    {
-        $ids = normalize_ids($ids);
-
-        if (empty($ids)) return null;
-
-        $pages = Page::whereIn('id', $ids)
-            ->get(['id', 'title', 'slug'])
-            ->toArray();
-
-        if (empty($pages)) return $returnSingleWhenOne ? null : [];
-
-        // Get page IDs for meta lookup
-        $pageIds = array_column($pages, 'id');
-
-        // Fetch all relevant meta in one query
-        $metaKeys = ['short_summary_icon', 'short_summary_image', 'short_summary_title', 'short_summary_description', 'short_summary_video_url'];
-        $pageMetas = PageMeta::whereIn('page_id', $pageIds)
-            ->whereIn('meta_key', $metaKeys)
-            ->get()
-            ->groupBy('page_id');
-
-        // Process each page and add meta fields
-        foreach ($pages as &$page) {
-            $metaGroup = $pageMetas->get($page['id'], collect());
-            $metaMap = $metaGroup->pluck('meta_value', 'meta_key')->toArray();
-
-            // Upload fields
-            if (!empty($metaMap['short_summary_icon'])) {
-                $page['short_summary_icon'] = uploaded_asset_details_from_ids($metaMap['short_summary_icon']);
-            }
-
-            if (!empty($metaMap['short_summary_image'])) {
-                $page['short_summary_image'] = uploaded_asset_details_from_ids($metaMap['short_summary_image']);
-            }
-
-            // Text fields
-            if (!empty($metaMap['short_summary_video_url'])) {
-                $page['short_summary_video_url'] = $metaMap['short_summary_video_url'];
-            }
-
-            if (!empty($metaMap['short_summary_title'])) {
-                $page['short_summary_title'] = $metaMap['short_summary_title'];
-            }
-
-            if (!empty($metaMap['short_summary_description'])) {
-                $page['short_summary_description'] = $metaMap['short_summary_description'];
-            }
-        }
-
-        if ($returnSingleWhenOne && count($pages) === 1) {
-            return $pages[0];
-        }
-
-        return $pages;
-    }
-}
-
-if (!function_exists('post_category_details_from_ids')) {
-    function post_category_details_from_ids($ids, bool $returnSingleWhenOne = true)
-    {
-        $ids = normalize_ids($ids);
-
-        if (empty($ids)) return null;
-
-        $categories = Category::whereIn('id', $ids)
-            ->get(['id', 'name', 'slug', 'description', 'breadcrumb_image']);
-
-        if ($categories->isEmpty()) {
-            return $returnSingleWhenOne ? null : [];
-        }
-
-        $companyId = config('custom.company_id');
-
-        $categoryPayloads = $categories->map(function (Category $category) use ($companyId) {
-            $postsQuery = $category->posts()
-                ->where('is_active', true)
-                ->with('meta')
-                ->orderByDesc('published_at')
-                ->limit(3);
-
-            if (!empty($companyId)) {
-                $postsQuery->where('company_id', $companyId);
-            }
-
-            $posts = $postsQuery->get()->map(function (Post $post) {
-                $summary = post_meta_value($post, 'short_summary');
-                if (!filled($summary)) {
-                    $summary = post_meta_value($post, 'summary');
-                }
-
-                $date = post_meta_value($post, 'date');
-                $time = post_meta_value($post, 'time');
-
-                return [
-                    'id' => $post->id,
-                    'title' => $post->title,
-                    'slug' => $post->slug,
-                    'featured_image' => filled($post->featured_image)
-                        ? uploaded_asset_details_from_ids($post->featured_image)
-                        : null,
-                    'summary' => $summary,
-                    'date' => filled($date) ? $date : null,
-                    'time' => filled($time) ? $time : null,
-                ];
-            })->values()->all();
-
-            return [
-                'id' => $category->id,
-                'name' => $category->name,
-                'slug' => $category->slug,
-                'description' => $category->description,
-                // 'breadcrumb_image' => filled($category->breadcrumb_image)
-                //     ? uploaded_asset_details_from_ids($category->breadcrumb_image)
-                //     : null,
-                'posts' => $posts,
-            ];
-        })->values()->all();
-
-        if ($returnSingleWhenOne && count($categoryPayloads) === 1) {
-            return $categoryPayloads[0];
-        }
-
-        return $categoryPayloads;
     }
 }
