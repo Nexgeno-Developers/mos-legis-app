@@ -11,11 +11,8 @@ use App\Http\Controllers\Backend\UploadController;
 use App\Http\Controllers\Backend\PageController;
 use App\Http\Controllers\Backend\MenuController;
 use App\Http\Controllers\Backend\VisitorController;
-use App\Http\Controllers\Backend\FormController as BackendFormController;
 use App\Http\Controllers\Backend\UserController;
 use App\Http\Controllers\Backend\RoleController;
-use App\Http\Controllers\Backend\SeoMetaController;
-use App\Http\Controllers\FormController;
 
 
 //Command Routes
@@ -36,9 +33,6 @@ Route::middleware(['auth.backend'])->prefix('command')->group(function () {
     Route::get('queue-forget/{id}', [CommandController::class, 'queueForget']);
     Route::get('queue-flush', [CommandController::class, 'queueFlush']);    
 });
-
-//Form submission route with protection and reCAPTCHA
-Route::post('/submit-form', [FormController::class, 'submit'])->middleware(['protect.forms','recaptcha','throttle:4,1'])->name('form.submit');
 
 // Global password reset routes to support Laravel's default password.* route names
 Route::middleware(['auth.guest'])->group(function () {
@@ -125,10 +119,5 @@ Route::prefix('backend')->group(function () {
 
     Route::middleware('auth.backend')->group(function () {
         Route::resource('roles', RoleController::class);        
-    });
-
-    Route::middleware('auth.backend')->group(function () {
-        Route::get('seo-meta/{id}/clone', [SeoMetaController::class, 'clone'])->name('seo-meta.clone');
-        Route::resource('seo-meta', SeoMetaController::class);
     });
 });

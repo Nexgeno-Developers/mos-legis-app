@@ -49,20 +49,6 @@
                 <span class="menu-text"> Pages </span>
             </a>
         </li> 
-        
-        <li class="side-nav-item">
-            <a href="{{ route('seo-meta.index') }}" class="side-nav-link">
-                <span class="menu-icon"><i class="ti ti-search"></i></span>
-                <span class="menu-text"> SEO Meta </span>
-            </a>
-        </li>
-        
-        <!-- <li class="side-nav-item">
-            <a href="{{ route('forms.by', ['form_name' => 'contact']) }}" class="side-nav-link">
-                <span class="menu-icon"><i class="ti ti-message-question"></i></span>
-                <span class="menu-text"> Form Submissions </span>
-            </a>
-        </li>-->
 
         <li class="side-nav-item">
             <a data-bs-toggle="collapse" href="#sidebarUploads" aria-expanded="false" aria-controls="sidebarTables"
