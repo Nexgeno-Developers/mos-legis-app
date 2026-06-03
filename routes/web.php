@@ -7,21 +7,14 @@ use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\CommandController;
 use App\Http\Controllers\Backend\AuthController;
 use App\Http\Controllers\Backend\CompanyController;
-use App\Http\Controllers\Backend\CacheController;
 use App\Http\Controllers\Backend\UploadController;
 use App\Http\Controllers\Backend\PageController;
 use App\Http\Controllers\Backend\MenuController;
 use App\Http\Controllers\Backend\VisitorController;
-
-use App\Http\Controllers\Backend\PostController;
-use App\Http\Controllers\Backend\PostCategoryController;
-use App\Http\Controllers\Backend\PostTagController;
-use App\Http\Controllers\Backend\AuthorController;
 use App\Http\Controllers\Backend\FormController as BackendFormController;
 use App\Http\Controllers\Backend\UserController;
 use App\Http\Controllers\Backend\RoleController;
 use App\Http\Controllers\Backend\SeoMetaController;
-use App\Http\Controllers\Backend\SeoSettingController;
 use App\Http\Controllers\FormController;
 
 
@@ -74,12 +67,6 @@ Route::prefix('backend')->group(function () {
         Route::get('/dashboard', function () {
             return view('backend.dashboard');
         })->name('backend.dashboard');
-
-        Route::post('/frontend-sitemap-generate', [CacheController::class, 'generateFrontendSitemap'])
-            ->name('backend.frontend-sitemap-generate');
-
-        Route::post('/frontend-robots-generate', [CacheController::class, 'generateFrontendRobots'])
-            ->name('backend.frontend-robots-generate');
     });
 
     // Uploads routes 
@@ -107,17 +94,7 @@ Route::prefix('backend')->group(function () {
         Route::get('pages/{page}/layout-fields', [PageController::class, 'layoutFields'])->name('pages.layout-fields');
         Route::get('pages/{page}/clone', [PageController::class, 'clone'])->name('pages.clone');
         Route::resource('pages', PageController::class);
-    });   
-
-    //Posts Routes
-    Route::middleware('auth.backend')->group(function () {
-        Route::get('posts/layout-fields', [PostController::class, 'layoutFields'])->name('posts.layout-fields');
-        Route::get('posts/{post}/layout-fields', [PostController::class, 'layoutFields'])->name('posts.layout-fields.edit');
-        Route::resource('posts', PostController::class)->except(['show']);
-        Route::resource('post-categories', PostCategoryController::class)->except(['show']);
-        Route::resource('post-tags', PostTagController::class)->except(['show']);
-        Route::resource('authors', AuthorController::class)->except(['show']);
-    });   
+    });     
     
     //Forms Routes
     Route::middleware('auth.backend')->group(function () {
@@ -153,10 +130,5 @@ Route::prefix('backend')->group(function () {
     Route::middleware('auth.backend')->group(function () {
         Route::get('seo-meta/{id}/clone', [SeoMetaController::class, 'clone'])->name('seo-meta.clone');
         Route::resource('seo-meta', SeoMetaController::class);
-    });
-
-    Route::middleware('auth.backend')->group(function () {
-        Route::get('seo-settings', [SeoSettingController::class, 'index'])->name('seo-settings.index');
-        Route::post('seo-settings', [SeoSettingController::class, 'update'])->name('seo-settings.update');
     });
 });
