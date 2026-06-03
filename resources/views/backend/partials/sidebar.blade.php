@@ -41,51 +41,6 @@
                 <span class="menu-icon"><i class="ti ti-school"></i></span>
                 <span class="menu-text"> Company </span>
             </a>
-        </li>        
-        
-        <li class="side-nav-item">
-            <a href="{{ route('pages.index') }}" class="side-nav-link">
-                <span class="menu-icon"><i class="ti ti-pencil"></i></span>
-                <span class="menu-text"> Pages </span>
-            </a>
-        </li> 
-
-        <li class="side-nav-item">
-            <a data-bs-toggle="collapse" href="#sidebarUploads" aria-expanded="false" aria-controls="sidebarTables"
-                class="side-nav-link">
-                <span class="menu-icon"><i class="ti ti-file-upload"></i></span>
-                <span class="menu-text"> Media Uploads </span>
-                <span class="menu-arrow"></span>
-            </a>
-            <div class="collapse" id="sidebarUploads">
-                <ul class="sub-menu">
-                    <li class="side-nav-item">
-                        <a href="{{ route('uploaded-files.create') }}" class="side-nav-link">
-                            <span class="menu-text">Add New</span>
-                        </a>
-                    </li>
-                    <li class="side-nav-item">
-                        <a href="{{ route('uploaded-files.index') }}" class="side-nav-link">
-                            <span class="menu-text">All Uploads</span>
-                        </a>
-                    </li>
-                </ul>
-            </div>
-        </li>        
-          
-
-        <li class="side-nav-item">
-            <a href="{{ route('backend.menus') }}" class="side-nav-link">
-                <span class="menu-icon"><i class="ti ti-menu"></i></span>
-                <span class="menu-text"> Menus </span>
-            </a>
-        </li>
-
-        <li class="side-nav-item">
-            <a href="{{ route('visitors.index') }}" class="side-nav-link">
-                <span class="menu-icon"><i class="ti ti-world"></i></span>
-                <span class="menu-text"> Visitors </span>
-            </a>
         </li>
 
         @canany(['properties view', 'cabins view'])
@@ -116,7 +71,14 @@
             </div>
         </li>
         @endcanany
-        
+
+        <li class="side-nav-item">
+            <a href="{{ route('pages.index') }}" class="side-nav-link">
+                <span class="menu-icon"><i class="ti ti-pencil"></i></span>
+                <span class="menu-text"> Pages </span>
+            </a>
+        </li>
+
         <li class="side-nav-item">
             <a data-bs-toggle="collapse" href="#sidebarUsers" aria-expanded="false" aria-controls="sidebarUsers"
                 class="side-nav-link">
@@ -135,10 +97,47 @@
                         <a href="{{ route('roles.index') }}" class="side-nav-link">
                             <span class="menu-text">Roles</span>
                         </a>
-                    </li>   
+                    </li>
                 </ul>
             </div>
-        </li>       
+        </li>
+
+        <li class="side-nav-item">
+            <a data-bs-toggle="collapse" href="#sidebarUploads" aria-expanded="false" aria-controls="sidebarTables"
+                class="side-nav-link">
+                <span class="menu-icon"><i class="ti ti-file-upload"></i></span>
+                <span class="menu-text"> Media Uploads </span>
+                <span class="menu-arrow"></span>
+            </a>
+            <div class="collapse" id="sidebarUploads">
+                <ul class="sub-menu">
+                    <li class="side-nav-item">
+                        <a href="{{ route('uploaded-files.create') }}" class="side-nav-link">
+                            <span class="menu-text">Add New</span>
+                        </a>
+                    </li>
+                    <li class="side-nav-item">
+                        <a href="{{ route('uploaded-files.index') }}" class="side-nav-link">
+                            <span class="menu-text">All Uploads</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </li>
+
+        <li class="side-nav-item">
+            <a href="{{ route('backend.menus') }}" class="side-nav-link">
+                <span class="menu-icon"><i class="ti ti-menu"></i></span>
+                <span class="menu-text"> Menus </span>
+            </a>
+        </li>
+
+        <li class="side-nav-item">
+            <a href="{{ route('visitors.index') }}" class="side-nav-link">
+                <span class="menu-icon"><i class="ti ti-world"></i></span>
+                <span class="menu-text"> Visitors </span>
+            </a>
+        </li>
 
         <li class="side-nav-item">
             <a target="_blank" href="{{ url('') . '/command/optimize-clear?back=true' }}" class="side-nav-link text-danger fw-bold">
