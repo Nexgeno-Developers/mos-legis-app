@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Backend;
 
-use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
@@ -181,7 +180,7 @@ class UserController extends BaseController
             return redirect()->route($this->module . '.index')->with('success', __('messages.deleted'));
         } catch (\Exception $e) {
             // Redirect back with an error message
-            return redirect()->route($this->module . 'index')->with('error', __('messages.failed'));
+            return redirect()->route($this->module . '.index')->with('error', __('messages.failed'));
         }
     }
 }

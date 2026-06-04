@@ -92,6 +92,7 @@
         </li>
         @endcanany
 
+        @canany(['users view', 'customers view', 'roles view'])
         <li class="side-nav-item">
             <a data-bs-toggle="collapse" href="#sidebarUsers" aria-expanded="false" aria-controls="sidebarUsers"
                 class="side-nav-link">
@@ -101,11 +102,13 @@
             </a>
             <div class="collapse" id="sidebarUsers">
                 <ul class="sub-menu">
+                    @can('users view')
                     <li class="side-nav-item">
                         <a href="{{ route('users.index') }}" class="side-nav-link">
                             <span class="menu-text">Staffs</span>
                         </a>
                     </li>
+                    @endcan
                     @can('customers view')
                     <li class="side-nav-item">
                         <a href="{{ route('customers.index') }}" class="side-nav-link">
@@ -113,14 +116,17 @@
                         </a>
                     </li>
                     @endcan
+                    @can('roles view')
                     <li class="side-nav-item">
                         <a href="{{ route('roles.index') }}" class="side-nav-link">
                             <span class="menu-text">Roles</span>
                         </a>
                     </li>
+                    @endcan
                 </ul>
             </div>
         </li>
+        @endcanany
 
         @canany(['uploads view', 'uploads create'])
         <li class="side-nav-item">
