@@ -4,7 +4,8 @@ namespace App\Http\Controllers\Backend;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Spatie\Permission\Models\Role;
+//use Spatie\Permission\Models\Role;
+use App\Models\Role;
 use Spatie\Permission\Models\Permission;
 use Illuminate\Routing\Controller as BaseController;
 
@@ -25,7 +26,7 @@ class RoleController extends BaseController
 
     public function index()
     {
-        $pageData = Role::paginate(10);
+        $pageData = $roles = Role::whereNot('name', Role::CUSTOMER)->paginate(10);
         return view('backend.' . $this->module . '.index', compact('pageData'));
     }
 

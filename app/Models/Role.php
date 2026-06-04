@@ -7,6 +7,8 @@ use Spatie\Permission\Models\Role as SpatieRole;
 
 class Role extends SpatieRole
 {
+    public const CUSTOMER = 'customer';
+    
     // Columns that are mass assignable
     protected $fillable = ['name', 'guard_name'];
 

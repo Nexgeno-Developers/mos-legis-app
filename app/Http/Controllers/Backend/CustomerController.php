@@ -144,7 +144,7 @@ class CustomerController extends BaseController
 
     protected function customerRoleId(): int
     {
-        return (int) Role::where('name', 'customer')->value('id')
+        return (int) Role::where('name', Role::CUSTOMER)->value('id')
             ?? throw new \RuntimeException('Customer role not found. Run RoleSeeder.');
     }
 

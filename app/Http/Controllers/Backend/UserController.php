@@ -35,6 +35,9 @@ class UserController extends BaseController
     
         // Start building the query
         $query = User::with('role')
+        ->whereHas('role', function ($query) {
+            $query->where('name', '!=', Role::CUSTOMER);
+        })        
         ->when($search, function($query) use ($search) {
             $query->where(function($query) use ($search) {
                 $query->where('name', 'like', '%'.$search.'%')
@@ -58,7 +61,7 @@ class UserController extends BaseController
     public function create()
     {
         // Fetch all roles for the dropdown
-        $roles = Role::all();
+        $roles = Role::whereNot('name', Role::CUSTOMER)->get();
         return view('backend.' . $this->module . '.create', compact('roles'));
     }
 
@@ -117,7 +120,7 @@ class UserController extends BaseController
     {
         // Find the user and fetch all roles for the dropdown
         $user = User::findOrFail($id);
-        $roles = Role::all();
+        $roles = Role::whereNot('name', Role::CUSTOMER)->get();
         return view('backend.' . $this->module . '.edit', compact('user', 'roles'));
     }
 
