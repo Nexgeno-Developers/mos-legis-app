@@ -30,6 +30,7 @@
                         </form>
                     </div>
                 </div>
+                @can('visitors delete')
                 <div class="row mt-3" id="bulkActionsContainer" style="display: none;">
                     <div class="col-md-12">
                         <div class="d-flex align-items-center gap-2">
@@ -40,17 +41,20 @@
                         </div>
                     </div>
                 </div>
+                @endcan
             </div>
             <div class="card-body">
                 <div class="table-responsive-sm">
                     <table class="table table-striped">
                         <thead>
                             <tr>
+                                @can('visitors delete')
                                 <th width="50" class="text-center">
                                     <div class="form-check d-flex justify-content-center">
                                         <input class="form-check-input" type="checkbox" id="selectAll" onchange="toggleSelectAll()" style="cursor: pointer; width: 1.2em; height: 1.2em; margin-top: 0.25em;">
                                     </div>
                                 </th>
+                                @endcan
                                 <th>#</th>
                                 <th>IP</th>
                                 <th>URL</th>
@@ -59,17 +63,21 @@
                                 <th>Browser</th>
                                 <th>Platform</th>
                                 <th>Created At</th>
+                                @can('visitors delete')
                                 <th>Actions</th>
+                                @endcan
                             </tr>
                         </thead>
                         <tbody>
                             @foreach ($pageData as $index => $row)
                             <tr>
+                                @can('visitors delete')
                                 <td class="text-center">
                                     <div class="form-check d-flex justify-content-center">
                                         <input class="form-check-input row-checkbox" type="checkbox" value="{{ $row->id }}" onchange="updateBulkActions()" style="cursor: pointer; width: 1.2em; height: 1.2em; margin-top: 0.25em;">
                                     </div>
                                 </td>
+                                @endcan
                                 <td>{{ $pageData->firstItem() + $index }}</td>
                                 <td>{{ $row->ip_address ?? 'N/A' }}</td>
                                 <td>
@@ -90,9 +98,11 @@
                                 <td>{{ $row->browser ?? 'N/A' }}</td>
                                 <td>{{ $row->platform ?? 'N/A' }}</td>
                                 <td>{{ formatDatetime($row->created_at) }}</td>
+                                @can('visitors delete')
                                 <td>
                                     <a href="javascript:void(0);" onclick="confirmModal('{{ route('visitors.destroy', $row->id) }}', callbackVisitors )" class="link-reset fs-20 p-1"> <i class="ti ti-trash"></i></a>
                                 </td>
+                                @endcan
                             </tr>
                             @endforeach
                         </tbody>

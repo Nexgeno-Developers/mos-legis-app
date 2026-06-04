@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers\Backend;
 
-use App\Http\Controllers\Controller;
 use App\Models\Visitor;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controller as BaseController;
 
-class VisitorController extends Controller
+class VisitorController extends BaseController
 {
     protected $moduleName;
 
@@ -14,6 +14,9 @@ class VisitorController extends Controller
     {
         $this->moduleName = 'Visitors';
         view()->share('moduleName', $this->moduleName);
+
+        $this->middleware('permission:visitors view')->only(['index', 'show']);
+        $this->middleware('permission:visitors delete')->only(['destroy', 'bulkDelete']);
     }
 
     public function index()

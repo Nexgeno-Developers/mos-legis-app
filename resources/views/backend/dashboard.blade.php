@@ -36,11 +36,13 @@
         'url' => route('uploaded-files.index'),
     ])
 
+    @can('visitors view')
     @include('backend.includes.dashboard-card', [
         'name' => 'Visitors',
         'icon' => 'ti ti-world',
         'count' => $visitors,
         'url' => route('visitors.index'),
-    ]) 
+    ])
+    @endcan
 </div>
 @endsection
