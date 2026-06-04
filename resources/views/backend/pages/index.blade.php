@@ -52,10 +52,12 @@
                         </form>
                     </div>
                     <div class="col-md-4 d-flex justify-content-end">
+                        @can('pages create')
                         <a href="{{ route($routeName . '.create') }}?layout=default"
                            class="btn btn-primary d-inline-flex align-items-center">
                             <i class="ti ti-plus"></i> Add New
                         </a>
+                        @endcan
                     </div>
                 </div>
             </div>
@@ -107,14 +109,20 @@
                                 </td>
                                 <td>{{ formatDatetime($row->updated_at) }}</td>
                                 <td>
+                                    @can('pages edit')
                                     <a href="{{ route($routeName . '.edit', $row->id) }}?layout={{ $row->layout }}" class="link-reset fs-20 p-1">
                                         <i class="ti ti-pencil"></i>
                                     </a>
+                                    @endcan
+                                    @can('pages create')
                                     <a href="javascript:void(0);" onclick="cloneConfirm('{{ route($routeName . '.clone', $row->id) }}')" class="link-reset fs-20 p-1" title="Clone">
                                         <i class="ti ti-copy"></i>
                                     </a>
+                                    @endcan
                                     @if(!in_array($row->layout, ['home', 'thank_us'], true))
+                                    @can('pages delete')
                                     <a href="javascript:void(0);" onclick="confirmModal('{{ route($routeName . '.destroy', $row->id) }}', callback )" class="link-reset fs-20 p-1"> <i class="ti ti-trash"></i></a>
+                                    @endcan
                                     @endif
                                 </td>
                             </tr>

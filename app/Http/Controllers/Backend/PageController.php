@@ -2,15 +2,15 @@
 
 namespace App\Http\Controllers\Backend;
 
-use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controller as BaseController;
 use App\Models\Page;
 use App\Models\PageMeta;
 use App\Models\Gallery;
 use App\Services\ApiPayloadCache;
 use Illuminate\Validation\Rule;
 
-class PageController extends Controller
+class PageController extends BaseController
 {
     protected $moduleName;
     protected $folderName;
@@ -24,7 +24,12 @@ class PageController extends Controller
         view()->share('moduleName', $this->moduleName);
         view()->share('folderName', $this->folderName);
         view()->share('routeName', $this->routeName);
-    } 
+
+        $this->middleware('permission:pages view')->only(['index', 'show']);
+        $this->middleware('permission:pages create')->only(['create', 'store', 'clone']);
+        $this->middleware('permission:pages edit')->only(['edit', 'update', 'layoutFields']);
+        $this->middleware('permission:pages delete')->only(['destroy']);
+    }
 
     /**
      * Display a listing of the resource.

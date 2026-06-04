@@ -81,12 +81,14 @@
         </li>
         @endcanany
 
+        @canany(['pages view', 'pages create', 'pages edit'])
         <li class="side-nav-item">
-            <a href="{{ route('pages.index') }}" class="side-nav-link">
+            <a href="@if(auth()->user()->can('pages view')){{ route('pages.index') }}@else{{ route('pages.create') }}@endif" class="side-nav-link">
                 <span class="menu-icon"><i class="ti ti-pencil"></i></span>
                 <span class="menu-text"> Pages </span>
             </a>
         </li>
+        @endcanany
 
         <li class="side-nav-item">
             <a data-bs-toggle="collapse" href="#sidebarUsers" aria-expanded="false" aria-controls="sidebarUsers"
