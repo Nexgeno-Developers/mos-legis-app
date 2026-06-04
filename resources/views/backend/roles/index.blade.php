@@ -36,11 +36,13 @@
                     <td>{{ ucfirst($row->name) }}</td>
                     <td>{{ formatDatetime($row->created_at) }}</td>
                     <td>
-                        @can('roles edit')
-                        <a href="javascript:void(0);" onclick="smallModal('{{ url(route($module . '.edit', $row->id)) }}', '{{__('labels.update')}}')" class="link-reset fs-20 p-1">
-                            <i class="ti ti-pencil"></i>
-                        </a>
-                        @endcan
+                        @if($row->id != 1)
+                            @can('roles edit')
+                            <a href="javascript:void(0);" onclick="smallModal('{{ url(route($module . '.edit', $row->id)) }}', '{{__('labels.update')}}')" class="link-reset fs-20 p-1">
+                                <i class="ti ti-pencil"></i>
+                            </a>
+                            @endcan
+                        @endif
                         @if($row->id != 1)
                             @can('roles delete')
                             <a href="javascript:void(0);" onclick="confirmModal('{{ route($module . '.destroy', $row->id) }}')" class="link-reset fs-20 p-1">

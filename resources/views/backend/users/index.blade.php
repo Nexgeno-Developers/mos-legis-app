@@ -70,9 +70,9 @@
                                     <a href="javascript:void(0);" onclick="smallModal('{{url(route($module . '.edit', $row->id))}}', '{{__('labels.update')}}')" class="link-reset fs-20 p-1"> <i class="ti ti-pencil"></i></a>
                                     @endcan
                                     @if($row->id != 1)
-                                    @can('users delete')
-                                    <a href="javascript:void(0);" onclick="confirmModal('{{ route($module . '.destroy', $row->id) }}', callback )" class="link-reset fs-20 p-1"> <i class="ti ti-trash"></i></a>
-                                    @endcan
+                                        @can('users delete')
+                                        <a href="javascript:void(0);" onclick="confirmModal('{{ route($module . '.destroy', $row->id) }}', callback )" class="link-reset fs-20 p-1"> <i class="ti ti-trash"></i></a>
+                                        @endcan
                                     @endif
                                 </td>
                             </tr>
