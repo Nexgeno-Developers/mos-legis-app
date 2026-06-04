@@ -40,7 +40,7 @@ Route::middleware(['auth.backend'])->prefix('command')->group(function () {
 // Global password reset routes to support Laravel's default password.* route names
 Route::middleware(['auth.guest'])->group(function () {
     Route::get('password/forgot', [AuthController::class, 'showForgotPasswordForm'])->name('password.request');
-    Route::post('password/email', [AuthController::class, 'sendResetLinkEmail'])->middleware(['recaptcha','throttle:5,60'])->name('password.email');
+    Route::post('password/email', [AuthController::class, 'sendResetLinkEmail'])->middleware(['recaptcha','throttle:10,60'])->name('password.email');
     Route::get('password/reset/{token}', [AuthController::class, 'showResetForm'])->name('password.reset');
     Route::post('password/reset', [AuthController::class, 'resetPassword'])->name('password.update');
 });
@@ -55,7 +55,7 @@ Route::prefix('backend')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('backend.logout');
 
     Route::get('/password/forgot', [AuthController::class, 'showForgotPasswordForm'])->middleware(['auth.guest'])->name('backend.password.request');
-    Route::post('/password/email', [AuthController::class, 'sendResetLinkEmail'])->middleware(['recaptcha','throttle:5,60'])->name('backend.password.email');
+    Route::post('/password/email', [AuthController::class, 'sendResetLinkEmail'])->middleware(['recaptcha','throttle:10,60'])->name('backend.password.email');
     Route::get('/password/reset/{token}', [AuthController::class, 'showResetForm'])->middleware(['auth.guest'])->name('backend.password.reset');
     Route::post('/password/reset', [AuthController::class, 'resetPassword'])->name('backend.password.update');
 

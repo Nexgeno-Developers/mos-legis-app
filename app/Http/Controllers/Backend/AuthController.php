@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Backend;
 
 use App\Http\Controllers\Controller;
+use App\Models\Role;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Password;
@@ -37,6 +39,13 @@ class AuthController extends Controller
         $credentials = $request->only('email', 'password');
 
         if (Auth::attempt($credentials)) {
+            if (Auth::user()->role?->name === Role::CUSTOMER) {
+                Auth::logout();
+                return back()->withErrors([
+                    'email' => 'The provided credentials do not match our records.',
+                ])->withInput();
+            }
+
             $request->session()->regenerate();
             return redirect()->route('backend.dashboard')->with('success', 'You are logged in.');
         }
@@ -84,6 +93,10 @@ class AuthController extends Controller
             'email' => 'required|email',
         ]);
 
+        if (User::where('email', $request->email)->whereRelation('role', 'name', Role::CUSTOMER)->exists()) {
+            return back()->withErrors(['email' => __(Password::INVALID_USER)])->withInput();
+        }
+
         $status = Password::sendResetLink(
             $request->only('email')
         );
@@ -125,6 +138,10 @@ class AuthController extends Controller
             'email' => 'required|email',
             'password' => 'required|min:8|confirmed',
         ]);
+
+        if (User::where('email', $request->email)->whereRelation('role', 'name', Role::CUSTOMER)->exists()) {
+            return back()->withErrors(['email' => __(Password::INVALID_USER)])->withInput();
+        }
 
         $status = Password::reset(
             $request->only('email', 'password', 'password_confirmation', 'token'),

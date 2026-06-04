@@ -45,7 +45,7 @@
                             class="form-control"
                             placeholder="Enter your email"
                             value="{{ old('email', $email ?? '') }}"
-                            required
+                            required readonly
                         >
                     </div>
 
