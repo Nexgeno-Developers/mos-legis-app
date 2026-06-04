@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CommandController;
 use App\Http\Controllers\Backend\AuthController;
 use App\Http\Controllers\Backend\CompanyController;
+use App\Http\Controllers\Backend\DashboardController;
 use App\Http\Controllers\Backend\UploadController;
 use App\Http\Controllers\Backend\PageController;
 use App\Http\Controllers\Backend\MenuController;
@@ -61,9 +62,7 @@ Route::prefix('backend')->group(function () {
 
     // Authenticated admin routes
     Route::middleware(['auth.backend'])->group(function () {
-        Route::get('/dashboard', function () {
-            return view('backend.dashboard');
-        })->name('backend.dashboard');
+        Route::get('/dashboard', [DashboardController::class, 'index'])->name('backend.dashboard');
     });
 
     // Uploads routes 

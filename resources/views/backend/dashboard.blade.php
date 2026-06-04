@@ -29,12 +29,14 @@
 </div>
 
 <div class="row justify-content-center">
+    @can('uploads view')
     @include('backend.includes.dashboard-card', [
         'name' => 'Media Uploads',
         'icon' => 'ti ti-file-upload',
         'count' => $mediaCount,
         'url' => route('uploaded-files.index'),
     ])
+    @endcan
 
     @can('visitors view')
     @include('backend.includes.dashboard-card', [

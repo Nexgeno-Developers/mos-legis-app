@@ -29,12 +29,14 @@
     <ul class="side-nav">
         <li class="side-nav-title">Navigation</li>
 
+        @can('dashboard view')
         <li class="side-nav-item">
             <a href="{{route('backend.dashboard')}}" class="side-nav-link">
                 <span class="menu-icon"><i class="ti ti-dashboard"></i></span>
                 <span class="menu-text"> Dashboard </span>
             </a>
-        </li> 
+        </li>
+        @endcan
 
         @canany(['companies view', 'companies edit'])
         <li class="side-nav-item">
