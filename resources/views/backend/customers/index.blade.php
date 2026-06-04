@@ -32,7 +32,7 @@
                     </div>
                     <div class="col-md-2 offset-md-5 text-end">
                         @can('customers create')
-                        <button onclick="smallModal('{{ url(route($module . '.create')) }}', '{{ __('labels.create') }}')"
+                        <button onclick="largeModal('{{ url(route($module . '.create')) }}', '{{ __('labels.create') }}')"
                             class="btn btn-primary btn-icon w-100"><i class="ti ti-plus"></i> {{ __('labels.create') }}</button>
                         @endcan
                     </div>
@@ -67,7 +67,7 @@
                                 <td>{{ formatDatetime($row->created_at) }}</td>
                                 <td>
                                     @can('customers edit')
-                                    <a href="javascript:void(0);" onclick="smallModal('{{ url(route($module . '.edit', $row->id)) }}', '{{ __('labels.update') }}')" class="link-reset fs-20 p-1"><i class="ti ti-pencil"></i></a>
+                                    <a href="javascript:void(0);" onclick="largeModal('{{ url(route($module . '.edit', $row->id)) }}', '{{ __('labels.update') }}')" class="link-reset fs-20 p-1"><i class="ti ti-pencil"></i></a>
                                     @endcan
                                     @can('customers delete')
                                     <a href="javascript:void(0);" onclick="confirmModal('{{ route($module . '.destroy', $row->id) }}', callback)" class="link-reset fs-20 p-1"><i class="ti ti-trash"></i></a>
