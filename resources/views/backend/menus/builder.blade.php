@@ -36,12 +36,16 @@
                     <li class="list-group-item d-flex justify-content-between align-items-center py-2 px-2">
                         <span class="text-truncate">{{ $group->name }}</span>
                         <div class="d-flex gap-1 flex-shrink-0">
+                            @can('menus edit')
                             <button type="button" class="btn btn-sm btn-primary" onclick="showEditGroupModal({{ $group->id }})" title="Edit">
                                 <i class="ti ti-pencil"></i>
                             </button>
-                            {{-- <button type="button" class="btn btn-sm btn-danger" onclick="deleteGroup({{ $group->id }})" title="Delete">
+                            @endcan
+                            @can('menus delete')
+                            <button type="button" class="btn btn-sm btn-danger" onclick="deleteGroup({{ $group->id }})" title="Delete">
                                 <i class="ti ti-trash"></i>
-                            </button> --}}
+                            </button>
+                            @endcan
                         </div>
                     </li>
                     @endforeach
@@ -56,14 +60,18 @@
             <div class="card-header border-bottom border-dashed d-flex align-items-center justify-content-between">
                 <h5 class="card-title mb-0 fs-14 fw-semibold">Menu Items</h5>
                 <div class="d-flex align-items-center gap-2">
+                    @can('menus edit')
                     <button type="button" class="btn btn-light btn-sm" onclick="saveMenuOrder()" title="Save order">
                         <i class="ti ti-grip-vertical me-1"></i>
                         <span>Save Order</span>
                     </button>
+                    @endcan
+                    @can('menus create')
                     <button type="button" class="btn btn-success btn-sm" onclick="showAddItemModal()" title="Add item">
                         <i class="ti ti-plus me-1"></i>
                         <span>Add Item</span>
                     </button>
+                    @endcan
                 </div>
             </div>
             <div class="card-body">
@@ -352,13 +360,11 @@
     }
 
     function setupFormSubmissions() {
-        // Menu Group Form
         $('#menuGroupForm').submit(function(e) {
             e.preventDefault();
             saveMenuGroup();
         });
 
-        // Menu Item Form
         $('#menuItemForm').submit(function(e) {
             e.preventDefault();
             saveMenuItem();

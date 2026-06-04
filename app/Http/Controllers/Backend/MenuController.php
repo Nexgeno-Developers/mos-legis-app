@@ -2,18 +2,26 @@
 
 namespace App\Http\Controllers\Backend;
 
-use App\Http\Controllers\Controller;
 use App\Models\MenuGroup;
 use App\Models\MenuItem;
 use App\Services\ApiPayloadCache;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Support\Facades\Validator;
 
-class MenuController extends Controller
+class MenuController extends BaseController
 {
+    protected $moduleName;
+
     public function __construct()
     {
-        //$this->middleware('auth');
+        $this->moduleName = 'Menus';
+        view()->share('moduleName', $this->moduleName);
+
+        $this->middleware('permission:menus view')->only(['index', 'getMenuItems']);
+        $this->middleware('permission:menus create')->only(['saveGroup', 'saveItem']);
+        $this->middleware('permission:menus edit')->only(['saveOrder']);
+        $this->middleware('permission:menus delete')->only(['deleteGroup', 'deleteItem']);
     }
 
     /**

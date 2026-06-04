@@ -7,12 +7,16 @@
         @endif
     </div>
     <div class="menu-item-actions">
+        @can('menus edit')
         <button type="button" class="btn btn-sm btn-primary btn-icon" onclick="showEditItemModal({{ $menuItem->id }})" title="Edit">
             <i class="ti ti-pencil"></i>
         </button>
+        @endcan
+        @can('menus delete')
         <button type="button" class="btn btn-sm btn-danger btn-icon" onclick="deleteItem({{ $menuItem->id }})" title="Delete">
             <i class="ti ti-trash"></i>
         </button>
+        @endcan
     </div>
     @if($menuItem->children->count() > 0)
     <ol class="dd-list">

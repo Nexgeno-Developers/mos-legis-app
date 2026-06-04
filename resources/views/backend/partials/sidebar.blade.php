@@ -81,7 +81,7 @@
         </li>
         @endcanany
 
-        @canany(['pages view', 'pages create', 'pages edit'])
+        @canany(['pages view'])
         <li class="side-nav-item">
             <a href="@if(auth()->user()->can('pages view')){{ route('pages.index') }}@else{{ route('pages.create') }}@endif" class="side-nav-link">
                 <span class="menu-icon"><i class="ti ti-pencil"></i></span>
@@ -143,12 +143,14 @@
             </div>
         </li>
 
+        @can('menus view')
         <li class="side-nav-item">
             <a href="{{ route('backend.menus') }}" class="side-nav-link">
                 <span class="menu-icon"><i class="ti ti-menu"></i></span>
                 <span class="menu-text"> Menus </span>
             </a>
         </li>
+        @endcan
 
         @can('visitors view')
         <li class="side-nav-item">
