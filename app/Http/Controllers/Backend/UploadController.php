@@ -1,8 +1,9 @@
 <?php
 
 namespace App\Http\Controllers\Backend;
-use App\Http\Controllers\Controller;
+
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controller as BaseController;
 use App\Models\Upload;
 use App\Models\User;
 use Illuminate\Support\Facades\Response;
@@ -10,15 +11,18 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
-class UploadController extends Controller
+class UploadController extends BaseController
 {
     protected $moduleName;
 
     public function __construct()
     {
-        //Module Name
         $this->moduleName = 'Uploads';
         view()->share('moduleName', $this->moduleName);
+
+        $this->middleware('permission:uploads view')->only(['index', 'get_uploaded_files', 'get_preview_files', 'file_info', 'attachment_download', 'all_file']);
+        $this->middleware('permission:uploads create')->only(['create', 'show_uploader', 'upload']);
+        $this->middleware('permission:uploads delete')->only(['destroy', 'bulk_uploaded_files_delete']);
     }
 
     public function index(Request $request)

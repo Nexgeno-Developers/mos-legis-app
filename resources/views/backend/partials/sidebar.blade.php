@@ -122,6 +122,7 @@
             </div>
         </li>
 
+        @canany(['uploads view', 'uploads create'])
         <li class="side-nav-item">
             <a data-bs-toggle="collapse" href="#sidebarUploads" aria-expanded="false" aria-controls="sidebarTables"
                 class="side-nav-link">
@@ -131,19 +132,24 @@
             </a>
             <div class="collapse" id="sidebarUploads">
                 <ul class="sub-menu">
+                    @can('uploads create')
                     <li class="side-nav-item">
                         <a href="{{ route('uploaded-files.create') }}" class="side-nav-link">
                             <span class="menu-text">Add New</span>
                         </a>
                     </li>
+                    @endcan
+                    @can('uploads view')
                     <li class="side-nav-item">
                         <a href="{{ route('uploaded-files.index') }}" class="side-nav-link">
                             <span class="menu-text">All Uploads</span>
                         </a>
                     </li>
+                    @endcan
                 </ul>
             </div>
         </li>
+        @endcanany
 
         @can('menus view')
         <li class="side-nav-item">

@@ -31,7 +31,6 @@ class PermissionSeeder extends Seeder
             // Media uploads
             'uploads view',
             'uploads create',
-            'uploads edit',
             'uploads delete',
 
             // Menus

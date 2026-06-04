@@ -5,11 +5,13 @@
     <div class="flex-grow-1">
         <h4 class="fs-16 text-uppercase fw-bold mb-0">All {{$moduleName}}</h4>
     </div>
+	@can('uploads create')
 	<div class="text-end">
 		<ol class="breadcrumb m-0 py-0 fs-13">
 			<li class="breadcrumb-item"><a href="{{ route('uploaded-files.create') }}">Upload a new file</a></li>
 		</ol>
-	</div>    
+	</div>
+	@endcan
 </div>
 
 <div class="row">
@@ -19,6 +21,7 @@
 			<div class="">
                 <form id="sort_uploads" action="">
                     <div class="card-header border-bottom border-dashed d-flex align-items-center row">
+                        @can('uploads delete')
                         <div class="col-md-2">
                             <div class="dropdown">
                                 <button class="btn border dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -33,6 +36,7 @@
                                 </ul>
                             </div>
                         </div>
+                        @endcan
                         <!-- Company filter removed -->
                         <div class="col-md-2">
                             <select class="form-select" name="sort" onchange="sort_uploads()">
@@ -59,12 +63,14 @@
                     </div>
 
                     <div class="card-body">
+                        @can('uploads delete')
                         <div class="form-group mb-3">
                             <div class="form-check">
                                 <input type="checkbox" class="form-check-input check-all" id="select-all">
                                 <label class="form-check-label" for="select-all">{{ __('Select All') }}</label>
                             </div>
                         </div>
+                        @endcan
 
                         <div class="row g-3">
                             @foreach($all_uploads as $key => $file)
@@ -92,6 +98,7 @@
                                                     <i class="la la-download me-2"></i>{{ __('Download') }}</a></li>
                                                 <li><a href="javascript:void(0)" class="dropdown-item" onclick="copyUrl(this)" data-url="{{ my_asset($file->file_name) }}">
                                                     <i class="las la-clipboard me-2"></i>{{ __('Copy Link') }}</a></li>
+                                                    @can('uploads delete')
                                                     <li>
                                                         <a href="javascript:void(0)" 
                                                         class="dropdown-item confirm-delete" 
@@ -101,9 +108,11 @@
                                                             <i class="las la-trash me-2"></i>{{ __('Delete') }}
                                                         </a>
                                                     </li>
+                                                    @endcan
                                             </ul>
                                         </div>
 
+                                        @can('uploads delete')
                                         <div class="select-box">
                                             @if(auth()->user()->role_id == 1 || $file->user_id == auth()->id())
                                             <div class="form-check">
@@ -112,6 +121,7 @@
                                             </div>
                                             @endif
                                         </div>
+                                        @endcan
                                         <div class="card card-file aiz-uploader-select c-default" title="{{ $file_name }}.{{ $file->extension }}">
                                             <div class="card-file-thumb">
                                                 @if($file->type == 'image')

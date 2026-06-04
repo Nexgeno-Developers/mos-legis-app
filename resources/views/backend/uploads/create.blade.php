@@ -6,11 +6,13 @@
 		<h4 class="fs-16 text-uppercase fw-bold mb-0">New {{$moduleName}}</h4>
 	</div>
 
+	@can('uploads view')
 	<div class="text-end">
 		<ol class="breadcrumb m-0 py-0 fs-13">
 			<li class="breadcrumb-item"><a href="{{ route('uploaded-files.index') }}">Back to uploaded files</a></li>
 		</ol>
 	</div>
+	@endcan
 </div>
 
 <div class="row">
