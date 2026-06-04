@@ -53,7 +53,7 @@
 
 <div class="col-sm-12">
     <hr>
-    <h6 class="text-primary text-uppercase mb-2">{{ __('labels.address') }}</h6>
+    <h6 class="text-primary text-uppercase mb-2">{{ __('labels.billing_address') }}</h6>
 </div>
 
 <div class="col-sm-12">

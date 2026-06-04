@@ -19,6 +19,7 @@ return [
     'properties' => 'Properties',
     'phone' => 'Phone',
     'address' => 'Address',
+    'billing_address' => 'Billing Address',
     'facilities' => 'Facilities',
     'thumbnail' => 'Thumbnail',
     'images' => 'Images',
