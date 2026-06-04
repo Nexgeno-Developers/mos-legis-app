@@ -5,6 +5,13 @@
     <div class="flex-grow-1">
         <h4 class="fs-16 text-uppercase fw-bold mb-0">{{$moduleName}}</h4>
     </div>
+    @can('companies create')
+    <!-- <div class="text-end">
+        <a href="{{ route('companies.create') }}" class="btn btn-primary btn-icon">
+            <i class="ti ti-plus"></i> Create
+        </a>
+    </div> -->
+    @endcan
 </div>
 
 <div class="row">
@@ -38,7 +45,9 @@
                                 <td>{{ $row->email }}</td>
                                 <td>{{ $row->phone }}</td>
                                 <td>
+                                    @can('companies edit')
                                     <a href="{{ route('companies.edit', $row->id) }}" class="link-reset fs-20 p-1"> <i class="ti ti-pencil"></i></a>
+                                    @endcan
                                 </td>
                             </tr>
                             @endforeach

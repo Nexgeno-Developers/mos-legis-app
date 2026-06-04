@@ -18,7 +18,8 @@ class PermissionSeeder extends Seeder
             // Dashboard
             'dashboard view',
 
-            // Company
+            // Companies
+            'companies view',
             'companies edit',
 
             // Pages (CMS)

@@ -36,12 +36,14 @@
             </a>
         </li> 
 
+        @canany(['companies view', 'companies edit'])
         <li class="side-nav-item">
-            <a href="{{ route('companies.edit', 1) }}" class="side-nav-link">
+            <a href="{{ route('companies.index') }}" class="side-nav-link">
                 <span class="menu-icon"><i class="ti ti-school"></i></span>
                 <span class="menu-text"> Company </span>
             </a>
         </li>
+        @endcanany
 
         @canany(['properties view', 'cabins view', 'seats view'])
         <li class="side-nav-item">

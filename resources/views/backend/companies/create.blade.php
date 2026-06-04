@@ -5,11 +5,13 @@
     <div class="flex-grow-1">
         <h4 class="fs-16 text-uppercase fw-bold mb-0">{{$moduleName}} / Create</h4>
     </div>
+    @can('companies view')
     <div class="text-end">
         <ol class="breadcrumb m-0 py-0 fs-13">
             <li class="breadcrumb-item"><a href="{{ route('companies.index') }}">Back to {{$moduleName}} list</a></li>
         </ol>
     </div>
+    @endcan
 </div>
 
 <form class="form" action="{{ route('companies.store') }}" method="POST">

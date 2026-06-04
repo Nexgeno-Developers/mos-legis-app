@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers\Backend;
 
-use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Company;
 use App\Services\ApiPayloadCache;
 
-class CompanyController extends Controller
+class CompanyController extends BaseController
 {
     protected $moduleName;
 
@@ -18,6 +18,9 @@ class CompanyController extends Controller
         //Module Name
         $this->moduleName = 'Company';
         view()->share('moduleName', $this->moduleName);
+
+        $this->middleware('permission:companies view')->only(['index', 'show']);
+        $this->middleware('permission:companies edit')->only(['edit', 'update']);
     }
 
     /**

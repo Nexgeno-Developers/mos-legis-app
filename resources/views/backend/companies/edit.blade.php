@@ -5,11 +5,13 @@
     <div class="flex-grow-1">
         <h4 class="fs-16 text-uppercase fw-bold mb-0">{{$moduleName}}</h4>
     </div>
+	@can('companies view')
 	<div class="text-end">
 		<ol class="breadcrumb m-0 py-0 fs-13">
 			<li class="breadcrumb-item"><a href="{{ route('companies.index') }}">Back to {{$moduleName}} list</a></li>
 		</ol>
-	</div>    
+	</div>
+	@endcan
 </div>
 
 <form class="form" action="{{ route('companies.update', $pageData->id) }}" method="POST">
@@ -181,10 +183,12 @@
                 </div>
             </div> --}}
             
+            @can('companies edit')
             <!-- Submit Button -->
             <div class="text-end">
                 <button type="submit" class="btn btn-primary w-100">Update</button>
             </div>
+            @endcan
         </div>
     </div>
 </form>
