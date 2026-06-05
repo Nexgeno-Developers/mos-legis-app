@@ -82,7 +82,7 @@ class ActivityLogController extends BaseController
     public function clearLast30Days(Request $request)
     {
         try {
-            $deleted = ActivityLog::where('created_at', '>=', now()->subDays(30))->delete();
+            $deleted = ActivityLog::where('created_at', '<', now()->subDays(30))->delete();
 
             if ($request->ajax() || $request->expectsJson()) {
                 return response()->json([

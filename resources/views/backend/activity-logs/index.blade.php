@@ -59,7 +59,7 @@
                     </div>
                     @can('activity-logs delete')
                     <div class="col-md-2 text-end">
-                        <button type="button" class="btn btn-danger w-100" onclick="confirmModal('{{ route('activity-logs.clear-last-30-days') }}')">
+                        <button title="Delete logs older than 30 days" type="button" class="btn btn-danger w-100" onclick="confirmModal('{{ route('activity-logs.clear-last-30-days') }}')">
                             <i class="ti ti-trash"></i> Clear Logs
                         </button>
                     </div>
@@ -93,9 +93,9 @@
                                     <span class="text-muted">System</span>
                                     @endif
                                 </td>
-                                <td><span class="badge bg-secondary">{{ $row->module }}</span></td>
+                                <td><span class="">{{ $row->module }}</span></td>
                                 <td>
-                                    <span class="badge bg-secondary">{{ ucfirst($row->action) }}</span>
+                                    <span class="">{{ ucfirst($row->action) }}</span>
                                 </td>
                                 <td>{{ $row->record_id ?? '—' }}</td>
                                 <td>{{ text_limit($row->remarks, 40) }}</td>
