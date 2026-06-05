@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Backend;
 
 use App\Models\Property;
+use App\Services\ActivityLogService;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller as BaseController;
 
@@ -59,7 +60,7 @@ class PropertyController extends BaseController
         ]);
 
         try {
-            Property::create([
+            $property = Property::create([
                 'name' => $request->name,
                 'phone' => $request->phone,
                 'email' => $request->email,
@@ -69,6 +70,8 @@ class PropertyController extends BaseController
                 'images' => $request->images,
                 'status' => $request->status,
             ]);
+
+            ActivityLogService::store('properties', 'create', (int) $property->id, $request->all(), 'Property created');
 
             return response()->json(['status' => true, 'notification' => __('messages.created')]);
         } catch (\Exception $e) {
@@ -114,6 +117,8 @@ class PropertyController extends BaseController
                 'status' => $request->status,
             ]);
 
+            ActivityLogService::store('properties', 'update', (int) $property->id, $request->all(), 'Property updated');
+
             return response()->json(['status' => true, 'notification' => __('messages.updated')]);
         } catch (\Exception $e) {
             return response()->json(['status' => false, 'notification' => __('messages.failed')]);
@@ -123,7 +128,11 @@ class PropertyController extends BaseController
     public function destroy($id)
     {
         try {
-            Property::destroy($id);
+            $property = Property::findOrFail($id);
+
+            ActivityLogService::store('properties', 'delete', (int) $property->id, ['name' => $property->name, 'email' => $property->email], 'Property deleted');
+
+            $property->delete();
 
             return redirect()->route($this->module.'.index')->with('success', __('messages.deleted'));
         } catch (\Exception $e) {

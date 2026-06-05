@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Backend;
 
 use App\Models\Cabin;
 use App\Models\Property;
+use App\Services\ActivityLogService;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller as BaseController;
 
@@ -70,7 +71,7 @@ class CabinController extends BaseController
         ]);
 
         try {
-            Cabin::create([
+            $cabin = Cabin::create([
                 'property_id' => $request->property_id,
                 'name' => $request->name,
                 'type' => $request->input('type', 'flexible'),
@@ -78,6 +79,8 @@ class CabinController extends BaseController
                 'images' => $request->images,
                 'status' => $request->status,
             ]);
+
+            ActivityLogService::store('cabins', 'create', (int) $cabin->id, $request->all(), 'Cabin created');
 
             return response()->json(['status' => true, 'notification' => __('messages.created')]);
         } catch (\Exception $e) {
@@ -120,6 +123,8 @@ class CabinController extends BaseController
                 'status' => $request->status,
             ]);
 
+            ActivityLogService::store('cabins', 'update', (int) $cabin->id, $request->all(), 'Cabin updated');
+
             return response()->json(['status' => true, 'notification' => __('messages.updated')]);
         } catch (\Exception $e) {
             return response()->json(['status' => false, 'notification' => __('messages.failed')]);
@@ -129,7 +134,11 @@ class CabinController extends BaseController
     public function destroy($id)
     {
         try {
-            Cabin::destroy($id);
+            $cabin = Cabin::findOrFail($id);
+
+            ActivityLogService::store('cabins', 'delete', (int) $cabin->id, ['name' => $cabin->name, 'property_id' => $cabin->property_id], 'Cabin deleted');
+
+            $cabin->delete();
 
             return redirect()->route($this->module.'.index')->with('success', __('messages.deleted'));
         } catch (\Exception $e) {

@@ -6,6 +6,7 @@ use App\Models\Cabin;
 use App\Models\Property;
 use App\Models\Seat;
 use App\Models\SeatPricing;
+use App\Services\ActivityLogService;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Validation\Rule;
@@ -83,6 +84,8 @@ class SeatController extends BaseController
 
             $this->syncPricing($seat, $request->input('pricing', []));
 
+            ActivityLogService::store('seats', 'create', (int) $seat->id, $request->all(), 'Seat created');
+
             return response()->json(['status' => true, 'notification' => __('messages.created')]);
         } catch (\Exception $e) {
             return response()->json(['status' => false, 'notification' => __('messages.failed')]);
@@ -120,6 +123,8 @@ class SeatController extends BaseController
 
             $this->syncPricing($seat, $request->input('pricing', []));
 
+            ActivityLogService::store('seats', 'update', (int) $seat->id, $request->all(), 'Seat updated');
+
             return response()->json(['status' => true, 'notification' => __('messages.updated')]);
         } catch (\Exception $e) {
             return response()->json(['status' => false, 'notification' => __('messages.failed')]);
@@ -129,7 +134,15 @@ class SeatController extends BaseController
     public function destroy($id)
     {
         try {
-            Seat::destroy($id);
+            $seat = Seat::findOrFail($id);
+
+            ActivityLogService::store('seats', 'delete', (int) $seat->id, [
+                'seat_no' => $seat->seat_no,
+                'property_id' => $seat->property_id,
+                'cabin_id' => $seat->cabin_id,
+            ], 'Seat deleted');
+
+            $seat->delete();
 
             return redirect()->route($this->module.'.index')->with('success', __('messages.deleted'));
         } catch (\Exception $e) {
