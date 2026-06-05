@@ -86,5 +86,7 @@ return [
     'id_proof' => 'ID Proof',
     'kyc_status' => 'KYC Status',
     'updated' => 'Updated',
+    'total_paid' => 'Total Paid',
+    'remaining_balance' => 'Remaining Balance',
 ];
 

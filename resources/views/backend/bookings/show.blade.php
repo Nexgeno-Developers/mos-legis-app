@@ -1,4 +1,9 @@
 @php
+    use App\Services\BookingPaymentService;
+
+    $totalPaid = BookingPaymentService::totalPaid($booking);
+    $remainingBalance = BookingPaymentService::remainingAmount($booking);
+
     $bookingBadgeClass = match ($booking->booking_status) {
         'active' => 'bg-success',
         'completed' => 'bg-info',
@@ -95,6 +100,16 @@
                 <tr>
                     <th class="bg-light">{{ __('labels.grand_total') }}</th>
                     <td class="fw-bold">{{ formatCurrency($booking->grand_total_amount) }}</td>
+                </tr>
+                <tr>
+                    <th class="bg-light">{{ __('labels.total_paid') }}</th>
+                    <td class="text-success">{{ formatCurrency($totalPaid) }}</td>
+                </tr>
+                <tr>
+                    <th class="bg-light">{{ __('labels.remaining_balance') }}</th>
+                    <td class="fw-bold {{ $remainingBalance > 0 ? 'text-danger' : 'text-success' }}">
+                        {{ formatCurrency($remainingBalance) }}
+                    </td>
                 </tr>
             </tbody>
         </table>
