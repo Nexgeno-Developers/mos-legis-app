@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Booking extends Model
 {
     protected $fillable = [
-        'booking_no',
+        'invoice_no',
         'user_id',
         'start_datetime',
         'end_datetime',
