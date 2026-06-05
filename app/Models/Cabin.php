@@ -46,6 +46,6 @@ class Cabin extends Model
 
     public function formattedPriceSum(?float $total): string
     {
-        return number_format($total ?? 0, 2);
+        return formatCurrency($total ?? 0);
     }
 }

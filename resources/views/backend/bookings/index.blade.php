@@ -86,7 +86,7 @@
                                 <td>
                                     {{ formatDate($row->start_datetime) }} – {{ formatDate($row->end_datetime) }}
                                 </td>
-                                <td>{{ number_format($row->grand_total_amount, 2) }}</td>
+                                <td>{{ formatCurrency($row->grand_total_amount) }}</td>
                                 <td>
                                     @php
                                         $bookingBadgeClass = match ($row->booking_status) {

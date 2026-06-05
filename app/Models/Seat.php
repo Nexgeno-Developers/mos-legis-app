@@ -46,6 +46,6 @@ class Seat extends Model
     {
         $pricing = $this->pricing->firstWhere('duration', $duration);
 
-        return $pricing ? number_format($pricing->price, 2) : null;
+        return $pricing ? formatCurrency($pricing->price) : null;
     }
 }

@@ -318,3 +318,21 @@ if (!function_exists('text_limit')) {
         return \Illuminate\Support\Str::limit($text, $limit);
     }
 }
+
+if (! function_exists('formatCurrency')) {
+    /**
+     * Format an amount as Indian Rupees (₹).
+     *
+     * @param  float|int|string|null  $amount
+     * @param  int  $decimals
+     * @return string|null
+     */
+    function formatCurrency($amount, int $decimals = 2): ?string
+    {
+        if ($amount === null || $amount === '') {
+            return null;
+        }
+
+        return '₹' . number_format((float) $amount, $decimals);
+    }
+}
