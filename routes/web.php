@@ -119,7 +119,7 @@ Route::prefix('backend')->group(function () {
     Route::middleware('auth.backend')->group(function () {
         Route::resource('users', UserController::class);
         Route::resource('customers', CustomerController::class);
-        Route::get('customers/login-as/{id}', [CustomerController::class, 'loginAsCustomer'])->name('customers.login-as');
+        Route::any('customers/login-as/{id}', [CustomerController::class, 'loginAsCustomer'])->name('customers.login-as');
     });
 
     Route::middleware('auth.backend')->group(function () {
