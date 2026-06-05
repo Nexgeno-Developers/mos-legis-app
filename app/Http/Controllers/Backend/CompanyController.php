@@ -7,6 +7,7 @@ use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Company;
+use App\Services\ActivityLogService;
 
 class CompanyController extends BaseController
 {
@@ -79,6 +80,8 @@ class CompanyController extends BaseController
                     ]);
                 }
             }
+
+            ActivityLogService::store('companies', 'create', (int) $company->id, $request->all(), 'Company created');
 
             return redirect()->route('companies.edit', $company->id)->with('success', 'Company created successfully!');
         } catch (\Exception $e) {
@@ -156,7 +159,9 @@ class CompanyController extends BaseController
                         ]);
                     }
                 }
-            }            
+            }
+
+            ActivityLogService::store('companies', 'update', (int) $company->id, $request->all(), 'Company updated');
 
             return redirect()->route('companies.edit', $company->id)->with('success', 'Company details updated successfully!');
 
