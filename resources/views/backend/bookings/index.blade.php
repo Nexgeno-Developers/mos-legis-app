@@ -76,7 +76,7 @@
                                 <td>{{ $row->id }}</td>
                                 <td>{{ $row->invoice_no }}</td>
                                 <td>{{ $row->user?->name ?? '—' }}</td>
-                                <td>{{ $row->propertyNamesDisplay() ?: '—' }}</td>
+                                <td>{{ $row->property?->name ?? '—' }}</td>
                                 <td>
                                     @forelse ($row->cabinsAndSeatsLines() as $line)
                                     <div>{{ $line }}</div>

@@ -82,9 +82,4 @@ class Booking extends Model
 
         return $lines;
     }
-
-    public function propertyNamesDisplay(): string
-    {
-        return $this->property?->name ?? '';
-    }
 }
