@@ -20,6 +20,11 @@ use App\Http\Controllers\Backend\CustomerController;
 use App\Http\Controllers\Backend\FormController;
 
 
+Route::get('/', function () {
+    return 'Coming Soon';
+})->name('frontend.home');
+
+
 //Command Routes
 Route::middleware(['auth.backend'])->prefix('command')->group(function () {
     Route::get('cache-clear', [CommandController::class, 'cacheClear']);

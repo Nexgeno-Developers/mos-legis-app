@@ -148,7 +148,7 @@ class CustomerController extends BaseController
         $customer = $this->findCustomerOrFail($id);
         session(['impersonator_id' => Auth::id()]);
         Auth::loginUsingId($customer->id);
-        return redirect()->route('backend.dashboard')->with('success', 'Logged in as ' . $customer->name);
+        return redirect()->route('frontend.home')->with('success', 'Logged in as ' . $customer->name);
     }
 
     protected function customerRoleId(): int
