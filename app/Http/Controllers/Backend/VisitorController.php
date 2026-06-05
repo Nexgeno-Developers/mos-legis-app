@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Backend;
 
 use App\Models\Visitor;
+use App\Services\ActivityLogService;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller as BaseController;
 
@@ -44,7 +45,11 @@ class VisitorController extends BaseController
     public function destroy($id)
     {
         try {
-            Visitor::destroy($id);
+            $visitor = Visitor::findOrFail($id);
+
+            ActivityLogService::store('visitors', 'delete', (int) $visitor->id, [], 'Visitor deleted');
+
+            $visitor->delete();
 
             if (request()->ajax() || request()->expectsJson()) {
                 return response()->json(['status' => true, 'notification' => 'Record deleted successfully!']);
@@ -75,7 +80,15 @@ class VisitorController extends BaseController
                 return response()->json(['status' => false, 'notification' => 'No items selected for deletion.']);
             }
 
-            $deleted = Visitor::whereIn('id', $ids)->delete();
+            $visitors = Visitor::whereIn('id', $ids)->get();
+            $deleted = 0;
+
+            foreach ($visitors as $visitor) {
+                ActivityLogService::store('visitors', 'delete', (int) $visitor->id, [], 'Visitor deleted');
+
+                $visitor->delete();
+                $deleted++;
+            }
 
             if ($deleted > 0) {
                 return response()->json([
