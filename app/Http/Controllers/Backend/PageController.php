@@ -8,6 +8,7 @@ use App\Models\Page;
 use App\Models\PageMeta;
 use App\Models\Gallery;
 use App\Services\ApiPayloadCache;
+use App\Services\ActivityLogService;
 use Illuminate\Validation\Rule;
 
 class PageController extends BaseController
@@ -100,11 +101,6 @@ class PageController extends BaseController
                 Rule::unique('pages')->where(function ($query) use ($request) {
                     return $query->where('company_id', $request->company_id);
                 }),
-                function ($attribute, $value, $fail) use ($request) {
-                    if (slug_conflicts_with_pages_or_posts($value, $request->company_id, null, null)) {
-                        $fail('Slug already exists in pages or posts.');
-                    }
-                },
             ],            
             'content' => 'required|string', 
             'seo_title' => 'nullable|string|max:255',
@@ -128,7 +124,9 @@ class PageController extends BaseController
             ]);
 
             ApiPayloadCache::invalidatePage((int) $team->id, true);
-    
+
+            ActivityLogService::store('pages', 'create', (int) $team->id, $request->all(), 'Page created');
+
             // Return success response
             return redirect()->route($this->routeName . '.index')->with('success', 'Record created successfully!');
     
@@ -189,11 +187,6 @@ class PageController extends BaseController
                 Rule::unique('pages')->where(function ($query) use ($request) {
                     return $query->where('company_id', $request->company_id);
                 })->ignore($id), // Ignore the current record
-                function ($attribute, $value, $fail) use ($request, $id) {
-                    if (slug_conflicts_with_pages_or_posts($value, $request->company_id, (int) $id, null)) {
-                        $fail('Slug already exists in pages or posts.');
-                    }
-                },
             ],            
             'content' => 'nullable|string',
             'seo_title' => 'nullable|string|max:255',
@@ -254,7 +247,9 @@ class PageController extends BaseController
             }              
 
             ApiPayloadCache::invalidatePage((int) $id, true);
-    
+
+            ActivityLogService::store('pages', 'update', (int) $id, $request->all(), 'Page updated');
+
             return redirect()->route($this->routeName . '.edit', $id)->with('success', 'Record updated successfully');
         } catch (\Exception $e) {
             return redirect()->route($this->routeName . '.edit', $id)->with('error', 'There was an error updating the record.');
@@ -270,6 +265,9 @@ class PageController extends BaseController
             // Attempt to delete the record
             $page = Page::findOrFail($id);
             ApiPayloadCache::invalidatePage((int) $page->id, true);
+            
+            ActivityLogService::store('pages', 'delete', (int) $page->id, ['title' => $page->title, 'slug' => $page->slug], 'Page deleted');
+            
             $page->meta()->delete();
             $page->delete();
 
@@ -312,6 +310,8 @@ class PageController extends BaseController
             }
 
             ApiPayloadCache::invalidatePage((int) $clonedPage->id, true);
+
+            ActivityLogService::store('pages', 'clone', (int) $clonedPage->id, ['original_id' => $id, 'title' => $clonedPage->title, 'slug' => $clonedPage->slug], 'Page cloned');
 
             // Redirect to the edit page of the cloned page
             return redirect()->route($this->routeName . '.index')->with('success', 'Page cloned successfully!');
