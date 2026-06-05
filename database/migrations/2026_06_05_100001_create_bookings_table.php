@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('invoice_no', 100)->unique();
             $table->foreignId('user_id')->constrained('users');
+            $table->foreignId('property_id')->constrained('properties');
             $table->dateTime('start_datetime');
             $table->dateTime('end_datetime');
             $table->decimal('subtotal_amount', 12, 2)->default(0);

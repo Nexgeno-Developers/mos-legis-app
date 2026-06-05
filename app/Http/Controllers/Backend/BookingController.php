@@ -29,7 +29,7 @@ class BookingController extends BaseController
         $paymentStatus = request()->input('payment_status');
 
         $pageData = Booking::query()
-            ->with(['user', 'items.property', 'items.cabin', 'items.seat'])
+            ->with(['user', 'property', 'items.cabin', 'items.seat'])
             ->when($search, function ($query) use ($search) {
                 $query->where(function ($query) use ($search) {
                     $query->where('invoice_no', 'like', '%'.$search.'%')
@@ -38,7 +38,7 @@ class BookingController extends BaseController
                             $userQuery->where('name', 'like', '%'.$search.'%')
                                 ->orWhere('email', 'like', '%'.$search.'%');
                         })
-                        ->orWhereHas('items.property', function ($propertyQuery) use ($search) {
+                        ->orWhereHas('property', function ($propertyQuery) use ($search) {
                             $propertyQuery->where('name', 'like', '%'.$search.'%');
                         });
                 });

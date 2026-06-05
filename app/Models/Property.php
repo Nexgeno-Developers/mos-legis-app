@@ -31,4 +31,9 @@ class Property extends Model
     {
         return $this->hasMany(Cabin::class);
     }
+
+    public function bookings()
+    {
+        return $this->hasMany(Booking::class);
+    }
 }

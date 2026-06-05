@@ -11,6 +11,7 @@ class Booking extends Model
     protected $fillable = [
         'invoice_no',
         'user_id',
+        'property_id',
         'start_datetime',
         'end_datetime',
         'subtotal_amount',
@@ -26,6 +27,7 @@ class Booking extends Model
     {
         return [
             'user_id' => 'integer',
+            'property_id' => 'integer',
             'start_datetime' => 'datetime',
             'end_datetime' => 'datetime',
             'subtotal_amount' => 'decimal:2',
@@ -38,6 +40,11 @@ class Booking extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function property(): BelongsTo
+    {
+        return $this->belongsTo(Property::class);
     }
 
     public function items(): HasMany
@@ -78,10 +85,6 @@ class Booking extends Model
 
     public function propertyNamesDisplay(): string
     {
-        return $this->items
-            ->map(fn (BookingItem $item) => $item->property?->name)
-            ->filter()
-            ->unique()
-            ->implode(', ');
+        return $this->property?->name ?? '';
     }
 }

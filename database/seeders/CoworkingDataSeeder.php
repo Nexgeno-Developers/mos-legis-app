@@ -314,6 +314,7 @@ class CoworkingDataSeeder extends Seeder
         $booking = Booking::create([
             'invoice_no' => $this->generateInvoiceNo(),
             'user_id' => $customer->id,
+            'property_id' => $property->id,
             'start_datetime' => $this->randomDatetime($startDate),
             'end_datetime' => $this->randomDatetime($endDate),
             'subtotal_amount' => $subtotal,
@@ -328,7 +329,7 @@ class CoworkingDataSeeder extends Seeder
         return $booking;
     }
 
-    private function createBookingItems(Booking $booking, $property, array $itemDefinitions): void
+    private function createBookingItems(Booking $booking, array $itemDefinitions): void
     {
         $usedSeats = [];
 
@@ -346,7 +347,6 @@ class CoworkingDataSeeder extends Seeder
 
             BookingItem::create([
                 'booking_id' => $booking->id,
-                'property_id' => $property->id,
                 'cabin_id' => $item['cabin_id'] ?? null,
                 'seat_id' => $item['seat_id'] ?? null,
                 'occupant_name' => $this->fakeName(),
@@ -427,7 +427,7 @@ class CoworkingDataSeeder extends Seeder
             $subtotal, $taxRate, $taxAmount, 0, $grandTotal, 'paid'
         );
 
-        $this->createBookingItems($booking, $property, [
+        $this->createBookingItems($booking, [
             ['cabin_id' => $cabin->id, 'seat_id' => $seat ? $seat->id : null, 'quantity' => 1, 'unit_price' => $unitPrice],
         ]);
 
@@ -469,7 +469,7 @@ class CoworkingDataSeeder extends Seeder
             $itemDefinitions[] = ['cabin_id' => $cabin->id, 'seat_id' => $seat->id, 'quantity' => 1, 'unit_price' => $unitPrice];
         }
 
-        $this->createBookingItems($booking, $property, $itemDefinitions);
+        $this->createBookingItems($booking, $itemDefinitions);
 
         $this->createPayments($booking, $customer, $grandTotal, [
             ['amount' => $grandTotal, 'method' => 'online', 'status' => 'paid', 'remarks' => 'Full payment via bank transfer'],
@@ -504,7 +504,7 @@ class CoworkingDataSeeder extends Seeder
             $itemDefinitions[] = ['cabin_id' => $cabin->id, 'seat_id' => $seat ? $seat->id : null, 'quantity' => 1, 'unit_price' => $unitPrice];
         }
 
-        $this->createBookingItems($booking, $property, $itemDefinitions);
+        $this->createBookingItems($booking, $itemDefinitions);
 
         $this->createPayments($booking, $customer, $grandTotal, [
             ['amount' => $grandTotal, 'method' => 'online', 'status' => 'paid', 'remarks' => 'Full payment via online for multiple cabins'],
@@ -545,7 +545,7 @@ class CoworkingDataSeeder extends Seeder
             $subtotal, $taxRate, $taxAmount, $discount, $grandTotal, 'paid'
         );
 
-        $this->createBookingItems($booking, $property, $itemDefinitions);
+        $this->createBookingItems($booking, $itemDefinitions);
 
         $this->createPayments($booking, $customer, $grandTotal, [
             ['amount' => $grandTotal, 'method' => 'cash', 'status' => 'paid', 'remarks' => 'Full payment via cash'],
@@ -583,7 +583,7 @@ class CoworkingDataSeeder extends Seeder
             }
         }
 
-        $this->createBookingItems($booking, $property, $itemDefinitions);
+        $this->createBookingItems($booking, $itemDefinitions);
 
         $partialAmount = round($grandTotal * 0.5, 2);
         $balanceAmount = round($grandTotal - $partialAmount, 2);
@@ -617,7 +617,7 @@ class CoworkingDataSeeder extends Seeder
             $subtotal, $taxRate, $taxAmount, $discount, $grandTotal, 'paid'
         );
 
-        $this->createBookingItems($booking, $property, [
+        $this->createBookingItems($booking, [
             ['cabin_id' => $cabin->id, 'seat_id' => null, 'quantity' => 1, 'unit_price' => $unitPrice],
         ]);
 
@@ -651,7 +651,7 @@ class CoworkingDataSeeder extends Seeder
             $subtotal, $taxRate, $taxAmount, 0, $grandTotal, 'unpaid'
         );
 
-        $this->createBookingItems($booking, $property, [
+        $this->createBookingItems($booking, [
             ['cabin_id' => $seat ? $seat->cabin_id : null, 'seat_id' => $seat ? $seat->id : null, 'quantity' => 1, 'unit_price' => $unitPrice],
         ]);
 
@@ -684,7 +684,7 @@ class CoworkingDataSeeder extends Seeder
 
         $partialPayment = round($grandTotal * 0.4, 2);
 
-        $this->createBookingItems($booking, $property, [
+        $this->createBookingItems($booking, [
             ['cabin_id' => $seat ? $seat->cabin_id : null, 'seat_id' => $seat ? $seat->id : null, 'quantity' => 1, 'unit_price' => $unitPrice],
         ]);
 
@@ -722,7 +722,7 @@ class CoworkingDataSeeder extends Seeder
             $subtotal, $taxRate, $taxAmount, $discount, $grandTotal, 'partially_paid'
         );
 
-        $this->createBookingItems($booking, $property, [
+        $this->createBookingItems($booking, [
             ['cabin_id' => $cabin->id, 'seat_id' => null, 'quantity' => 1, 'unit_price' => $cabinPrice],
             ['cabin_id' => $seatA ? $seatA->cabin_id : null, 'seat_id' => $seatA ? $seatA->id : null, 'quantity' => 1, 'unit_price' => $seatAPrice],
             ['cabin_id' => $seatB ? $seatB->cabin_id : null, 'seat_id' => $seatB ? $seatB->id : null, 'quantity' => 1, 'unit_price' => $seatBPrice],
@@ -774,7 +774,7 @@ class CoworkingDataSeeder extends Seeder
             $subtotal, $taxRate, $taxAmount, $discount, $grandTotal, 'partially_paid'
         );
 
-        $this->createBookingItems($booking, $property, $itemDefinitions);
+        $this->createBookingItems($booking, $itemDefinitions);
 
         $payment1 = round($grandTotal * 0.35, 2);
         $payment2 = round($grandTotal * 0.35, 2);

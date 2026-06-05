@@ -9,7 +9,6 @@ class BookingItem extends Model
 {
     protected $fillable = [
         'booking_id',
-        'property_id',
         'cabin_id',
         'seat_id',
         'occupant_name',
@@ -23,7 +22,6 @@ class BookingItem extends Model
     {
         return [
             'booking_id' => 'integer',
-            'property_id' => 'integer',
             'cabin_id' => 'integer',
             'seat_id' => 'integer',
             'amount' => 'decimal:2',
@@ -33,11 +31,6 @@ class BookingItem extends Model
     public function booking(): BelongsTo
     {
         return $this->belongsTo(Booking::class);
-    }
-
-    public function property(): BelongsTo
-    {
-        return $this->belongsTo(Property::class);
     }
 
     public function cabin(): BelongsTo
