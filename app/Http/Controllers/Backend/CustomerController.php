@@ -6,6 +6,7 @@ use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller as BaseController;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
@@ -140,6 +141,14 @@ class CustomerController extends BaseController
         } catch (\Exception $e) {
             return redirect()->route($this->module.'.index')->with('error', __('messages.failed'));
         }
+    }
+
+    public function loginAsCustomer($id)
+    {
+        $customer = $this->findCustomerOrFail($id);
+        session(['impersonator_id' => Auth::id()]);
+        Auth::loginUsingId($customer->id);
+        return redirect()->route('backend.dashboard')->with('success', 'Logged in as ' . $customer->name);
     }
 
     protected function customerRoleId(): int

@@ -72,6 +72,9 @@
                                     @can('customers delete')
                                     <a href="javascript:void(0);" onclick="confirmModal('{{ route($module . '.destroy', $row->id) }}', callback)" class="link-reset fs-20 p-1"><i class="ti ti-trash"></i></a>
                                     @endcan
+                                    @can('customers edit')
+                                    <a href="{{ route($module . '.login-as', $row->id) }}" class="link-reset fs-20 p-1" title="Login as Customer"><i class="ti ti-user-check"></i></a>
+                                    @endcan
                                 </td>
                             </tr>
                             @empty
