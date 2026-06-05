@@ -23,8 +23,8 @@ class CoworkingDataSeeder extends Seeder
 
     public function __construct()
     {
-        $this->invoiceCounter = (int) (Booking::max('invoice_no') ?? 'INV-1000');
-        $this->invoiceCounter = (int) str_replace('INV-', '', $this->invoiceCounter);
+        $max = Booking::max('invoice_no');
+        $this->invoiceCounter = $max ? (int) str_replace('INV-', '', $max) + 1 : 1001;
     }
 
     private array $fakerNames = [
