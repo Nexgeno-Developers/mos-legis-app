@@ -60,7 +60,6 @@
                                 <th>{{ __('labels.booking_id') }}</th>
                                 <th>{{ __('labels.invoice_number') }}</th>
                                 <th>{{ __('labels.name') }}</th>
-                                <th>{{ __('labels.property') }}</th>
                                 <th>{{ __('labels.cabins_and_seats') }}</th>
                                 <th>{{ __('labels.duration') }}</th>
                                 <th>{{ __('labels.amount') }}</th>
@@ -76,8 +75,8 @@
                                 <td>{{ $row->id }}</td>
                                 <td>{{ $row->invoice_no }}</td>
                                 <td>{{ $row->user?->name ?? '—' }}</td>
-                                <td>{{ $row->property?->name ?? '—' }}</td>
                                 <td>
+                                    <em>{{ $row->property?->name ?? '—' }}</em> 
                                     @forelse ($row->cabinsAndSeatsLines() as $line)
                                     <div>{{ $line }}</div>
                                     @empty
