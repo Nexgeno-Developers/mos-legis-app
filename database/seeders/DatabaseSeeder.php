@@ -16,6 +16,7 @@ class DatabaseSeeder extends Seeder
             PermissionSeeder::class,
             CompanySeeder::class,
             UserSeeder::class,
+            CoworkingDataSeeder::class,
             PageSeeder::class,
             MenuSeeder::class,
         ]);
