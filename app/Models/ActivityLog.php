@@ -22,4 +22,9 @@ class ActivityLog extends Model
         'payload' => 'array',
         'created_at' => 'datetime',
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

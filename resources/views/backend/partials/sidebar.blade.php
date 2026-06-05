@@ -175,6 +175,15 @@
         </li>
         @endcan
 
+        @can('activity-logs view')
+        <li class="side-nav-item">
+            <a href="{{ route('activity-logs.index') }}" class="side-nav-link">
+                <span class="menu-icon"><i class="ti ti-history"></i></span>
+                <span class="menu-text"> Activity Logs </span>
+            </a>
+        </li>
+        @endcan
+
         <li class="side-nav-item">
             <a target="_blank" href="{{ url('') . '/command/optimize-clear?back=true' }}" class="side-nav-link text-danger fw-bold">
                 <span class="menu-icon"><i class="ti ti-refresh"></i></span>

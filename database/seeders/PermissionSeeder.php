@@ -43,6 +43,10 @@ class PermissionSeeder extends Seeder
             'visitors view',
             'visitors delete',
 
+            // Activity logs
+            'activity-logs view',
+            'activity-logs delete',
+
             // User management
             'users view',
             'users create',

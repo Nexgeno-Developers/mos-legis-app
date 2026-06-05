@@ -17,6 +17,7 @@ use App\Http\Controllers\Backend\PropertyController;
 use App\Http\Controllers\Backend\CabinController;
 use App\Http\Controllers\Backend\SeatController;
 use App\Http\Controllers\Backend\CustomerController;
+use App\Http\Controllers\Backend\ActivityLogController;
 use App\Http\Controllers\Backend\FormController;
 
 
@@ -107,6 +108,12 @@ Route::prefix('backend')->group(function () {
     Route::middleware('auth.backend')->group(function () {
         Route::resource('visitors', VisitorController::class);
         Route::post('visitors/bulk-delete', [VisitorController::class, 'bulkDelete'])->name('visitors.bulk-delete');
+    });
+
+    //Activity Logs Routes
+    Route::middleware('auth.backend')->group(function () {
+        Route::get('activity-logs', [ActivityLogController::class, 'index'])->name('activity-logs.index');
+        Route::post('activity-logs/clear-last-30-days', [ActivityLogController::class, 'clearLast30Days'])->name('activity-logs.clear-last-30-days');
     });
     
     //Menus Routes
