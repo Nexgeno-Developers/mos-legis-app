@@ -7,7 +7,6 @@ use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Company;
-use App\Services\ApiPayloadCache;
 
 class CompanyController extends BaseController
 {
@@ -80,8 +79,6 @@ class CompanyController extends BaseController
                     ]);
                 }
             }
-
-            ApiPayloadCache::invalidateCompany((int) $company->id);
 
             return redirect()->route('companies.edit', $company->id)->with('success', 'Company created successfully!');
         } catch (\Exception $e) {
@@ -160,8 +157,6 @@ class CompanyController extends BaseController
                     }
                 }
             }            
-
-            ApiPayloadCache::invalidateCompany((int) $company->id);
 
             return redirect()->route('companies.edit', $company->id)->with('success', 'Company details updated successfully!');
 

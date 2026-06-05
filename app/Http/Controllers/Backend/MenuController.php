@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Backend;
 
 use App\Models\MenuGroup;
 use App\Models\MenuItem;
-use App\Services\ApiPayloadCache;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Support\Facades\Validator;
@@ -83,8 +82,6 @@ class MenuController extends BaseController
             ]
         );
 
-        ApiPayloadCache::invalidateMenuGroup((int) $menuGroup->id);
-
         return response()->json(['success' => true, 'menu_group' => $menuGroup]);
     }
 
@@ -100,8 +97,6 @@ class MenuController extends BaseController
         if ($validator->fails()) {
             return response()->json(['success' => false, 'errors' => $validator->errors()]);
         }
-
-        ApiPayloadCache::invalidateMenuGroup((int) $request->id);
 
         MenuGroup::destroy($request->id);
 
@@ -150,8 +145,6 @@ class MenuController extends BaseController
             ]
         );
 
-        ApiPayloadCache::invalidateMenuGroup((int) $menuItem->menu_group_id);
-
         return response()->json(['success' => true, 'menu_item' => $menuItem]);
     }
 
@@ -166,11 +159,6 @@ class MenuController extends BaseController
 
         if ($validator->fails()) {
             return response()->json(['success' => false, 'errors' => $validator->errors()]);
-        }
-
-        $toDelete = MenuItem::find($request->id);
-        if ($toDelete) {
-            ApiPayloadCache::invalidateMenuGroup((int) $toDelete->menu_group_id);
         }
 
         MenuItem::destroy($request->id);
@@ -193,8 +181,6 @@ class MenuController extends BaseController
         }
 
         $this->saveMenuHierarchy($request->items, $request->menu_group_id);
-
-        ApiPayloadCache::invalidateMenuGroup((int) $request->menu_group_id);
 
         return response()->json(['success' => true, 'message' => 'Menu order saved successfully']);
     }

@@ -7,7 +7,6 @@ use Illuminate\Routing\Controller as BaseController;
 use App\Models\Page;
 use App\Models\PageMeta;
 use App\Models\Gallery;
-use App\Services\ApiPayloadCache;
 use App\Services\ActivityLogService;
 use Illuminate\Validation\Rule;
 
@@ -122,8 +121,6 @@ class PageController extends BaseController
                 'is_active' => $request->is_active,
                 'company_id' => $request->company_id,
             ]);
-
-            ApiPayloadCache::invalidatePage((int) $team->id, true);
 
             ActivityLogService::store('pages', 'create', (int) $team->id, $request->all(), 'Page created');
 
@@ -246,8 +243,6 @@ class PageController extends BaseController
                 }
             }              
 
-            ApiPayloadCache::invalidatePage((int) $id, true);
-
             ActivityLogService::store('pages', 'update', (int) $id, $request->all(), 'Page updated');
 
             return redirect()->route($this->routeName . '.edit', $id)->with('success', 'Record updated successfully');
@@ -264,8 +259,7 @@ class PageController extends BaseController
         try {
             // Attempt to delete the record
             $page = Page::findOrFail($id);
-            ApiPayloadCache::invalidatePage((int) $page->id, true);
-            
+
             ActivityLogService::store('pages', 'delete', (int) $page->id, ['title' => $page->title, 'slug' => $page->slug], 'Page deleted');
             
             $page->meta()->delete();
@@ -308,8 +302,6 @@ class PageController extends BaseController
                     'meta_value' => $meta->meta_value,
                 ]);
             }
-
-            ApiPayloadCache::invalidatePage((int) $clonedPage->id, true);
 
             ActivityLogService::store('pages', 'clone', (int) $clonedPage->id, ['original_id' => $id, 'title' => $clonedPage->title, 'slug' => $clonedPage->slug], 'Page cloned');
 
