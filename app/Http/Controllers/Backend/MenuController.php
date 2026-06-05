@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Backend;
 
 use App\Models\MenuGroup;
 use App\Models\MenuItem;
+use App\Services\ActivityLogService;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Support\Facades\Validator;
@@ -82,6 +83,14 @@ class MenuController extends BaseController
             ]
         );
 
+        ActivityLogService::store(
+            'menus',
+            $menuGroup->wasRecentlyCreated ? 'create' : 'update',
+            (int) $menuGroup->id,
+            $request->all(),
+            $menuGroup->wasRecentlyCreated ? 'Menu group created' : 'Menu group updated'
+        );
+
         return response()->json(['success' => true, 'menu_group' => $menuGroup]);
     }
 
@@ -98,7 +107,14 @@ class MenuController extends BaseController
             return response()->json(['success' => false, 'errors' => $validator->errors()]);
         }
 
-        MenuGroup::destroy($request->id);
+        $menuGroup = MenuGroup::findOrFail($request->id);
+
+        ActivityLogService::store('menus', 'delete', (int) $menuGroup->id, [
+            'name' => $menuGroup->name,
+            'slug' => $menuGroup->slug,
+        ], 'Menu group deleted');
+
+        $menuGroup->delete();
 
         return response()->json(['success' => true]);
     }
@@ -145,6 +161,14 @@ class MenuController extends BaseController
             ]
         );
 
+        ActivityLogService::store(
+            'menus',
+            $menuItem->wasRecentlyCreated ? 'create' : 'update',
+            (int) $menuItem->id,
+            $request->all(),
+            $menuItem->wasRecentlyCreated ? 'Menu item created' : 'Menu item updated'
+        );
+
         return response()->json(['success' => true, 'menu_item' => $menuItem]);
     }
 
@@ -161,7 +185,15 @@ class MenuController extends BaseController
             return response()->json(['success' => false, 'errors' => $validator->errors()]);
         }
 
-        MenuItem::destroy($request->id);
+        $menuItem = MenuItem::findOrFail($request->id);
+
+        ActivityLogService::store('menus', 'delete', (int) $menuItem->id, [
+            'name' => $menuItem->name,
+            'url' => $menuItem->url,
+            'menu_group_id' => $menuItem->menu_group_id,
+        ], 'Menu item deleted');
+
+        $menuItem->delete();
 
         return response()->json(['success' => true]);
     }
@@ -181,6 +213,14 @@ class MenuController extends BaseController
         }
 
         $this->saveMenuHierarchy($request->items, $request->menu_group_id);
+
+        ActivityLogService::store(
+            'menus',
+            'update',
+            (int) $request->menu_group_id,
+            $request->all(),
+            'Menu order updated'
+        );
 
         return response()->json(['success' => true, 'message' => 'Menu order saved successfully']);
     }
