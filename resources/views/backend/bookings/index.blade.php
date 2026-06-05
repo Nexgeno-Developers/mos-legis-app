@@ -115,7 +115,7 @@
                                 <td>{{ formatDatetime($row->created_at) }}</td>
                                 <td>
                                     @can('bookings delete')
-                                    <a href="javascript:void(0);" onclick="confirmModal('{{ route($module . '.destroy', $row->id) }}', callback)" class="link-reset fs-20 p-1" title="{{ __('labels.delete') }}"><i class="ti ti-trash"></i></a>
+                                    <!-- <a href="javascript:void(0);" onclick="confirmModal('{{ route($module . '.destroy', $row->id) }}', callback)" class="link-reset fs-20 p-1" title="{{ __('labels.delete') }}"><i class="ti ti-trash"></i></a> -->
                                     @endcan
                                 </td>
                             </tr>
