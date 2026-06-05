@@ -18,7 +18,8 @@ class Booking extends Model
         'tax_amount',
         'grand_total_amount',
         'duration_type',
-        'status',
+        'booking_status',
+        'payment_status',
     ];
 
     protected function casts(): array
