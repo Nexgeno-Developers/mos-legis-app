@@ -63,7 +63,11 @@ class BookingController extends BaseController
 
     public function show(string $id)
     {
-        //
+        $booking = Booking::query()
+            ->with(['user', 'property', 'items.cabin', 'items.seat', 'payments'])
+            ->findOrFail($id);
+
+        return view('backend.'.$this->module.'.show', compact('booking'));
     }
 
     public function edit($id)
