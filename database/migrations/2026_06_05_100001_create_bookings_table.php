@@ -22,7 +22,8 @@ return new class extends Migration
             $table->decimal('tax_amount', 12, 2)->default(0);
             $table->decimal('grand_total_amount', 12, 2)->default(0);
             $table->enum('duration_type', ['monthly', 'yearly']);
-            $table->enum('status', ['reserved', 'active', 'completed', 'cancelled'])->default('reserved');
+            $table->enum('booking_status', ['reserved', 'active', 'completed', 'cancelled'])->default('reserved');
+            $table->enum('payment_status', ['paid', 'unpaid', 'partially_paid'])->default('unpaid');
             $table->timestamps();
         });
     }
