@@ -17,6 +17,7 @@ use App\Http\Controllers\Backend\PropertyController;
 use App\Http\Controllers\Backend\CabinController;
 use App\Http\Controllers\Backend\SeatController;
 use App\Http\Controllers\Backend\CustomerController;
+use App\Http\Controllers\Backend\BookingController;
 use App\Http\Controllers\Backend\ActivityLogController;
 use App\Http\Controllers\Backend\FormController;
 
@@ -148,5 +149,9 @@ Route::prefix('backend')->group(function () {
 
     Route::middleware('auth.backend')->group(function () {
         Route::resource('seats', SeatController::class);
+    });
+
+    Route::middleware('auth.backend')->group(function () {
+        Route::resource('bookings', BookingController::class);
     });
 });

@@ -83,6 +83,15 @@
         </li>
         @endcanany
 
+        @can('bookings view')
+        <li class="side-nav-item">
+            <a href="{{ route('bookings.index') }}" class="side-nav-link">
+                <span class="menu-icon"><i class="ti ti-calendar-event"></i></span>
+                <span class="menu-text"> Bookings </span>
+            </a>
+        </li>
+        @endcan
+
         @canany(['pages view'])
         <li class="side-nav-item">
             <a href="@if(auth()->user()->can('pages view')){{ route('pages.index') }}@else{{ route('pages.create') }}@endif" class="side-nav-link">

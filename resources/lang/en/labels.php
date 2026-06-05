@@ -54,5 +54,17 @@ return [
     'industry_type' => 'Industry Type',
     'company_size' => 'Company Size',
     'select_option' => 'Select option',
+    'bookings' => 'Bookings',
+    'booking_id' => 'Booking ID',
+    'invoice_number' => 'Invoice Number',
+    'cabins_and_seats' => 'Cabins & Seats',
+    'duration' => 'Duration',
+    'amount' => 'Amount',
+    'booking_status' => 'Booking Status',
+    'payment_status' => 'Payment Status',
+    'all_booking_statuses' => 'All booking statuses',
+    'all_payment_statuses' => 'All payment statuses',
+    'delete' => 'Delete',
+    'options' => 'Options',
 ];
 
