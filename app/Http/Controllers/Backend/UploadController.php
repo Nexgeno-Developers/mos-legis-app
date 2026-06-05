@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use App\Services\ActivityLogService;
 
 class UploadController extends BaseController
 {
@@ -146,6 +147,12 @@ class UploadController extends BaseController
                 $upload->file_size = $size;
                 $upload->save();
 
+                ActivityLogService::store('uploads', 'create', (int) $upload->id, [
+                    'file_original_name' => $upload->file_original_name,
+                    'extension' => $upload->extension,
+                    'file_size' => $upload->file_size,
+                ], 'Upload created');
+
                 // makeImageThumbnail($upload->file_name, 150, 150);
                 // makeImageThumbnail($upload->file_name, 300, 300);                
             }
@@ -196,14 +203,23 @@ class UploadController extends BaseController
     public function destroy($id)
     {
         $upload = Upload::findOrFail($id);
+
+        $payload = [
+            'file_original_name' => $upload->file_original_name,
+            'extension' => $upload->extension,
+            'file_size' => $upload->file_size,
+        ];
+
         try {
             unlink(public_path() . '/' . $upload->file_name);
-            $upload->delete();
-            return redirect()->back()->with('success', __('File deleted successfully'));
         } catch (\Exception $e) {
-            $upload->delete();
-            return redirect()->back()->with('success', __('File deleted successfully'));
+            // Ignore unlink failures; we'll still delete the database record.
         }
+
+        $upload->delete();
+        ActivityLogService::store('uploads', 'delete', (int) $upload->id, $payload, 'Upload deleted');
+
+        return redirect()->back()->with('success', __('File deleted successfully'));
     }
 
     public function bulk_uploaded_files_delete(Request $request)
@@ -259,14 +275,21 @@ class UploadController extends BaseController
     {
         $uploads = Upload::all();
         foreach ($uploads as $upload) {
+            $payload = [
+                'file_original_name' => $upload->file_original_name,
+                'extension' => $upload->extension,
+                'file_size' => $upload->file_size,
+            ];
+
             try {
                 unlink(public_path() . '/' . $upload->file_name);
                 $upload->delete();
 
+                ActivityLogService::store('uploads', 'delete', (int) $upload->id, $payload, 'Upload deleted');
+
                 flash(__('File deleted successfully'))->success();
             } catch (\Exception $e) {
-                $upload->delete();
-                flash(__('File deleted successfully'))->success();
+
             }
         }
 
