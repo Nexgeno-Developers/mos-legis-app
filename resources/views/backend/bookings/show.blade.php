@@ -20,7 +20,7 @@
             <tbody>
                 <tr>
                     <th class="bg-light" style="width: 40%;">{{ __('labels.booking_id') }}</th>
-                    <td>#{{ $booking->id }}</td>
+                    <td>{{ formatBookingId($booking->id) }}</td>
                 </tr>
                 <tr>
                     <th class="bg-light">{{ __('labels.invoice_number') }}</th>

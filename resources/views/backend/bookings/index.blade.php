@@ -72,7 +72,7 @@
                         <tbody>
                             @forelse ($pageData as $row)
                             <tr>
-                                <td>{{ $row->id }}</td>
+                                <td>{{ formatBookingId($row->id) }}</td>
                                 <td>{{ $row->invoice_no }}</td>
                                 <td>{{ $row->user?->name ?? '—' }}</td>
                                 <td>
@@ -115,7 +115,7 @@
                                 <td>{{ formatDatetime($row->created_at) }}</td>
                                 <td>
                                     @can('bookings view')
-                                    <a href="javascript:void(0);" onclick="largeModal('{{ url(route($module . '.show', $row->id)) }}', '{{ __('labels.booking_details') }} #{{ $row->id }}')" class="link-reset fs-20 p-1" title="{{ __('labels.view') }}"><i class="ti ti-eye"></i></a>
+                                    <a href="javascript:void(0);" onclick="largeModal('{{ url(route($module . '.show', $row->id)) }}', '{{ __('labels.booking_details') }} {{ formatBookingId($row->id) }}')" class="link-reset fs-20 p-1" title="{{ __('labels.view') }}"><i class="ti ti-eye"></i></a>
                                     @endcan
                                     @can('bookings delete')
                                     <!-- <a href="javascript:void(0);" onclick="confirmModal('{{ route($module . '.destroy', $row->id) }}', callback)" class="link-reset fs-20 p-1" title="{{ __('labels.delete') }}"><i class="ti ti-trash"></i></a> -->

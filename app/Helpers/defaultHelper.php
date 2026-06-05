@@ -336,3 +336,23 @@ if (! function_exists('formatCurrency')) {
         return '₹' . number_format((float) $amount, $decimals);
     }
 }
+
+if (! function_exists('formatBookingId')) {
+    /**
+     * Format a booking ID with prefix and zero padding.
+     *
+     * @param  int|string|null  $id
+     * @return string|null
+     */
+    function formatBookingId($id): ?string
+    {
+        if ($id === null || $id === '') {
+            return null;
+        }
+
+        $prefix = (string) config('custom.booking_id_prefix', 'BK-');
+        $padding = max(1, (int) config('custom.booking_id_padding', 6));
+
+        return $prefix.str_pad((string) (int) $id, $padding, '0', STR_PAD_LEFT);
+    }
+}

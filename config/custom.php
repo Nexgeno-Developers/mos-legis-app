@@ -21,4 +21,6 @@ return [
     'frontend_url' => env('FRONTEND_URL'),
     'frontend_sitemap_generate_url' => env('FRONTEND_SITEMAP_GENERATE_URL'),
     'frontend_robots_generate_url' => env('FRONTEND_ROBOTS_GENERATE_URL'),
+    'booking_id_prefix' => env('BOOKING_ID_PREFIX', 'BK-'),
+    'booking_id_padding' => env('BOOKING_ID_PADDING', 6),
 ];
