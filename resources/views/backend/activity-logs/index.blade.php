@@ -59,7 +59,7 @@
                     </div>
                     @can('activity-logs delete')
                     <div class="col-md-2 text-end">
-                        <button type="button" class="btn btn-danger w-100" onclick="openClearLogsModal()">
+                        <button type="button" class="btn btn-danger w-100" onclick="confirmModal('{{ route('activity-logs.clear-last-30-days') }}')">
                             <i class="ti ti-trash"></i> Clear Logs
                         </button>
                     </div>
@@ -104,7 +104,7 @@
                             </tr>
                             @empty
                             <tr>
-                                <td colspan="9" class="text-center text-muted py-4">No activity logs found.</td>
+                                <td colspan="8" class="text-center text-muted py-4">No activity logs found.</td>
                             </tr>
                             @endforelse
                         </tbody>
@@ -116,48 +116,9 @@
     </div>
 </div>
 
-@can('activity-logs delete')
-<div class="modal fade" id="clearLogsModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
-    <div class="modal-dialog modal-sm">
-        <div class="modal-content">
-            <div class="modal-body text-center">
-                <form method="POST" class="ajaxBulkForm" action="{{ route('activity-logs.clear-last-30-days') }}" id="clear_logs_form">
-                    @csrf
-                    <i class="fa-solid fa-trash" style="font-size: 50px; color: #dc3545;"></i>
-                    <p class="mt-3">Clear all activity logs from the last 30 days?</p>
-                    <div class="d-flex justify-content-center gap-2 mt-2">
-                        <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">
-                            <i class="fa-solid fa-xmark"></i> Cancel
-                        </button>
-                        <button type="submit" class="btn btn-sm btn-danger">
-                            <i class="fa-solid fa-check"></i> Clear Logs
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-@endcan
-
 <script defer>
 $(document).ready(function() {
     initSelect2('.select2-filter');
 });
-
-
-@can('activity-logs delete')
-function openClearLogsModal() {
-    callBackFunction = function(response) {
-        $('#clearLogsModal').modal('hide');
-        if (response && response.status) {
-            setTimeout(function() {
-                location.reload();
-            }, 1500);
-        }
-    };
-    $('#clearLogsModal').modal('show');
-}
-@endcan
 </script>
 @endsection

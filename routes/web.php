@@ -113,7 +113,7 @@ Route::prefix('backend')->group(function () {
     //Activity Logs Routes
     Route::middleware('auth.backend')->group(function () {
         Route::get('activity-logs', [ActivityLogController::class, 'index'])->name('activity-logs.index');
-        Route::post('activity-logs/clear-last-30-days', [ActivityLogController::class, 'clearLast30Days'])->name('activity-logs.clear-last-30-days');
+        Route::delete('activity-logs/clear-last-30-days', [ActivityLogController::class, 'clearLast30Days'])->name('activity-logs.clear-last-30-days');
     });
     
     //Menus Routes
