@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Backend;
 
 use App\Models\Role;
 use App\Models\User;
+use App\Services\ActivityLogService;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Support\Facades\Auth;
@@ -91,6 +92,8 @@ class CustomerController extends BaseController
             $user->assignRole('customer');
             $this->syncDetails($user, $request->input('details', []));
 
+            ActivityLogService::store('customers', 'create', (int) $user->id, $request->all(), 'Customer created');
+
             return response()->json(['status' => true, 'notification' => __('messages.created')]);
         } catch (\Exception $e) {
             return response()->json(['status' => false, 'notification' => __('messages.failed')]);
@@ -126,6 +129,8 @@ class CustomerController extends BaseController
             $user->syncRoles('customer');
             $this->syncDetails($user, $request->input('details', []));
 
+            ActivityLogService::store('customers', 'update', (int) $user->id, $request->all(), 'Customer updated');
+
             return response()->json(['status' => true, 'notification' => __('messages.updated')]);
         } catch (\Exception $e) {
             return response()->json(['status' => false, 'notification' => __('messages.failed')]);
@@ -135,7 +140,15 @@ class CustomerController extends BaseController
     public function destroy($id)
     {
         try {
-            $this->findCustomerOrFail($id)->delete();
+            $user = $this->findCustomerOrFail($id);
+
+            ActivityLogService::store('customers', 'delete', (int) $user->id, [
+                'name' => $user->name,
+                'email' => $user->email,
+                'phone' => $user->phone,
+            ], 'Customer deleted');
+
+            $user->delete();
 
             return redirect()->route($this->module.'.index')->with('success', __('messages.deleted'));
         } catch (\Exception $e) {

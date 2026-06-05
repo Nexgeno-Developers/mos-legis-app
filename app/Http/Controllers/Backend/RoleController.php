@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Backend;
 use Illuminate\Http\Request;
 //use Spatie\Permission\Models\Role;
 use App\Models\Role;
+use App\Services\ActivityLogService;
 use Spatie\Permission\Models\Permission;
 use Illuminate\Routing\Controller as BaseController;
 
@@ -43,6 +44,8 @@ class RoleController extends BaseController
         $role = Role::create(['name' => $request->name]);
         $role->syncPermissions([]);
 
+        ActivityLogService::store('roles', 'create', (int) $role->id, $request->all(), 'Role created');
+
         return response()->json(['status' => true, 'notification' => __('messages.created')]);
     }
 
@@ -63,12 +66,19 @@ class RoleController extends BaseController
         // 🔥 Clear permission cache
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
+        ActivityLogService::store('roles', 'update', (int) $role->id, $request->all(), 'Role updated');
+
         return response()->json(['status' => true, 'notification' => __('messages.updated')]);
     }
 
     public function destroy($id)
     {
-        Role::destroy($id);
+        $role = Role::findOrFail($id);
+
+        ActivityLogService::store('roles', 'delete', (int) $role->id, ['name' => $role->name], 'Role deleted');
+
+        $role->delete();
+
         return redirect()->route($this->module . '.index')->with('success', __('messages.deleted'));
     }
 }

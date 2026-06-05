@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 use App\Models\Role;
+use App\Services\ActivityLogService;
 use Illuminate\Routing\Controller as BaseController;
 
 class UserController extends BaseController
@@ -93,7 +94,9 @@ class UserController extends BaseController
             $role = Role::find($request->role_id);
             if ($role) {
                 $user->assignRole($role->name); // Sync Spatie role system
-            }            
+            }
+
+            ActivityLogService::store('users', 'create', (int) $user->id, $request->except('password'), 'User created');
     
             // Return success response
             return response()->json(['status' => true, 'notification' => __('messages.created')]);
@@ -157,7 +160,9 @@ class UserController extends BaseController
             $role = Role::find($request->role_id);
             if ($role) {
                 $user->syncRoles($role->name); // Sync Spatie role system
-            }             
+            }
+
+            ActivityLogService::store('users', 'update', (int) $user->id, $request->except('password'), 'User updated');
     
             // Return success response
             return response()->json(['status' => true, 'notification' => __('messages.updated')]);
@@ -174,8 +179,11 @@ class UserController extends BaseController
     public function destroy($id)
     {
         try {
-            // Attempt to delete the record
-            User::destroy($id);
+            $user = User::findOrFail($id);
+
+            ActivityLogService::store('users', 'delete', (int) $user->id, ['name' => $user->name, 'email' => $user->email], 'User deleted');
+
+            $user->delete();
             // Redirect back with a success message
             return redirect()->route($this->module . '.index')->with('success', __('messages.deleted'));
         } catch (\Exception $e) {
