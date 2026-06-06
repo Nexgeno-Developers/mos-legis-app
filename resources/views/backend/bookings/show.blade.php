@@ -189,9 +189,9 @@
                             <label class="form-label">{{ __('labels.payment_method') }} <span class="text-danger">*</span></label>
                             <select name="payment_method" id="paymentMethod" class="form-select" required>
                                 <option value="">{{ __('labels.select_payment_method') }}</option>
-                                <option value="cash">{{ __('labels.cash') }}</option>
-                                <option value="cheque">{{ __('labels.cheque') }}</option>
-                                <option value="bank_transfer">{{ __('labels.bank_transfer') }}</option>
+                                @foreach ($manualPaymentMethods as $method)
+                                    <option value="{{ $method }}">{{ __('labels.'.$method) }}</option>
+                                @endforeach
                             </select>
                         </div>
                     </div>
@@ -308,7 +308,7 @@
                     <td>{{ $payment->remarks ?? '—' }}</td>
                     @can('bookings edit')
                     <td class="text-center">
-                        @if (in_array($payment->payment_method, \App\Services\BookingPaymentService::MANUAL_METHODS))
+                        @if (in_array($payment->payment_method, \App\Models\Payment::MANUAL_PAYMENT_METHODS))
                         <a href="javascript:void(0);"
                            onclick="confirmModal('{{ route('bookings.payments.destroy', [$booking->id, $payment->id]) }}', reloadBookingModal)"
                            class="link-reset fs-20 p-1"

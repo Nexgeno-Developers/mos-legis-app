@@ -7,6 +7,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Payment extends Model
 {
+    public const PAYMENT_METHODS = ['online', 'cash', 'cheque', 'bank_transfer'];
+
+    public const MANUAL_PAYMENT_METHODS = ['cash', 'cheque', 'bank_transfer'];
+
     protected $fillable = [
         'user_id',
         'payable_type',

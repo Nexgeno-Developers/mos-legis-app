@@ -8,8 +8,6 @@ use Illuminate\Support\Facades\DB;
 
 class BookingPaymentService
 {
-    public const MANUAL_METHODS = ['cash', 'cheque', 'bank_transfer'];
-
     public static function totalPaid(Booking $booking): float
     {
         if ($booking->relationLoaded('payments')) {

@@ -73,7 +73,9 @@ class BookingController extends BaseController
             ->with(['user', 'property', 'items.cabin', 'items.seat', 'payments'])
             ->findOrFail($id);
 
-        return view('backend.'.$this->module.'.show', compact('booking'));
+        $manualPaymentMethods = Payment::MANUAL_PAYMENT_METHODS;
+
+        return view('backend.'.$this->module.'.show', compact('booking', 'manualPaymentMethods'));
     }
 
     public function edit($id)
@@ -107,7 +109,7 @@ class BookingController extends BaseController
 
         $rules = [
             'amount' => 'required|numeric|min:0.01',
-            'payment_method' => ['required', Rule::in(BookingPaymentService::MANUAL_METHODS)],
+            'payment_method' => ['required', Rule::in(Payment::MANUAL_PAYMENT_METHODS)],
             'paid_at' => 'required|date',
             'remarks' => 'nullable|string|max:1000',
         ];
