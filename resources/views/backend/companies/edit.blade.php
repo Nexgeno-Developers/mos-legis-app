@@ -100,6 +100,20 @@
                 </div>
             </div>
 
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="text-uppercase mt-0 mb-3 bg-light p-2">Invoice Settings</h5>
+                    <div class="mb-3 form-group">
+                        <label for="meta-invoice-hsn-code" class="form-label">Invoice HSN Code</label>
+                        <input type="text" class="form-control" id="meta-invoice-hsn-code" name="meta[invoice_hsn_code]" value="{{ old('meta.invoice_hsn_code', $pageData->meta->where('meta_key', 'invoice_hsn_code')->first()->meta_value ?? '') }}" placeholder="e.g. 997212">
+                    </div>
+                    <div class="mb-3 form-group">
+                        <label for="meta-invoice-notes" class="form-label">Invoice Notes</label>
+                        <textarea class="form-control" id="meta-invoice-notes" name="meta[invoice_notes]" rows="4" placeholder="Notes shown on invoice footer">{{ old('meta.invoice_notes', $pageData->meta->where('meta_key', 'invoice_notes')->first()->meta_value ?? '') }}</textarea>
+                    </div>
+                </div>
+            </div>
+
             <!-- SEO -->
             {{-- <div class="card">
                 <div class="card-body">
