@@ -6,6 +6,7 @@ use App\Models\Booking;
 use App\Models\Payment;
 use App\Services\ActivityLogService;
 use App\Services\BookingPaymentService;
+use App\Services\InvoiceService;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Validation\Rule;
@@ -19,7 +20,7 @@ class BookingController extends BaseController
         $this->module = 'bookings';
         view()->share('module', $this->module);
 
-        $this->middleware('permission:bookings view')->only(['index', 'show']);
+        $this->middleware('permission:bookings view')->only(['index', 'show', 'showInvoice']);
         $this->middleware('permission:bookings create')->only(['create', 'store']);
         $this->middleware('permission:bookings edit')->only(['edit', 'update', 'storePayment', 'destroyPayment']);
         $this->middleware('permission:bookings delete')->only(['destroy']);
@@ -76,6 +77,13 @@ class BookingController extends BaseController
         $manualPaymentMethods = Payment::MANUAL_PAYMENT_METHODS;
 
         return view('backend.'.$this->module.'.show', compact('booking', 'manualPaymentMethods'));
+    }
+
+    public function showInvoice(int $id, InvoiceService $invoiceService)
+    {
+        $invoice = $invoiceService->getInvoiceData($id);
+
+        return view('invoice.index', compact('invoice'));
     }
 
     public function edit($id)

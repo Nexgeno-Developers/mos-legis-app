@@ -116,6 +116,7 @@
                                 <td>
                                     @can('bookings view')
                                     <a href="javascript:void(0);" onclick="largeModal('{{ url(route($module . '.show', $row->id)) }}', '{{ __('labels.booking_details') }} {{ formatBookingId($row->id) }}')" class="link-reset fs-20 p-1" title="{{ __('labels.view') }}"><i class="ti ti-eye"></i></a>
+                                    <a href="{{ route('bookings.invoice', $row->id) }}" target="_blank" class="link-reset fs-20 p-1" title="{{ __('invoice.tax_invoice') }}"><i class="ti ti-file-invoice"></i></a>
                                     @endcan
                                     @can('bookings edit')
                                     <a href="javascript:void(0);" onclick="smallModal('{{ url(route($module . '.edit', $row->id)) }}', '{{ __('labels.update') }} {{ __('labels.booking_status') }} {{ formatBookingId($row->id) }}')" class="link-reset fs-20 p-1" title="{{ __('labels.update') }} {{ __('labels.booking_status') }}"><i class="ti ti-pencil"></i></a>
