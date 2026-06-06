@@ -35,6 +35,8 @@ return [
     'ifsc' => 'IFSC',
     'branch' => 'Branch',
     'print_invoice' => 'Print Invoice',
+    'download_invoice' => 'Download Invoice',
+    'generating_pdf' => 'Generating…',
     'back_to_booking' => 'Back to Booking',
     'gstin' => 'GSTIN',
     'address' => 'Address',
