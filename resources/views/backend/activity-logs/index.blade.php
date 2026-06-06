@@ -59,7 +59,7 @@
                     </div>
                     @can('activity-logs delete')
                     <div class="col-md-2 text-end">
-                        <button title="Delete logs older than 30 days" type="button" class="btn btn-danger w-100" onclick="confirmModal('{{ route('activity-logs.clear-last-30-days') }}')">
+                        <button title="Delete logs older than 30 days" type="button" class="btn btn-danger w-100" onclick="confirmModal('{{ route('activity-logs.clear-last-30-days') }}', callback)">
                             <i class="ti ti-trash"></i> Clear Logs
                         </button>
                     </div>
@@ -117,6 +117,12 @@
 </div>
 
 <script defer>
+const callback = function(response) {
+    setTimeout(function() {
+        location.reload();
+    }, 1500);
+}
+
 $(document).ready(function() {
     initSelect2('.select2-filter');
 });

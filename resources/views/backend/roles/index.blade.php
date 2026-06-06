@@ -45,7 +45,7 @@
                         @endif
                         @if($row->id != 1)
                             @can('roles delete')
-                            <a href="javascript:void(0);" onclick="confirmModal('{{ route($module . '.destroy', $row->id) }}')" class="link-reset fs-20 p-1">
+                            <a href="javascript:void(0);" onclick="confirmModal('{{ route($module . '.destroy', $row->id) }}', callback)" class="link-reset fs-20 p-1">
                                 <i class="ti ti-trash"></i>
                             </a>
                             @endcan
@@ -58,4 +58,12 @@
         {{ $pageData->links() }}
     </div>
 </div>
+
+<script defer>
+const callback = function(response) {
+    setTimeout(function() {
+        location.reload();
+    }, 1500);
+}
+</script>
 @endsection
