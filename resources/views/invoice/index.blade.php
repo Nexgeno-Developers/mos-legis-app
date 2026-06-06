@@ -94,7 +94,7 @@
     @endphp
 
     <div class="invoice-toolbar no-print">
-        <a href="{{ route('bookings.show', $invoice['booking']['id']) }}">&larr; {{ __('invoice.back_to_booking') }}</a>
+        <a href="{{ route('bookings.index') }}">&larr; {{ __('invoice.back_to_booking') }}</a>
         <div class="invoice-toolbar-actions">
             {{--<button type="button" class="btn-invoice btn-invoice--secondary" onclick="window.print()">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
