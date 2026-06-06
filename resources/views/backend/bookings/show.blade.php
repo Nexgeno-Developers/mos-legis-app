@@ -16,8 +16,6 @@
         'partially_paid' => 'bg-warning',
         default => 'bg-danger',
     };
-
-    $paymentsTableCols = auth()->user()?->can('bookings edit') ? 9 : 8;
 @endphp
 
 <div class="row g-3">
@@ -325,7 +323,7 @@
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="{{ $paymentsTableCols }}" class="text-center text-muted">{{ __('labels.no_records') }}</td>
+                    <td colspan="9" class="text-center text-muted">{{ __('labels.no_records') }}</td>
                 </tr>
                 @endforelse
             </tbody>
