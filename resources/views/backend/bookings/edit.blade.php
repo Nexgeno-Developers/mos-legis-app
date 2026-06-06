@@ -7,7 +7,7 @@
             <div class="form-group mb-2">
                 <label for="booking_status" class="form-label">{{ __('labels.booking_status') }} <span class="text-danger">*</span></label>
                 <select name="booking_status" id="booking_status" class="form-select select2" required>
-                    @foreach (['reserved', 'active', 'completed', 'cancelled'] as $status)
+                    @foreach ($bookingStatuses as $status)
                     <option value="{{ $status }}" {{ $booking->booking_status === $status ? 'selected' : '' }}>
                         {{ humanize($status) }}
                     </option>

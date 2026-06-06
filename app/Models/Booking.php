@@ -8,6 +8,10 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Booking extends Model
 {
+    public const BOOKING_STATUSES = ['reserved', 'active', 'completed', 'cancelled'];
+
+    public const PAYMENT_STATUSES = ['paid', 'unpaid', 'partially_paid'];
+
     protected $fillable = [
         'invoice_no',
         'user_id',

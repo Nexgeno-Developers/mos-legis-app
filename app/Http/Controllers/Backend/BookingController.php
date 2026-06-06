@@ -51,7 +51,10 @@ class BookingController extends BaseController
             ->orderByDesc('id')
             ->paginate(10);
 
-        return view('backend.'.$this->module.'.index', compact('pageData'));
+        $bookingStatuses = Booking::BOOKING_STATUSES;
+        $paymentStatuses = Booking::PAYMENT_STATUSES;
+
+        return view('backend.'.$this->module.'.index', compact('pageData', 'bookingStatuses', 'paymentStatuses'));
     }
 
     public function create()
@@ -77,7 +80,9 @@ class BookingController extends BaseController
     {
         $booking = Booking::findOrFail($id);
 
-        return view('backend.'.$this->module.'.edit', compact('booking'));
+        $bookingStatuses = Booking::BOOKING_STATUSES;
+
+        return view('backend.'.$this->module.'.edit', compact('booking', 'bookingStatuses'));
     }
 
     public function update(Request $request, $id)

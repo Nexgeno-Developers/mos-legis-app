@@ -20,7 +20,7 @@
                             <div class="col-md-3">
                                 <select name="booking_status" class="form-select select2">
                                     <option value="">{{ __('labels.all_booking_statuses') }}</option>
-                                    @foreach (['reserved', 'active', 'completed', 'cancelled'] as $status)
+                                    @foreach ($bookingStatuses as $status)
                                     <option value="{{ $status }}" {{ request()->get('booking_status') === $status ? 'selected' : '' }}>
                                         {{ humanize($status) }}
                                     </option>
@@ -30,7 +30,7 @@
                             <div class="col-md-3">
                                 <select name="payment_status" class="form-select select2">
                                     <option value="">{{ __('labels.all_payment_statuses') }}</option>
-                                    @foreach (['paid', 'unpaid', 'partially_paid'] as $status)
+                                    @foreach ($paymentStatuses as $status)
                                     <option value="{{ $status }}" {{ request()->get('payment_status') === $status ? 'selected' : '' }}>
                                         {{ humanize($status) }}
                                     </option>
