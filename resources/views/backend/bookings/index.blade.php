@@ -32,7 +32,7 @@
                                     <option value="">{{ __('labels.all_payment_statuses') }}</option>
                                     @foreach (['paid', 'unpaid', 'partially_paid'] as $status)
                                     <option value="{{ $status }}" {{ request()->get('payment_status') === $status ? 'selected' : '' }}>
-                                        {{ ucfirst(str_replace('_', ' ', $status)) }}
+                                        {{ humanize($status) }}
                                     </option>
                                     @endforeach
                                 </select>
@@ -109,7 +109,7 @@
                                         };
                                     @endphp
                                     <span class="badge {{ $paymentBadgeClass }}">
-                                        {{ ucfirst(str_replace('_', ' ', $row->payment_status)) }}
+                                        {{ humanize($row->payment_status) }}
                                     </span>
                                 </td>
                                 <td>{{ formatDatetime($row->created_at) }}</td>

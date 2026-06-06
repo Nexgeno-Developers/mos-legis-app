@@ -51,7 +51,7 @@
                 </tr>
                 <tr>
                     <th class="bg-light">{{ __('labels.payment_status') }}</th>
-                    <td><span class="badge {{ $paymentBadgeClass }}">{{ ucfirst(str_replace('_', ' ', $booking->payment_status)) }}</span></td>
+                    <td><span class="badge {{ $paymentBadgeClass }}">{{ humanize($booking->payment_status) }}</span></td>
                 </tr>
                 <tr>
                     <th class="bg-light">{{ __('labels.created') }}</th>
@@ -298,7 +298,7 @@
                 <tr>
                     <td>{{ $index + 1 }}</td>
                     <td>{{ $payment->payment_id ?? '—' }}</td>
-                    <td>{{ ucfirst(str_replace('_', ' ', $payment->payment_method)) }}</td>
+                    <td>{{ humanize($payment->payment_method) }}</td>
                     <td class="small">{!! formatPaymentDetails($payment->payment_details, $payment->payment_method) !!}</td>
                     <td>
                         <span class="badge {{ $itemPaymentBadgeClass }}">

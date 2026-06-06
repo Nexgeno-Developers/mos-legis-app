@@ -371,6 +371,23 @@ if (! function_exists('generatePaymentId')) {
     }
 }
 
+if (! function_exists('humanize')) {
+    /**
+     * Convert a snake_case string to a human-readable title (e.g. bank_transfer → Bank Transfer).
+     *
+     * @param  string|null  $value
+     * @return string|null
+     */
+    function humanize(?string $value): ?string
+    {
+        if ($value === null || $value === '') {
+            return null;
+        }
+
+        return ucwords(str_replace('_', ' ', $value));
+    }
+}
+
 if (! function_exists('formatPaymentDetails')) {
     /**
      * Format payment_details JSON for display.
