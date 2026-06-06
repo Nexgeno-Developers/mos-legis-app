@@ -85,6 +85,7 @@
         <h6 class="text-uppercase fw-bold mb-2 mt-3">{{ __('labels.amount_summary') }}</h6>
         <table class="table table-sm table-bordered mb-0">
             <tbody>
+                {{--
                 <tr>
                     <th class="bg-light" style="width: 40%;">{{ __('labels.subtotal') }}</th>
                     <td>{{ formatCurrency($booking->subtotal_amount) }}</td>
@@ -97,6 +98,7 @@
                     <th class="bg-light">{{ __('labels.tax_amount') }}</th>
                     <td>{{ formatCurrency($booking->tax_amount) }}</td>
                 </tr>
+                --}}
                 <tr>
                     <th class="bg-light">{{ __('labels.grand_total') }}</th>
                     <td class="fw-bold">{{ formatCurrency($booking->grand_total_amount) }}</td>
