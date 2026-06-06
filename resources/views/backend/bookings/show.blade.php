@@ -332,10 +332,10 @@
 </div>
 
 <script>
-const bookingShowUrl = '{{ url(route('bookings.show', $booking->id)) }}';
-const bookingShowTitle = '{{ __('labels.booking_details') }} {{ formatBookingId($booking->id) }}';
+var bookingShowUrl = '{{ url(route('bookings.show', $booking->id)) }}';
+var bookingShowTitle = '{{ __('labels.booking_details') }} {{ formatBookingId($booking->id) }}';
 
-const reloadBookingModal = function(response) {
+var reloadBookingModal = function(response) {
     setTimeout(function() {
         closeConfirmModel();
         largeModal(bookingShowUrl, bookingShowTitle);
