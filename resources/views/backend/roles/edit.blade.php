@@ -20,7 +20,7 @@
                         <div class="col-md-12 col-lg-12">
                             <div class="card border-1 mb-2">
                                 <div class="card-header bg-light border-bottom border-dashed align-items-center fw-bold p-2 pt-1 pb-1">
-                                    {{ ucfirst(str_replace('-', ' ', $module)) }}
+                                    {{ humanize($module) }}
                                 </div>
                                 <div class="card-body p-2">
                                     <div class="row">
@@ -33,7 +33,7 @@
                                                     <input type="checkbox" class="form-check-input" id="{{ $permissionId }}" name="permissions[]" value="{{ $permission->name }}"
                                                         {{ $role->hasPermissionTo($permission->name) ? 'checked' : '' }}>
                                                     <label for="{{ $permissionId }}" class="form-check-label">
-                                                        {{ ucfirst(Str::after($permission->name, $module . ' ')) }}
+                                                        {{ humanize(Str::after($permission->name, $module . ' ')) }}
                                                     </label>
                                                 </div>
                                             </div>

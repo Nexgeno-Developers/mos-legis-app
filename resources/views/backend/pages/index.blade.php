@@ -31,7 +31,7 @@
                                             data-description="{{ $layoutData['description'] ?? '' }}"
                                             @selected(request()->get('layout') === $layoutKey)
                                         >
-                                            {{ $layoutData['label'] ?? ucfirst($layoutKey) }}
+                                            {{ $layoutData['label'] ?? humanize($layoutKey) }}
                                         </option>
                                     @endforeach
                                 </select>
@@ -101,7 +101,7 @@
                                 <td>{{ $index + 1 }}</td>                           
                                 <td>{{ $row->title }}</td>                                                           
                                 <td><a target="_blank" href="{{ $row->website }}">{{ $row->slug }}</a></td>                                                         
-                                <td>{{ $layouts[$row->layout]['label'] ?? ucfirst($row->layout) }}</td>
+                                <td>{{ $layouts[$row->layout]['label'] ?? humanize($row->layout) }}</td>
                                 <td>
                                 <span class="badge {{ $row->is_active ? 'bg-success' : 'bg-danger' }}">
                                     {{ $row->is_active ? 'Active' : 'Inactive' }}

@@ -39,7 +39,7 @@
                 </tr>
                 <tr>
                     <th class="bg-light">{{ __('labels.duration_type') }}</th>
-                    <td>{{ ucfirst($booking->duration_type ?? '—') }}</td>
+                    <td>{{ $booking->duration_type ? humanize($booking->duration_type) : '—' }}</td>
                 </tr>
                 <tr>
                     <th class="bg-light">{{ __('labels.duration') }}</th>
@@ -47,7 +47,7 @@
                 </tr>
                 <tr>
                     <th class="bg-light">{{ __('labels.booking_status') }}</th>
-                    <td><span class="badge {{ $bookingBadgeClass }}">{{ ucfirst($booking->booking_status) }}</span></td>
+                    <td><span class="badge {{ $bookingBadgeClass }}">{{ humanize($booking->booking_status) }}</span></td>
                 </tr>
                 <tr>
                     <th class="bg-light">{{ __('labels.payment_status') }}</th>
@@ -145,7 +145,7 @@
                     <td>{{ $item->occupant_id_proof_no ?? '—' }}</td>
                     <td>
                         <span class="badge {{ $item->kyc_status === 'verified' ? 'bg-success' : 'bg-warning' }}">
-                            {{ ucfirst($item->kyc_status) }}
+                            {{ humanize($item->kyc_status) }}
                         </span>
                     </td>
                     <td class="text-end">{{ formatCurrency($item->amount) }}</td>
@@ -302,7 +302,7 @@
                     <td class="small">{!! formatPaymentDetails($payment->payment_details, $payment->payment_method) !!}</td>
                     <td>
                         <span class="badge {{ $itemPaymentBadgeClass }}">
-                            {{ ucfirst($payment->payment_status) }}
+                            {{ humanize($payment->payment_status) }}
                         </span>
                     </td>
                     <td class="text-end">{{ formatCurrency($payment->amount) }}</td>

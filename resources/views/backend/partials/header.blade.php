@@ -390,7 +390,7 @@
                         {{--<img src="{{ asset('assets/backend/img/avatar-1.jpg') }}" width="32" class="rounded-circle me-lg-2 d-flex" alt="user-image">--}}
                         <span class="d-lg-flex flex-column gap-1 d-none">
                             <h5 class="my-0">{{ucfirst(auth()->user()->name)}}</h5>
-                            <h6 class="my-0 fw-normal">{{ucfirst(auth()->user()->role->name)}}</h6>
+                            <h6 class="my-0 fw-normal">{{ humanize(auth()->user()->role->name) }}</h6>
                         </span>
                         <i class="ti ti-chevron-down d-none d-lg-block align-middle ms-2"></i>
                     </a>

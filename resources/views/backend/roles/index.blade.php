@@ -33,7 +33,7 @@
                 @foreach ($pageData as $index => $row)
                 <tr>
                     <td>{{ $index + 1 }}</td>
-                    <td>{{ ucfirst($row->name) }}</td>
+                    <td>{{ humanize($row->name) }}</td>
                     <td>{{ formatDatetime($row->created_at) }}</td>
                     <td>
                         @if($row->id != 1)

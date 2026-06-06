@@ -58,7 +58,7 @@
                                 <td>{{ $index + 1 }}</td>
                                 <td>{{ $row->name }}</td>
                                 <td>{{ $row->email }}</td>
-                                <td>{{ ucfirst($row->role->name) }}</td>                                                           
+                                <td>{{ humanize($row->role->name) }}</td>                                                           
                                 <td>
                                 <span class="badge {{ $row->is_active ? 'bg-success' : 'bg-danger' }}">
                                     {{ $row->is_active ? 'Active' : 'Inactive' }}

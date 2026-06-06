@@ -373,7 +373,8 @@ if (! function_exists('generatePaymentId')) {
 
 if (! function_exists('humanize')) {
     /**
-     * Convert a snake_case string to a human-readable title (e.g. bank_transfer → Bank Transfer).
+     * Convert a snake_case or kebab-case string to a human-readable title.
+     * e.g. bank_transfer → Bank Transfer, activity-logs → Activity Logs
      *
      * @param  string|null  $value
      * @return string|null
@@ -384,7 +385,7 @@ if (! function_exists('humanize')) {
             return null;
         }
 
-        return ucwords(str_replace('_', ' ', $value));
+        return ucwords(str_replace(['_', '-'], ' ', $value));
     }
 }
 

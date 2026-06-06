@@ -8,7 +8,7 @@
                 <select name="role_id" class="form-select select2" required>
                     <option value="">{{__('labels.select_role')}}</option>
                     @foreach ($roles as $role)
-                        <option value="{{ $role->id }}">{{ ucfirst($role->name) }}</option>
+                        <option value="{{ $role->id }}">{{ humanize($role->name) }}</option>
                     @endforeach
                 </select>
             </div>

@@ -10,7 +10,7 @@
                     <option value="">{{__('labels.select_role')}}</option>
                     @foreach ($roles as $role)
                         <option value="{{ $role->id }}" {{ $user->role_id == $role->id ? 'selected' : '' }}>
-                            {{ ucfirst($role->name) }}
+                            {{ humanize($role->name) }}
                         </option>
                     @endforeach
                 </select>

@@ -23,7 +23,7 @@
                                     <option value="">All Modules</option>
                                     @foreach ($modules as $moduleOption)
                                     <option value="{{ $moduleOption }}" {{ $module === $moduleOption ? 'selected' : '' }}>
-                                        {{ ucfirst($moduleOption) }}
+                                        {{ humanize($moduleOption) }}
                                     </option>
                                     @endforeach
                                 </select>
@@ -33,7 +33,7 @@
                                     <option value="">All Actions</option>
                                     @foreach ($actions as $actionOption)
                                     <option value="{{ $actionOption }}" {{ $action === $actionOption ? 'selected' : '' }}>
-                                        {{ ucfirst($actionOption) }}
+                                        {{ humanize($actionOption) }}
                                     </option>
                                     @endforeach
                                 </select>
@@ -93,9 +93,9 @@
                                     <span class="text-muted">System</span>
                                     @endif
                                 </td>
-                                <td><span class="">{{ $row->module }}</span></td>
+                                <td><span class="">{{ humanize($row->module) }}</span></td>
                                 <td>
-                                    <span class="">{{ ucfirst($row->action) }}</span>
+                                    <span class="">{{ humanize($row->action) }}</span>
                                 </td>
                                 <td>{{ $row->record_id ?? '—' }}</td>
                                 <td>{{ text_limit($row->remarks, 40) }}</td>

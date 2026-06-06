@@ -62,7 +62,7 @@
                                     data-description="{{ $layoutData['description'] ?? '' }}"
                                     {{ (isset($pageData) && $pageData->layout === $layout) ? 'selected' : '' }}
                                 >
-                                    {{ $layoutData['label'] ?? ucfirst($layout) }}
+                                    {{ $layoutData['label'] ?? humanize($layout) }}
                                 </option>
                             @endforeach
                         </select>

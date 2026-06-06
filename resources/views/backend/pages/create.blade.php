@@ -56,7 +56,7 @@
                                     value="{{ $layout }}"
                                     data-description="{{ $layoutData['description'] ?? '' }}"
                                 >
-                                    {{ $layoutData['label'] ?? ucfirst($layout) }}
+                                    {{ $layoutData['label'] ?? humanize($layout) }}
                                 </option>
                             @endforeach
                         </select>

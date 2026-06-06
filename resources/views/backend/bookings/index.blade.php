@@ -22,7 +22,7 @@
                                     <option value="">{{ __('labels.all_booking_statuses') }}</option>
                                     @foreach (['reserved', 'active', 'completed', 'cancelled'] as $status)
                                     <option value="{{ $status }}" {{ request()->get('booking_status') === $status ? 'selected' : '' }}>
-                                        {{ ucfirst($status) }}
+                                        {{ humanize($status) }}
                                     </option>
                                     @endforeach
                                 </select>
@@ -97,7 +97,7 @@
                                         };
                                     @endphp
                                     <span class="badge {{ $bookingBadgeClass }}">
-                                        {{ ucfirst($row->booking_status) }}
+                                        {{ humanize($row->booking_status) }}
                                     </span>
                                 </td>
                                 <td>
