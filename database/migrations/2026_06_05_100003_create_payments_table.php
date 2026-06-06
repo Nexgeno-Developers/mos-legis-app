@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('payable_type', 100);
             $table->unsignedBigInteger('payable_id');
             $table->decimal('amount', 12, 2);
-            $table->enum('payment_method', ['online', 'cash', 'cheque']);
+            $table->enum('payment_method', ['online', 'cash', 'cheque', 'bank_transfer'])->default('online');
             $table->enum('payment_status', ['pending', 'processing', 'paid', 'failed', 'refunded'])->default('pending');
             $table->json('payment_details')->nullable();
             $table->string('payment_id', 100)->nullable()->unique();
