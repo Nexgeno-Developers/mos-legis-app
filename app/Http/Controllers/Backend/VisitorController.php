@@ -51,11 +51,7 @@ class VisitorController extends BaseController
 
             $visitor->delete();
 
-            if (request()->ajax() || request()->expectsJson()) {
-                return response()->json(['status' => true, 'notification' => 'Record deleted successfully!']);
-            }
-
-            return redirect()->route('visitors.index')->with('success', 'Record deleted successfully!');
+            return response()->json(['status' => true, 'notification' => __('messages.deleted')]);
         } catch (\Exception $e) {
             \Log::error('Error deleting Visitor record', [
                 'error_message' => $e->getMessage(),
@@ -63,11 +59,7 @@ class VisitorController extends BaseController
                 'visitor_id' => $id,
             ]);
 
-            if (request()->ajax() || request()->expectsJson()) {
-                return response()->json(['status' => false, 'notification' => 'There was an error deleting the record.']);
-            }
-
-            return redirect()->route('visitors.index')->with('error', 'There was an error deleting the record.');
+            return response()->json(['status' => false, 'notification' => __('messages.failed')]);
         }
     }
 

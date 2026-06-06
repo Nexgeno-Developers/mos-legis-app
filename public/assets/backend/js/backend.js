@@ -65,9 +65,9 @@ function cloneConfirm(url) {
     document.getElementById('clone_confirm_btn').setAttribute('href', url);
 }
 
-$(".ajaxDeleteForm").submit(function (e) {
+$(document).on('submit', '.ajaxDeleteForm', function (e) {
     e.preventDefault();
-    alert(1);
+    //alert(1);
     var form = $(this);
     ajaxSubmit(e, form, callBackFunction);
 });

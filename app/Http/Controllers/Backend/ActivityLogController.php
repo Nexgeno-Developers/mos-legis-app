@@ -84,30 +84,20 @@ class ActivityLogController extends BaseController
         try {
             $deleted = ActivityLog::where('created_at', '<', now()->subDays(30))->delete();
 
-            if ($request->ajax() || $request->expectsJson()) {
-                return response()->json([
-                    'status' => true,
-                    'notification' => $deleted.' log(s) from the last 30 days cleared successfully.',
-                ]);
-            }
-
-            return redirect()->route('activity-logs.index')
-                ->with('success', $deleted.' log(s) from the last 30 days cleared successfully.');
+            return response()->json([
+                'status' => true,
+                'notification' => $deleted.' log(s) from the last 30 days cleared successfully.',
+            ]);
         } catch (\Exception $e) {
             Log::error('Error clearing activity logs', [
                 'error_message' => $e->getMessage(),
                 'stack_trace' => $e->getTraceAsString(),
             ]);
 
-            if ($request->ajax() || $request->expectsJson()) {
-                return response()->json([
-                    'status' => false,
-                    'notification' => 'There was an error clearing the logs.',
-                ]);
-            }
-
-            return redirect()->route('activity-logs.index')
-                ->with('error', 'There was an error clearing the logs.');
+            return response()->json([
+                'status' => false,
+                'notification' => 'There was an error clearing the logs.',
+            ]);
         }
     }
 }

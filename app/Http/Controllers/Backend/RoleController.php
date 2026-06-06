@@ -73,12 +73,16 @@ class RoleController extends BaseController
 
     public function destroy($id)
     {
-        $role = Role::findOrFail($id);
+        try {
+            $role = Role::findOrFail($id);
 
-        ActivityLogService::store('roles', 'delete', (int) $role->id, ['name' => $role->name], 'Role deleted');
+            ActivityLogService::store('roles', 'delete', (int) $role->id, ['name' => $role->name], 'Role deleted');
 
-        $role->delete();
+            $role->delete();
 
-        return redirect()->route($this->module . '.index')->with('success', __('messages.deleted'));
+            return response()->json(['status' => true, 'notification' => __('messages.deleted')]);
+        } catch (\Exception $e) {
+            return response()->json(['status' => false, 'notification' => __('messages.failed')]);
+        }
     }
 }

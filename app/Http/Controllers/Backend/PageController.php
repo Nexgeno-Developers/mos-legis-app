@@ -265,11 +265,9 @@ class PageController extends BaseController
             $page->meta()->delete();
             $page->delete();
 
-            // Redirect back with a success message
-            return redirect()->route($this->routeName . '.index')->with('success', 'Record deleted successfully!');
+            return response()->json(['status' => true, 'notification' => __('messages.deleted')]);
         } catch (\Exception $e) {
-            // Redirect back with an error message
-            return redirect()->route($this->routeName . 'index')->with('error', 'There was an error deleting the record.');
+            return response()->json(['status' => false, 'notification' => __('messages.failed')]);
         }
     }
 

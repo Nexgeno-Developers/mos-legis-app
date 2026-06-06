@@ -184,11 +184,10 @@ class UserController extends BaseController
             ActivityLogService::store('users', 'delete', (int) $user->id, ['name' => $user->name, 'email' => $user->email], 'User deleted');
 
             $user->delete();
-            // Redirect back with a success message
-            return redirect()->route($this->module . '.index')->with('success', __('messages.deleted'));
+
+            return response()->json(['status' => true, 'notification' => __('messages.deleted')]);
         } catch (\Exception $e) {
-            // Redirect back with an error message
-            return redirect()->route($this->module . '.index')->with('error', __('messages.failed'));
+            return response()->json(['status' => false, 'notification' => __('messages.failed')]);
         }
     }
 }

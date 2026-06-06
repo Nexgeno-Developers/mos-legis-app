@@ -185,9 +185,9 @@ class BookingController extends BaseController
 
             $booking->delete();
 
-            return redirect()->route($this->module.'.index')->with('success', __('messages.deleted'));
+            return response()->json(['status' => true, 'notification' => __('messages.deleted')]);
         } catch (\Exception $e) {
-            return redirect()->route($this->module.'.index')->with('error', __('messages.failed'));
+            return response()->json(['status' => false, 'notification' => __('messages.failed')]);
         }
     }
 }
