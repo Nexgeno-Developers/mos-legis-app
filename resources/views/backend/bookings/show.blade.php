@@ -310,8 +310,8 @@
                     <td class="text-center">
                         @if (in_array($payment->payment_method, \App\Services\BookingPaymentService::MANUAL_METHODS))
                         <a href="javascript:void(0);"
-                           class="link-reset fs-20 p-1 delete-payment-btn"
-                           data-url="{{ route('bookings.payments.destroy', [$booking->id, $payment->id]) }}"
+                           onclick="confirmModal('{{ route('bookings.payments.destroy', [$booking->id, $payment->id]) }}', reloadBookingModal)"
+                           class="link-reset fs-20 p-1"
                            title="{{ __('labels.delete') }}">
                             <i class="ti ti-trash text-danger"></i>
                         </a>
@@ -332,10 +332,17 @@
 </div>
 
 <script>
-$(document).ready(function() {
-    const bookingShowUrl = '{{ url(route('bookings.show', $booking->id)) }}';
-    const bookingShowTitle = '{{ __('labels.booking_details') }} {{ formatBookingId($booking->id) }}';
+const bookingShowUrl = '{{ url(route('bookings.show', $booking->id)) }}';
+const bookingShowTitle = '{{ __('labels.booking_details') }} {{ formatBookingId($booking->id) }}';
 
+const reloadBookingModal = function(response) {
+    setTimeout(function() {
+        closeConfirmModel();
+        largeModal(bookingShowUrl, bookingShowTitle);
+    }, 1000);
+};
+
+$(document).ready(function() {
     $('#togglePaymentForm').on('click', function() {
         $('#paymentFormWrapper').toggleClass('d-none');
     });
@@ -361,49 +368,11 @@ $(document).ready(function() {
         togglePaymentMethodFields($(this).val());
     });
 
-    const reloadBookingModal = function() {
-        largeModal(bookingShowUrl, bookingShowTitle);
-    };
-
     initValidate('#addPaymentForm');
 
     $('#addPaymentForm').on('submit', function(e) {
         const form = $(this);
         ajaxSubmit(e, form, reloadBookingModal);
-    });
-
-    $('.delete-payment-btn').on('click', function() {
-        if (!confirm('Are you sure you want to delete this payment?')) {
-            return;
-        }
-
-        const url = $(this).data('url');
-        const $btn = $(this);
-        $btn.css('pointer-events', 'none');
-
-        $.ajax({
-            type: 'POST',
-            url: url,
-            data: {
-                _token: '{{ csrf_token() }}',
-                _method: 'DELETE',
-            },
-            dataType: 'json',
-            success: function(response) {
-                $btn.css('pointer-events', 'inherit');
-
-                if (response.status) {
-                    Command: toastr['success'](response.notification, 'Success');
-                    reloadBookingModal();
-                } else {
-                    Command: toastr['error'](response.notification, 'Alert');
-                }
-            },
-            error: function() {
-                $btn.css('pointer-events', 'inherit');
-                Command: toastr['error']('An unexpected error occurred. Please try again later.', 'Error');
-            },
-        });
     });
 });
 </script>

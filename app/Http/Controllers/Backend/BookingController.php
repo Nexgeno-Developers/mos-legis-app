@@ -175,7 +175,7 @@ class BookingController extends BaseController
                 [
                     'payment_id' => $paymentModel->payment_id,
                     'amount' => $paymentModel->amount,
-                    'payment_method' => $payment->payment_method,
+                    'payment_method' => $paymentModel->payment_method,
                 ],
                 'Manual payment deleted'
             );
