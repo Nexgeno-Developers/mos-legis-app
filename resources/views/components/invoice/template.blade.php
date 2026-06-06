@@ -238,7 +238,7 @@
 
     .invoice-totals-row--balance {
         font-weight: 600;
-        color: #16a34a;
+        color: #333;
     }
 
     .invoice-paid-stamp {
@@ -432,7 +432,7 @@
         <div class="invoice-info-block">
             <h3>{{ __('invoice.booking') }}</h3>
             <p><strong>{{ __('invoice.booking_number') }}:</strong> {{ $data['booking']['display_id'] ?? __('invoice.not_available') }}</p>
-            <p><strong>{{ __('invoice.cabins_and_seats') }}:</strong> {{ $cabinsAndSeats }}</p>
+            {{-- <p><strong>{{ __('invoice.cabins_and_seats') }}:</strong> {{ $cabinsAndSeats }}</p> --}}
             <p><strong>{{ __('invoice.duration') }}:</strong> {{ $durationLabel }}</p>
         </div>
 
