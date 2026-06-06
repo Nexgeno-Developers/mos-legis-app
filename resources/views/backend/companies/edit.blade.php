@@ -50,7 +50,7 @@
 
                     <div class="mb-3 form-group">
                         <label for="company-address" class="form-label">Address <span class="text-danger">*</span></label>
-                        <input type="text" id="company-address" name="address" value="{{ old('address', $pageData->address) }}" class="form-control" placeholder="e.g : 123 Main St, City, Country" required>
+                        <textarea type="text" id="company-address" name="address" class="form-control" placeholder="e.g : 123 Main St, City, Country" required>{{ old('address', $pageData->address) }}</textarea>
                     </div>    
                     
                     <div class="mb-3 form-group">

@@ -385,13 +385,13 @@
             </div>
             <div class="invoice-company-meta">
                 @if (! empty($data['company']['address']))
-                    <div>{{ $data['company']['address'] }}</div>
+                    <div>{{ __('invoice.address') }}: {!! nl2br($data['company']['address']) !!}</div>
                 @endif
                 @if (! empty($data['company']['email']))
-                    <div>{{ $data['company']['email'] }}</div>
+                    <div>{{ __('invoice.email') }}: {{ $data['company']['email'] }}</div>
                 @endif
                 @if (! empty($data['company']['phone']))
-                    <div>{{ $data['company']['phone'] }}</div>
+                    <div>{{ __('invoice.phone') }}: {{ $data['company']['phone'] }}</div>
                 @endif
                 @if (! empty($data['company']['gstin']))
                     <div>{{ __('invoice.gstin') }}: {{ $data['company']['gstin'] }}</div>
@@ -402,7 +402,7 @@
         <div class="invoice-title-block">
             <div class="invoice-title-label">{{ __('invoice.tax_invoice') }}</div>
             <div class="invoice-number">{{ $data['booking']['invoice_no'] ?? __('invoice.not_available') }}</div>
-            <div class="invoice-date">{{ __('invoice.invoice_date') }}: {{ formatDate($data['booking']['date'] ?? null) ?? __('invoice.not_available') }}</div>
+            <div class="invoice-date">{{ __('invoice.invoice_date') }} at {{ formatDate($data['booking']['date'] ?? null) ?? __('invoice.not_available') }}</div>
             <span class="invoice-badge {{ $paymentStatusClass }}">
                 <span class="invoice-badge-dot"></span>
                 {{ $paymentStatusLabel }}
