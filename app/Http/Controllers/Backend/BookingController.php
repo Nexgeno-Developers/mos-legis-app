@@ -75,12 +75,25 @@ class BookingController extends BaseController
 
     public function edit($id)
     {
-        //
+        $booking = Booking::findOrFail($id);
+
+        return view('backend.'.$this->module.'.edit', compact('booking'));
     }
 
     public function update(Request $request, $id)
     {
-        //
+        $booking = Booking::findOrFail($id);
+        $booking->update(['booking_status' => $request->booking_status]);
+
+        ActivityLogService::store(
+            'bookings',
+            'update',
+            (int) $booking->id,
+            ['booking_status' => $request->booking_status],
+            'Booking status updated'
+        );
+
+        return response()->json(['status' => true, 'notification' => __('messages.updated')]);
     }
 
     public function storePayment(Request $request, string $booking)
