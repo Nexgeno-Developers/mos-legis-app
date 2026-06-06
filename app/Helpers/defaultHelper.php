@@ -356,3 +356,53 @@ if (! function_exists('formatBookingId')) {
         return $prefix.str_pad((string) (int) $id, $padding, '0', STR_PAD_LEFT);
     }
 }
+
+if (! function_exists('generatePaymentId')) {
+    /**
+     * Generate a unique payment reference ID.
+     */
+    function generatePaymentId(): string
+    {
+        do {
+            $id = 'PAY-'.strtoupper(\Illuminate\Support\Str::random(16));
+        } while (\App\Models\Payment::where('payment_id', $id)->exists());
+
+        return $id;
+    }
+}
+
+if (! function_exists('formatPaymentDetails')) {
+    /**
+     * Format payment_details JSON for display.
+     *
+     * @param  array<string, mixed>|null  $details
+     */
+    function formatPaymentDetails(?array $details, string $method): string
+    {
+        if (empty($details)) {
+            return '—';
+        }
+
+        $lines = match ($method) {
+            'cash' => array_filter([
+                isset($details['receipt_number']) ? __('labels.receipt_number').': '.$details['receipt_number'] : null,
+                isset($details['received_by']) ? __('labels.received_by').': '.$details['received_by'] : null,
+            ]),
+            'cheque' => array_filter([
+                isset($details['cheque_number']) ? __('labels.cheque_number').': '.$details['cheque_number'] : null,
+                isset($details['bank_name']) ? __('labels.bank_name').': '.$details['bank_name'] : null,
+                isset($details['cheque_date']) ? __('labels.cheque_date').': '.$details['cheque_date'] : null,
+            ]),
+            'bank_transfer' => array_filter([
+                isset($details['utr_no']) ? __('labels.utr_no').': '.$details['utr_no'] : null,
+                isset($details['bank_name']) ? __('labels.bank_name').': '.$details['bank_name'] : null,
+            ]),
+            'online' => array_filter([
+                isset($details['mihpayid']) ? __('labels.mihpayid').': '.$details['mihpayid'] : null,
+            ]),
+            default => [],
+        };
+
+        return $lines ? implode('<br>', $lines) : '—';
+    }
+}

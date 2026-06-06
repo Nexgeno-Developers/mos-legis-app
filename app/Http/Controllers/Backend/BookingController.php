@@ -3,9 +3,12 @@
 namespace App\Http\Controllers\Backend;
 
 use App\Models\Booking;
+use App\Models\Payment;
 use App\Services\ActivityLogService;
+use App\Services\BookingPaymentService;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller as BaseController;
+use Illuminate\Validation\Rule;
 
 class BookingController extends BaseController
 {
@@ -18,7 +21,7 @@ class BookingController extends BaseController
 
         $this->middleware('permission:bookings view')->only(['index', 'show']);
         $this->middleware('permission:bookings create')->only(['create', 'store']);
-        $this->middleware('permission:bookings edit')->only(['edit', 'update']);
+        $this->middleware('permission:bookings edit')->only(['edit', 'update', 'storePayment', 'destroyPayment']);
         $this->middleware('permission:bookings delete')->only(['destroy']);
     }
 
@@ -78,6 +81,93 @@ class BookingController extends BaseController
     public function update(Request $request, $id)
     {
         //
+    }
+
+    public function storePayment(Request $request, string $booking)
+    {
+        $bookingModel = Booking::findOrFail($booking);
+
+        $rules = [
+            'amount' => 'required|numeric|min:0.01',
+            'payment_method' => ['required', Rule::in(BookingPaymentService::MANUAL_METHODS)],
+            'paid_at' => 'required|date',
+            'remarks' => 'nullable|string|max:1000',
+        ];
+
+        $methodRules = match ($request->input('payment_method')) {
+            'cash' => [
+                'receipt_number' => 'required|string|max:100',
+                'received_by' => 'required|string|max:100',
+            ],
+            'cheque' => [
+                'cheque_number' => 'required|string|max:100',
+                'bank_name' => 'required|string|max:100',
+                'cheque_date' => 'required|date',
+            ],
+            'bank_transfer' => [
+                'utr_no' => 'required|string|max:100',
+                'bank_name' => 'required|string|max:100',
+            ],
+            default => [],
+        };
+
+        $validated = $request->validate(array_merge($rules, $methodRules));
+
+        if (! BookingPaymentService::canAcceptPayment($bookingModel, (float) $validated['amount'])) {
+            return response()->json([
+                'status' => false,
+                'notification' => __('messages.payment_exceeds_balance'),
+            ]);
+        }
+
+        try {
+            $payment = BookingPaymentService::createManualPayment($bookingModel, $validated);
+
+            ActivityLogService::store(
+                'bookings',
+                'payment_create',
+                (int) $bookingModel->id,
+                [
+                    'payment_id' => $payment->payment_id,
+                    'amount' => $payment->amount,
+                    'payment_method' => $payment->payment_method,
+                ],
+                'Manual payment added'
+            );
+
+            return response()->json(['status' => true, 'notification' => __('messages.created')]);
+        } catch (\Exception $e) {
+            return response()->json(['status' => false, 'notification' => __('messages.failed')]);
+        }
+    }
+
+    public function destroyPayment(string $booking, string $payment)
+    {
+        try {
+            $bookingModel = Booking::findOrFail($booking);
+            $paymentModel = Payment::query()
+                ->where('payable_type', 'booking')
+                ->where('payable_id', $bookingModel->id)
+                ->findOrFail($payment);
+
+            ActivityLogService::store(
+                'bookings',
+                'payment_delete',
+                (int) $bookingModel->id,
+                [
+                    'payment_id' => $paymentModel->payment_id,
+                    'amount' => $paymentModel->amount,
+                    'payment_method' => $payment->payment_method,
+                ],
+                'Manual payment deleted'
+            );
+
+            BookingPaymentService::deleteManualPayment($bookingModel, $paymentModel);
+
+            return response()->json(['status' => true, 'notification' => __('messages.deleted')]);
+        } catch (\Exception $e) {
+            return response()->json(['status' => false, 'notification' => __('messages.failed')]);
+        }
     }
 
     public function destroy($id)

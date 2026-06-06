@@ -152,6 +152,8 @@ Route::prefix('backend')->group(function () {
     });
 
     Route::middleware('auth.backend')->group(function () {
+        Route::post('bookings/{booking}/payments', [BookingController::class, 'storePayment'])->name('bookings.payments.store');
+        Route::delete('bookings/{booking}/payments/{payment}', [BookingController::class, 'destroyPayment'])->name('bookings.payments.destroy');
         Route::resource('bookings', BookingController::class);
     });
 });

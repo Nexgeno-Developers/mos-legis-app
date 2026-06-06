@@ -382,7 +382,7 @@ class CoworkingDataSeeder extends Seeder
                 'payment_method' => $payment['method'],
                 'payment_status' => $status,
                 'payment_details' => [
-                    'transaction_ref' => $txnRef,
+                    'mihpayid' => $txnRef,
                     'paid_via' => $payment['method'],
                 ],
                 'payment_id' => $paymentId,
