@@ -1,4 +1,4 @@
-<div class="col-12 mb-3">
+<div class="col-12">
     <div class="card overflow-hidden">
         <div class="card-body">
             <div class="d-flex align-items-center gap-2 mb-3">
@@ -11,14 +11,16 @@
             </div>
             <div class="row g-3">
                 @foreach ($stats as $stat)
-                <div class="col-6 col-sm-4 col-lg">
-                    <div class="card overflow-hidden mb-0 border">
-                        <div class="card-body py-3">
+                <div class="col-6 col-md-4 col-xl-2 d-flex">
+                    <div class="card overflow-hidden mb-0 border h-100 w-100">
+                        <div class="card-body py-3 d-flex flex-column h-100">
                             @if (!empty($stat['url']))
-                            <a href="{{ $stat['url'] }}" class="text-reset">
+                            <a href="{{ $stat['url'] }}" class="text-reset text-decoration-none d-flex flex-column h-100">
+                            @else
+                            <div class="d-flex flex-column h-100">
                             @endif
-                                <h6 class="text-muted fs-12 text-uppercase mb-2" title="{{ $stat['label'] }}">{{ $stat['label'] }}</h6>
-                                <div class="d-flex align-items-center gap-2">
+                                <h6 class="text-muted fs-12 text-uppercase mb-2 flex-grow-1" title="{{ $stat['label'] }}">{{ $stat['label'] }}</h6>
+                                <div class="d-flex align-items-center gap-2 mt-auto">
                                     <div class="user-img flex-shrink-0">
                                         <span class="avatar-title text-bg-light text-primary rounded-circle fs-16">
                                             <i class="{{ $stat['icon'] ?? $icon }}"></i>
@@ -28,6 +30,8 @@
                                 </div>
                             @if (!empty($stat['url']))
                             </a>
+                            @else
+                            </div>
                             @endif
                         </div>
                     </div>
