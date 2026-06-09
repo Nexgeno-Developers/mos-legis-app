@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Backend;
 
 use App\Models\Booking;
+use App\Models\BookingItem;
 use App\Models\Payment;
+use App\Models\Property;
 use App\Services\ActivityLogService;
 use App\Services\BookingPaymentService;
 use App\Services\InvoiceService;
@@ -20,7 +22,7 @@ class BookingController extends BaseController
         $this->module = 'bookings';
         view()->share('module', $this->module);
 
-        $this->middleware('permission:bookings view')->only(['index', 'show', 'showInvoice']);
+        $this->middleware('permission:bookings view')->only(['index', 'show', 'showInvoice', 'seatAvailability']);
         $this->middleware('permission:bookings create')->only(['create', 'store']);
         $this->middleware('permission:bookings edit')->only(['edit', 'update', 'storePayment', 'destroyPayment']);
         $this->middleware('permission:bookings delete')->only(['destroy']);
@@ -56,6 +58,45 @@ class BookingController extends BaseController
         $paymentStatuses = Booking::PAYMENT_STATUSES;
 
         return view('backend.'.$this->module.'.index', compact('pageData', 'bookingStatuses', 'paymentStatuses'));
+    }
+
+    public function seatAvailability()
+    {
+        $properties = Property::query()
+            ->with([
+                'cabins' => fn ($query) => $query->orderBy('name'),
+                'cabins.seats' => fn ($query) => $query->orderBy('seat_no'),
+            ])
+            ->orderBy('name')
+            ->get();
+
+        $seatBookings = BookingItem::query()
+            ->whereNotNull('seat_id')
+            ->whereHas('booking', fn ($query) => $query->whereIn('booking_status', ['active', 'reserved']))
+            ->with(['booking.user'])
+            ->get();
+
+        $seatStatusMap = [];
+
+        foreach ($seatBookings as $item) {
+            $booking = $item->booking;
+            $seatId = $item->seat_id;
+            $status = $booking->booking_status;
+
+            if (
+                ! isset($seatStatusMap[$seatId])
+                || ($seatStatusMap[$seatId]['status'] === 'reserved' && $status === 'active')
+            ) {
+                $seatStatusMap[$seatId] = [
+                    'status' => $status,
+                    'user_name' => $booking->user?->name,
+                    'start_datetime' => $booking->start_datetime,
+                    'end_datetime' => $booking->end_datetime,
+                ];
+            }
+        }
+
+        return view('backend.'.$this->module.'.seat-availability', compact('properties', 'seatStatusMap'));
     }
 
     public function create()

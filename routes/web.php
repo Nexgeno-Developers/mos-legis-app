@@ -155,6 +155,7 @@ Route::prefix('backend')->group(function () {
         Route::post('bookings/{booking}/payments', [BookingController::class, 'storePayment'])->name('bookings.payments.store');
         Route::delete('bookings/{booking}/payments/{payment}', [BookingController::class, 'destroyPayment'])->name('bookings.payments.destroy');
         Route::get('bookings/{booking}/invoice', [BookingController::class, 'showInvoice'])->name('bookings.invoice');
+        Route::get('bookings/seat-availability', [BookingController::class, 'seatAvailability'])->name('bookings.seat-availability');
         Route::resource('bookings', BookingController::class);
     });
 });

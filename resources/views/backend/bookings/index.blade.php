@@ -5,6 +5,11 @@
     <div class="flex-grow-1">
         <h4 class="fs-16 text-uppercase fw-bold mb-0">{{ __('labels.bookings') }}</h4>
     </div>
+    <div>
+        <a href="{{ route('bookings.seat-availability') }}" class="btn btn-link btn-sm">
+            <i class="ti ti-layout-grid me-1"></i> {{ __('labels.seat_availability') }}
+        </a>
+    </div>
 </div>
 @include('backend.includes.alert-message')
 <div class="row">

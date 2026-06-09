@@ -85,10 +85,26 @@
 
         @can('bookings view')
         <li class="side-nav-item">
-            <a href="{{ route('bookings.index') }}" class="side-nav-link">
+            <a data-bs-toggle="collapse" href="#sidebarBookings" aria-expanded="false" aria-controls="sidebarBookings"
+                class="side-nav-link">
                 <span class="menu-icon"><i class="ti ti-calendar-event"></i></span>
                 <span class="menu-text"> Bookings </span>
+                <span class="menu-arrow"></span>
             </a>
+            <div class="collapse" id="sidebarBookings">
+                <ul class="sub-menu">
+                    <li class="side-nav-item">
+                        <a href="{{ route('bookings.index') }}" class="side-nav-link">
+                            <span class="menu-text"> All Bookings </span>
+                        </a>
+                    </li>
+                    <li class="side-nav-item">
+                        <a href="{{ route('bookings.seat-availability') }}" class="side-nav-link">
+                            <span class="menu-text"> Seat Availability </span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
         </li>
         @endcan
 
