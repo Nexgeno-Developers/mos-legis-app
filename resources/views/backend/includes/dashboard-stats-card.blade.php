@@ -1,17 +1,12 @@
-<div class="col-12">
-    <div class="card overflow-hidden">
-        <div class="card-body">
-            <div class="d-flex align-items-center gap-2 mb-3">
-                <div class="user-img fs-42 flex-shrink-0">
-                    <span class="avatar-title text-bg-primary rounded-circle fs-18">
-                        <i class="{{ $icon }}"></i>
-                    </span>
-                </div>
+<div class="col-12 mb-3">
+    <div class="overflow-hidden">
+        <div class="">
+            <div class="d-flex align-items-center gap-2 mb-2">
                 <h5 class="text-uppercase fw-bold mb-0 fs-14">{{ $name }}</h5>
             </div>
             <div class="row g-3">
                 @foreach ($stats as $stat)
-                <div class="col-6 col-md-4 col-xl-2 d-flex">
+                <div class="col-2">
                     <div class="card overflow-hidden mb-0 border h-100 w-100">
                         <div class="card-body py-3 d-flex flex-column h-100">
                             @if (!empty($stat['url']))
