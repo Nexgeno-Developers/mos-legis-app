@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Backend;
 
+use App\Jobs\SendNotificationJob;
 use App\Models\Booking;
 use App\Models\BookingItem;
 use App\Models\Payment;
@@ -138,7 +139,9 @@ class BookingController extends BaseController
 
     public function update(Request $request, $id)
     {
-        $booking = Booking::findOrFail($id);
+        $booking = Booking::with('user')->findOrFail($id);
+        $previousStatus = $booking->booking_status;
+
         $booking->update(['booking_status' => $request->booking_status]);
 
         ActivityLogService::store(
@@ -148,6 +151,23 @@ class BookingController extends BaseController
             ['booking_status' => $request->booking_status],
             'Booking status updated'
         );
+
+        if ($booking->wasChanged('booking_status')) {
+            SendNotificationJob::dispatch(
+                'booking_status_changed',
+                [
+                    'mobile' => $booking->user?->phone,
+                    'email' => $booking->user?->email,
+                ],
+                [
+                    'customer_name' => $booking->user?->name ?? '',
+                    'booking_no' => $booking->invoice_no ?? (string) $booking->id,
+                    'previous_status' => $previousStatus,
+                    'booking_status' => $booking->booking_status,
+                    'amount' => $booking->grand_total_amount,
+                ]
+            );
+        }
 
         return response()->json(['status' => true, 'notification' => __('messages.updated')]);
     }

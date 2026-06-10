@@ -23,5 +23,20 @@ class NotificationTemplateSeeder extends Seeder
                 'status' => true,
             ]
         );
+
+        NotificationTemplate::updateOrCreate(
+            ['slug' => 'booking_status_changed'],
+            [
+                'name' => 'Booking Status Changed',
+                'sms_template' => 'Booking #{booking_no} status updated to {booking_status}.',
+                'whatsapp_template' => "Hello {customer_name}\n\nBooking #{booking_no} status has been updated.\n\nPrevious: {previous_status}\nCurrent: {booking_status}\n\nAmount: {amount}",
+                'email_subject' => 'Booking Status Updated',
+                'email_template' => '<h2>Hello {customer_name}</h2><p>Booking <strong>#{booking_no}</strong> status has been updated.</p><p><strong>Previous:</strong> {previous_status}<br><strong>Current:</strong> {booking_status}</p><p>Amount: {amount}</p>',
+                'sms_enabled' => true,
+                'whatsapp_enabled' => true,
+                'email_enabled' => true,
+                'status' => true,
+            ]
+        );
     }
 }
