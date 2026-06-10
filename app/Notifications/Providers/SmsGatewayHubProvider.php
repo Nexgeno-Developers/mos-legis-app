@@ -13,16 +13,19 @@ class SmsGatewayHubProvider implements SmsProviderInterface
         $config = config('notification.providers.sms.smsgatewayhub');
 
         try {
-            $response = Http::asForm()->post('https://www.smsgatewayhub.com/api/mt/SendSMS', [
-                'APIKey' => $config['api_key'],
-                'senderid' => $config['sender_id'],
-                'channel' => 2,
-                'DCS' => 0,
-                'flashsms' => 0,
-                'number' => $mobile,
-                'text' => $message,
-                'route' => $config['route'],
-            ]);
+            $response = Http::withoutVerifying()->get(
+                'https://www.smsgatewayhub.com/api/mt/SendSMS',
+                [
+                    'APIKey' => $config['api_key'],
+                    'senderid' => $config['sender_id'],
+                    'channel' => 2,
+                    'DCS' => 0,
+                    'flashsms' => 0,
+                    'number' => $mobile,
+                    'text' => $message,
+                    'route' => $config['route'],
+                ]
+            );
 
             return [
                 'status' => $response->successful(),
