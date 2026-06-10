@@ -165,6 +165,7 @@ class BookingController extends BaseController
                     'previous_status' => $previousStatus,
                     'booking_status' => $booking->booking_status,
                     'amount' => $booking->grand_total_amount,
+                    'options' => ['wati' => ['name' => 'rashid', 'attribute_1' => '1', 'attribute_2' => '1']],
                 ]
             );
         }

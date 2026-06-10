@@ -42,7 +42,8 @@ class NotificationService
             $this->sendWhatsapp(
                 $slug,
                 $recipient['mobile'],
-                $this->replaceVariables($template->whatsapp_template, $data)
+                $this->replaceVariables($template->whatsapp_template, $data),
+                $data
             );
         }
 
@@ -80,11 +81,11 @@ class NotificationService
         $this->logNotification($templateSlug, 'sms', $providerName, $mobile, $message, $result);
     }
 
-    protected function sendWhatsapp(string $templateSlug, string $mobile, string $message): void
+    protected function sendWhatsapp(string $templateSlug, string $mobile, string $message, array $options = []): void
     {
         $providerName = config('notification.whatsapp_provider');
         $provider = $this->resolveWhatsappProvider($providerName);
-        $result = $provider->send($mobile, $message);
+        $result = $provider->send($mobile, $message, $options);
 
         $this->logNotification($templateSlug, 'whatsapp', $providerName, $mobile, $message, $result);
     }
