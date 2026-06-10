@@ -17,6 +17,7 @@ return new class extends Migration
             $table->longText('message')->nullable();
             $table->boolean('status')->default(false);
             $table->longText('response')->nullable();
+            $table->longText('payload')->nullable();
             $table->timestamps();
         });
     }

@@ -14,9 +14,11 @@ class NotificationLog extends Model
         'message',
         'status',
         'response',
+        'payload',
     ];
 
     protected $casts = [
         'status' => 'boolean',
+        'payload' => 'array',
     ];
 }

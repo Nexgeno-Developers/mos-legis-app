@@ -145,6 +145,7 @@ class NotificationService
             'message' => $logMessage,
             'status' => (bool) ($result['status'] ?? false),
             'response' => $result['response'] ?? null,
+            'payload' => $result['payload'] ?? null,
         ]);
     }
 }
