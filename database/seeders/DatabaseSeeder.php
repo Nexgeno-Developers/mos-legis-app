@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
             CoworkingDataSeeder::class,
             PageSeeder::class,
             MenuSeeder::class,
+            NotificationTemplateSeeder::class,
         ]);
     }
 }
