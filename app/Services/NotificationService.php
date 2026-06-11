@@ -34,7 +34,9 @@ class NotificationService
             $this->sendSms(
                 $slug,
                 $recipient['mobile'],
-                $this->replaceVariables($template->sms_template, $data)
+                $this->replaceVariables($template->sms_template, $data),
+                $data,
+                $template->toArray()
             );
         }
 
@@ -73,11 +75,11 @@ class NotificationService
         return str_replace(array_keys($replacements), array_values($replacements), $content);
     }
 
-    protected function sendSms(string $templateSlug, string $mobile, string $message): void
+    protected function sendSms(string $templateSlug, string $mobile, string $message, array $options = [], array $templateData = []): void
     {
         $providerName = config('notification.sms_provider');
         $provider = $this->resolveSmsProvider($providerName);
-        $result = $provider->send($mobile, $message);
+        $result = $provider->send($mobile, $message, $options, $templateData);
 
         $this->logNotification($templateSlug, 'sms', $providerName, $mobile, $message, $result);
     }

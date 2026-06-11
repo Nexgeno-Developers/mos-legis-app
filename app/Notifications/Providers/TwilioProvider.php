@@ -8,7 +8,7 @@ use Throwable;
 
 class TwilioProvider implements SmsProviderInterface
 {
-    public function send(string $mobile, string $message): array
+    public function send(string $mobile, string $message, array $options = [], array $templateData = []): array
     {
         $config = config('notification.providers.sms.twilio');
 
