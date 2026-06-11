@@ -12,7 +12,7 @@ class WatiProvider implements WhatsappProviderInterface
     {
         $config = config('notification.providers.whatsapp.wati');
         $templateName = $message;
-        $watiOptions = $options['options']['wati'] ?? [];
+        $watiOptions = $options ?? [];
         $parameters = [];
 
         foreach ($watiOptions as $key => $value) {

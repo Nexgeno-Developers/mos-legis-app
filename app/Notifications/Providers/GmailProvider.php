@@ -21,11 +21,21 @@ class GmailProvider implements EmailProviderInterface
 
             return [
                 'status' => true,
+                'payload' => [
+                    'to' => $email,
+                    'subject' => $subject,
+                    'body' => $body,
+                ],
                 'response' => 'sent via mail transport',
             ];
         } catch (Throwable $e) {
             return [
                 'status' => false,
+                'payload' => [
+                    'to' => $email,
+                    'subject' => $subject,
+                    'body' => $body,
+                ],
                 'response' => $e->getMessage(),
             ];
         }
