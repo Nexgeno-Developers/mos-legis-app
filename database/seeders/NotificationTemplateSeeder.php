@@ -30,13 +30,25 @@ class NotificationTemplateSeeder extends Seeder
             [
                 'name' => 'Booking Status Changed',
                 'sms_template' => 'Booking #{booking_no} status updated to {booking_status}.',
-                'whatsapp_template' => "birthday",
+                'whatsapp_template' => "hv_payment_success_02",
                 'whatsapp_options' => [
                     'wati' => [
                         'parameters' => [
                             [
                                 'name' => 'name',
-                                'value' => '{customer_name}',
+                                'value' => '{customer_name}'
+                            ],
+                            [
+                                'name' => 'installment',
+                                'value' => '{booking_no}'
+                            ],
+                            [
+                                'name' => 'plan_name',
+                                'value' => '{booking_status}'
+                            ],
+                            [
+                                'name' => 'amount',
+                                'value' => '{amount}'
                             ]
                         ],
                     ],
