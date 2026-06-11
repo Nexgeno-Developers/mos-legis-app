@@ -13,6 +13,7 @@ return new class extends Migration
             $table->string('slug')->unique();
             $table->string('name');
             $table->text('sms_template')->nullable();
+            $table->json('sms_options')->nullable();
             $table->longText('whatsapp_template')->nullable();
             $table->json('whatsapp_options')->nullable();
             $table->string('email_subject')->nullable();

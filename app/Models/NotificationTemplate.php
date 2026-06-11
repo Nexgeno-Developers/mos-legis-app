@@ -10,6 +10,7 @@ class NotificationTemplate extends Model
         'slug',
         'name',
         'sms_template',
+        'sms_options',
         'whatsapp_template',
         'whatsapp_options',
         'email_subject',
@@ -21,6 +22,7 @@ class NotificationTemplate extends Model
     ];
 
     protected $casts = [
+        'sms_options' => 'array',
         'whatsapp_options' => 'array',
         'sms_enabled' => 'boolean',
         'whatsapp_enabled' => 'boolean',

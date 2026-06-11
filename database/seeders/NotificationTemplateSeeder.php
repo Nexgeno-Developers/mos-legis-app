@@ -14,6 +14,7 @@ class NotificationTemplateSeeder extends Seeder
             [
                 'name' => 'Booking Created',
                 'sms_template' => 'Booking #{booking_no} confirmed.',
+                'sms_options' => [],
                 'whatsapp_template' => "Hello {customer_name}\n\nBooking #{booking_no} confirmed.\n\nAmount: {amount}",
                 'whatsapp_options' => [],
                 'email_subject' => 'Booking Confirmed',
@@ -30,26 +31,27 @@ class NotificationTemplateSeeder extends Seeder
             [
                 'name' => 'Booking Status Changed',
                 'sms_template' => 'Booking #{booking_no} status updated to {booking_status}.',
-                'whatsapp_template' => "hv_payment_success_02",
+                'sms_options' => [],
+                'whatsapp_template' => 'hv_payment_success_02',
                 'whatsapp_options' => [
                     'wati' => [
                         'parameters' => [
                             [
                                 'name' => 'name',
-                                'value' => '{customer_name}'
+                                'value' => '{customer_name}',
                             ],
                             [
                                 'name' => 'installment',
-                                'value' => '{booking_no}'
+                                'value' => '{booking_no}',
                             ],
                             [
                                 'name' => 'plan_name',
-                                'value' => '{booking_status}'
+                                'value' => '{booking_status}',
                             ],
                             [
                                 'name' => 'amount',
-                                'value' => '{amount}'
-                            ]
+                                'value' => '{amount}',
+                            ],
                         ],
                     ],
                 ],
