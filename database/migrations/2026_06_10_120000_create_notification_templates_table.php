@@ -14,6 +14,7 @@ return new class extends Migration
             $table->string('name');
             $table->text('sms_template')->nullable();
             $table->longText('whatsapp_template')->nullable();
+            $table->json('whatsapp_options')->nullable();
             $table->string('email_subject')->nullable();
             $table->longText('email_template')->nullable();
             $table->boolean('sms_enabled')->default(true);

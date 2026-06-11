@@ -12,15 +12,17 @@ class WatiProvider implements WhatsappProviderInterface
     {
         $config = config('notification.providers.whatsapp.wati');
         $templateName = $message;
-        $watiOptions = $options ?? [];
+        $watiParameters = $templateData['whatsapp_options']['wati']['parameters'] ?? [];
         $parameters = [];
 
-        foreach ($watiOptions as $key => $value) {
-            $parameters[] = [
-                'name' => $key,
-                'value' => (string) $value,
-            ];
-        }        
+        if (! empty($watiParameters)) {
+            foreach ($watiParameters as $parameter) {
+                $parameters[] = [
+                    'name' => $parameter['name'],
+                    'value' => $this->replaceParameters((string) ($parameter['value'] ?? ''), $options),
+                ];
+            }
+        }
 
         $payload = [
             'broadcast_name' => $templateName,
@@ -50,5 +52,18 @@ class WatiProvider implements WhatsappProviderInterface
                 'response' => $e->getMessage(),
             ];
         }
+    }
+
+    protected function replaceParameters(string $content, array $data): string
+    {
+        $replacements = [];
+
+        foreach ($data as $key => $value) {
+            if (is_scalar($value) || $value === null) {
+                $replacements['{'.$key.'}'] = (string) $value;
+            }
+        }
+
+        return str_replace(array_keys($replacements), array_values($replacements), $content);
     }
 }
