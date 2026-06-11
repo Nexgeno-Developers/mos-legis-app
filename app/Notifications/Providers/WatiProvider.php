@@ -8,7 +8,7 @@ use Throwable;
 
 class WatiProvider implements WhatsappProviderInterface
 {
-    public function send(string $mobile, string $message, array $options = []): array
+    public function send(string $mobile, string $message, array $options = [], array $templateData = []): array
     {
         $config = config('notification.providers.whatsapp.wati');
         $templateName = $message;
