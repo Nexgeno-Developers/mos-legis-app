@@ -38,6 +38,18 @@ Route::middleware('admin')->group(function () {
     Route::put('fees', [Admin\ManuscriptFeeController::class, 'update'])->name('fees.update');
 
     // Content
+    Route::patch('blogs/{blog}/status', [Admin\BlogController::class, 'toggleStatus'])->name('blogs.toggle-status');
+    Route::post('blogs/{blog}/duplicate', [Admin\BlogController::class, 'duplicate'])->name('blogs.duplicate');
+    Route::resource('blogs', Admin\BlogController::class)->except('show');
+    Route::patch('blog-categories/{blog_category}/status', [Admin\BlogCategoryController::class, 'toggleStatus'])->name('blog-categories.toggle-status');
+    Route::post('blog-categories/{blog_category}/duplicate', [Admin\BlogCategoryController::class, 'duplicate'])->name('blog-categories.duplicate');
+    Route::resource('blog-categories', Admin\BlogCategoryController::class)->only(['index', 'store', 'update', 'destroy']);
+    Route::patch('blog-tags/{blog_tag}/status', [Admin\BlogTagController::class, 'toggleStatus'])->name('blog-tags.toggle-status');
+    Route::post('blog-tags/{blog_tag}/duplicate', [Admin\BlogTagController::class, 'duplicate'])->name('blog-tags.duplicate');
+    Route::resource('blog-tags', Admin\BlogTagController::class)->only(['index', 'store', 'update', 'destroy']);
+    Route::patch('blog-comments/{blog_comment}/moderate', [Admin\BlogCommentController::class, 'moderate'])->name('blog-comments.moderate');
+    Route::post('blog-comments/{blog_comment}/reply', [Admin\BlogCommentController::class, 'reply'])->name('blog-comments.reply');
+    Route::resource('blog-comments', Admin\BlogCommentController::class)->only(['index', 'store', 'update', 'destroy']);
     Route::patch('pages/{page}/status', [Admin\PageController::class, 'toggleStatus'])->name('pages.toggle-status');
     Route::post('pages/{page}/duplicate', [Admin\PageController::class, 'duplicate'])->name('pages.duplicate');
     Route::resource('pages', Admin\PageController::class)->except('show');

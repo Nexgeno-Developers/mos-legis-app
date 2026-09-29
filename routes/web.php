@@ -19,6 +19,7 @@ Route::middleware('guest')->group(function () {
     Route::post('reset-password', [PasswordResetController::class, 'update'])->name('password.update');
 });
 
-// Placeholders until the Author Portal module lands.
+// Placeholders until the public site / Author Portal modules land.
+Route::get('blogs/{slug}', fn () => abort(404))->name('blogs.show');
 Route::get('login', fn () => redirect()->route('home'))->name('login');
 Route::get('account', fn () => redirect()->route('home'))->middleware('auth')->name('account.dashboard');

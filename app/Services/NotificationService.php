@@ -18,7 +18,8 @@ use InvalidArgumentException;
 
 class NotificationService
 {
-    public function sendTemplate(string $slug, array $recipient, array $data): void
+    /** @param list<string> $channels */
+    public function sendTemplate(string $slug, array $recipient, array $data, array $channels = ['email', 'sms', 'whatsapp']): void
     {
         $template = NotificationTemplate::query()
             ->where('slug', $slug)
@@ -31,7 +32,7 @@ class NotificationService
             return;
         }
 
-        if ($template->sms_enabled && ! empty($recipient['mobile']) && $template->sms_template) {
+        if (in_array('sms', $channels, true) && $template->sms_enabled && ! empty($recipient['mobile']) && $template->sms_template) {
             $this->sendSms(
                 $slug,
                 $recipient['mobile'],
@@ -41,7 +42,7 @@ class NotificationService
             );
         }
 
-        if ($template->whatsapp_enabled && ! empty($recipient['mobile']) && $template->whatsapp_template) {
+        if (in_array('whatsapp', $channels, true) && $template->whatsapp_enabled && ! empty($recipient['mobile']) && $template->whatsapp_template) {
             $this->sendWhatsapp(
                 $slug,
                 $recipient['mobile'],
@@ -51,25 +52,25 @@ class NotificationService
             );
         }
 
-        if ($template->email_enabled && ! empty($recipient['email']) && $template->email_template) {
+        if (in_array('email', $channels, true) && $template->email_enabled && ! empty($recipient['email']) && $template->email_template) {
             $subject = $this->replaceVariables($template->email_subject ?? '', $data);
 
             $this->sendEmail(
                 $slug,
                 $recipient['email'],
                 $subject,
-                $this->replaceVariables($template->email_template, $data)
+                $this->replaceVariables($template->email_template, $data, escape: true)
             );
         }
     }
 
-    protected function replaceVariables(string $content, array $data): string
+    protected function replaceVariables(string $content, array $data, bool $escape = false): string
     {
         $replacements = [];
 
         foreach ($data as $key => $value) {
             if (is_scalar($value) || $value === null) {
-                $replacements['{'.$key.'}'] = (string) $value;
+                $replacements['{'.$key.'}'] = $escape ? e((string) $value) : (string) $value;
             }
         }
 
