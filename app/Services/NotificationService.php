@@ -8,7 +8,8 @@ use App\Notifications\Contracts\EmailProviderInterface;
 use App\Notifications\Contracts\SmsProviderInterface;
 use App\Notifications\Contracts\WhatsappProviderInterface;
 use App\Notifications\Providers\BrevoProvider;
-use App\Notifications\Providers\GmailProvider;
+use App\Notifications\Providers\LogProvider;
+use App\Notifications\Providers\MailProvider;
 use App\Notifications\Providers\SmsGatewayHubProvider;
 use App\Notifications\Providers\TwilioProvider;
 use App\Notifications\Providers\WatiProvider;
@@ -106,6 +107,7 @@ class NotificationService
     {
         return match ($providerName) {
             'twilio' => app(TwilioProvider::class),
+            'log' => app(LogProvider::class),
             'smsgatewayhub' => app(SmsGatewayHubProvider::class),
             default => throw new InvalidArgumentException("Unsupported SMS provider [{$providerName}]"),
         };
@@ -115,6 +117,7 @@ class NotificationService
     {
         return match ($providerName) {
             'wati' => app(WatiProvider::class),
+            'log' => app(LogProvider::class),
             default => throw new InvalidArgumentException("Unsupported WhatsApp provider [{$providerName}]"),
         };
     }
@@ -123,7 +126,7 @@ class NotificationService
     {
         return match ($providerName) {
             'brevo' => app(BrevoProvider::class),
-            'gmail' => app(GmailProvider::class),
+            'mail' => app(MailProvider::class),
             default => throw new InvalidArgumentException("Unsupported email provider [{$providerName}]"),
         };
     }

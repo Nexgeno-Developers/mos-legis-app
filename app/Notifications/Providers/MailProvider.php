@@ -6,11 +6,11 @@ use App\Notifications\Contracts\EmailProviderInterface;
 use Illuminate\Support\Facades\Mail;
 use Throwable;
 
-class GmailProvider implements EmailProviderInterface
+class MailProvider implements EmailProviderInterface
 {
     public function send(string $email, string $subject, string $body): array
     {
-        $config = config('notification.providers.email.gmail');
+        $config = config('notification.providers.email.mail');
 
         try {
             Mail::html($body, function ($mail) use ($email, $subject, $config) {

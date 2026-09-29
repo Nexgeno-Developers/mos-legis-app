@@ -2,11 +2,11 @@
 
 return [
 
-    'sms_provider' => env('SMS_PROVIDER', 'smsgatewayhub'),
+    'sms_provider' => env('SMS_PROVIDER', 'log'),
 
-    'whatsapp_provider' => env('WHATSAPP_PROVIDER', 'wati'),
+    'whatsapp_provider' => env('WHATSAPP_PROVIDER', 'log'),
 
-    'email_provider' => env('EMAIL_PROVIDER', 'gmail'),
+    'email_provider' => env('EMAIL_PROVIDER', 'mail'),
 
     'providers' => [
 
@@ -36,7 +36,7 @@ return [
                 'from_email' => env('BREVO_FROM_EMAIL', env('MAIL_FROM_ADDRESS')),
                 'from_name' => env('BREVO_FROM_NAME', env('MAIL_FROM_NAME')),
             ],
-            'gmail' => [
+            'mail' => [
                 'from_email' => env('MAIL_FROM_ADDRESS'),
                 'from_name' => env('MAIL_FROM_NAME'),
             ],
