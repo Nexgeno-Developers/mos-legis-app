@@ -28,6 +28,13 @@ class RazorpayWebhookController extends Controller
             return response()->json(['status' => 'ignored']);
         }
 
+        // Never settle a payment for a different amount than was charged.
+        if ($request->input('event') === 'payment.captured' && (int) ($entity['amount'] ?? 0) !== $payment->totalInMinorUnits()) {
+            activity()->log('Payments', 'Webhook amount mismatch', $payment, ['captured' => $entity['amount'] ?? null]);
+
+            return response()->json(['status' => 'amount mismatch'], 422);
+        }
+
         match ($request->input('event')) {
             'payment.captured' => $payments->markPaid($payment, $entity['id'], $entity['method'] ?? null, null),
             'payment.failed' => $payments->markFailed($payment, $entity['error_description'] ?? 'Payment failed'),

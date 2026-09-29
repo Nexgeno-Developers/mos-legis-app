@@ -20,6 +20,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 
 /**
@@ -62,7 +63,7 @@ class CheckoutController extends Controller
         $data = $request->validate([
             'payable_type' => ['required', 'in:manuscript_submissions,plagiarism_checks'],
             'payable_id' => ['required', 'integer'],
-            'purpose' => ['required', 'string'],
+            'purpose' => ['required', Rule::enum(PaymentPurpose::class)],
         ]);
         $purpose = PaymentPurpose::from($data['purpose']);
         $user = $request->user();

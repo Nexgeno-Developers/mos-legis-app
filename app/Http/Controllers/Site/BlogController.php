@@ -10,6 +10,7 @@ use App\Models\BlogCategory;
 use App\Models\BlogTag;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 
 /**
@@ -66,7 +67,7 @@ class BlogController extends Controller
         $blog = Blog::live()->where('slug', $slug)->firstOrFail();
         $data = $request->validate([
             'comment' => ['required', 'string', 'min:3', 'max:3000'],
-            'parent_id' => ['nullable', 'integer', 'exists:blog_comments,id'],
+            'parent_id' => ['nullable', 'integer', Rule::exists('blog_comments', 'id')->where('blog_id', $blog->id)->whereNull('parent_id')],
         ]);
 
         $user = $request->user();
