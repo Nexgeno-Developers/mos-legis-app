@@ -28,6 +28,15 @@ Route::middleware('admin')->group(function () {
     Route::get('profile', [Admin\ProfileController::class, 'edit'])->name('profile.edit');
     Route::put('profile', [Admin\ProfileController::class, 'update'])->name('profile.update');
 
+    // Manuscript catalogue
+    Route::patch('author-categories/{author_category}/status', [Admin\AuthorCategoryController::class, 'toggleStatus'])->name('author-categories.toggle-status');
+    Route::resource('author-categories', Admin\AuthorCategoryController::class)->only(['index', 'store', 'update', 'destroy']);
+    Route::patch('content-categories/{content_category}/status', [Admin\ContentCategoryController::class, 'toggleStatus'])->name('content-categories.toggle-status');
+    Route::resource('content-categories', Admin\ContentCategoryController::class)->only(['index', 'store', 'update', 'destroy']);
+    Route::resource('themes', Admin\ContentCategoryThemeController::class)->only(['index', 'store', 'update', 'destroy']);
+    Route::get('fees', [Admin\ManuscriptFeeController::class, 'index'])->name('fees.index');
+    Route::put('fees', [Admin\ManuscriptFeeController::class, 'update'])->name('fees.update');
+
     // Administration
     Route::patch('users/{user}/status', [Admin\UserController::class, 'toggleStatus'])->name('users.toggle-status');
     Route::resource('users', Admin\UserController::class)->except('show');

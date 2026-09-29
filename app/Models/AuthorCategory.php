@@ -28,4 +28,20 @@ class AuthorCategory extends Model
     {
         return $this->hasMany(ManuscriptFee::class, 'author_category_id');
     }
+
+    public function submissions(): HasMany
+    {
+        return $this->hasMany(ManuscriptSubmission::class, 'author_category_id');
+    }
+
+    public function authorProfiles(): HasMany
+    {
+        return $this->hasMany(AuthorProfile::class, 'author_category_id');
+    }
+
+    /** Referenced by manuscripts or profiles (both RESTRICT on delete). */
+    public function submissionsExist(): bool
+    {
+        return $this->submissions()->exists() || $this->authorProfiles()->exists();
+    }
 }
