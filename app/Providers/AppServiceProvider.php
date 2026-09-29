@@ -16,9 +16,12 @@ use App\Support\Settings;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
+use SocialiteProviders\Manager\SocialiteWasCalled;
+use SocialiteProviders\Orcid\OrcidExtendSocialite;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -67,5 +70,8 @@ class AppServiceProvider extends ServiceProvider
             : Password::min(8));
 
         Paginator::defaultView('components.pagination');
+
+        // SOW B.01: ORCID sign-in via the SocialiteProviders ORCID driver.
+        Event::listen(SocialiteWasCalled::class, [OrcidExtendSocialite::class, 'handle']);
     }
 }

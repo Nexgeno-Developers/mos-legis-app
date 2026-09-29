@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 /**
  * SOW A.13 — the other axis of the fee matrix; drives word-count validation.
@@ -32,6 +33,13 @@ class ContentCategory extends Model
     public function themes(): HasMany
     {
         return $this->hasMany(ContentCategoryTheme::class, 'content_category_id');
+    }
+
+    /** This month's theme, if the admin has set one (SOW A.14). */
+    public function currentTheme(): HasOne
+    {
+        return $this->hasOne(ContentCategoryTheme::class, 'content_category_id')
+            ->ofMany(['id' => 'max'], fn ($q) => $q->whereDate('period', now()->startOfMonth()));
     }
 
     public function fees(): HasMany

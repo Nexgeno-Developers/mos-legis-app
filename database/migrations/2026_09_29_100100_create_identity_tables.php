@@ -18,7 +18,8 @@ return new class extends Migration
             $table->string('otp_code');
             $table->enum('purpose', ['registration', 'login', 'password_reset'])->default('registration');
             $table->unsignedTinyInteger('attempts')->default(0);
-            $table->timestamp('expires_at');
+            // Explicit default: stops MySQL/MariaDB adding ON UPDATE CURRENT_TIMESTAMP to the first NOT NULL timestamp.
+            $table->timestamp('expires_at')->useCurrent();
             $table->timestamp('verified_at')->nullable();
             $table->timestamp('created_at')->nullable();
 

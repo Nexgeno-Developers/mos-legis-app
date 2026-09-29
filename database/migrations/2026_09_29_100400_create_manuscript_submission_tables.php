@@ -72,7 +72,8 @@ return new class extends Migration
             $table->enum('decision', ['approved', 'revision', 'rejected']);
             $table->text('reviewer_remarks')->nullable();
             $table->string('reviewed_attachment')->comment('File that was under review when the decision was made.');
-            $table->timestamp('decided_at');
+            // Explicit default: stops MySQL/MariaDB adding ON UPDATE CURRENT_TIMESTAMP (a resubmission must not change it).
+            $table->timestamp('decided_at')->useCurrent();
             $table->string('resubmitted_attachment')->nullable();
             $table->unsignedInteger('resubmitted_word_count')->nullable();
             $table->text('author_response')->nullable();
