@@ -27,4 +27,9 @@ Route::middleware('admin')->group(function () {
 
     Route::get('profile', [Admin\ProfileController::class, 'edit'])->name('profile.edit');
     Route::put('profile', [Admin\ProfileController::class, 'update'])->name('profile.update');
+
+    // Administration
+    Route::patch('users/{user}/status', [Admin\UserController::class, 'toggleStatus'])->name('users.toggle-status');
+    Route::resource('users', Admin\UserController::class)->except('show');
+    Route::resource('roles', Admin\RoleController::class)->except('show');
 });

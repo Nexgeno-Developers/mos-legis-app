@@ -101,9 +101,10 @@ class User extends Authenticatable
         return $this->hasRole(RoleName::Author->value);
     }
 
+    /** Any role other than Author (Superadmin, Reviewer or a custom editorial role) uses the admin panel. */
     public function canAccessAdmin(): bool
     {
-        return $this->hasAnyRole([RoleName::Superadmin->value, RoleName::Reviewer->value]);
+        return $this->roles->contains(fn ($role) => $role->name !== RoleName::Author->value);
     }
 
     public function primaryRole(): ?RoleName

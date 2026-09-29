@@ -34,8 +34,10 @@ class AppServiceProvider extends ServiceProvider
 
         Model::shouldBeStrict(! $this->app->isProduction());
 
-        // SOW A.10: Superadmin has every permission by default.
-        Gate::before(fn (User $user) => $user->hasRole(RoleName::Superadmin->value) ? true : null);
+        // SOW A.10: Superadmin has every permission by default. Limited to
+        // permission names ("module.ability") so policy business rules
+        // (e.g. "cannot delete yourself") still apply to superadmins.
+        Gate::before(fn (User $user, string $ability) => str_contains($ability, '.') && $user->hasRole(RoleName::Superadmin->value) ? true : null);
 
         Password::defaults(fn () => $this->app->isProduction()
             ? Password::min(8)->letters()->numbers()->uncompromised()

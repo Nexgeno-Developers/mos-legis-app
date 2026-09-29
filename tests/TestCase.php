@@ -3,9 +3,6 @@
 namespace Tests;
 
 use App\Models\User;
-use Database\Seeders\RolePermissionSeeder;
-use Database\Seeders\SettingSeeder;
-use Illuminate\Database\Seeder;
 use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 
@@ -44,16 +41,5 @@ abstract class TestCase extends BaseTestCase
     protected function author(array $attributes = []): User
     {
         return User::factory()->author()->create($attributes);
-    }
-}
-
-/**
- * Roles, permissions and settings every test needs.
- */
-class BaseDataSeeder extends Seeder
-{
-    public function run(): void
-    {
-        $this->call([RolePermissionSeeder::class, SettingSeeder::class]);
     }
 }
