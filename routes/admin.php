@@ -37,6 +37,11 @@ Route::middleware('admin')->group(function () {
     Route::get('fees', [Admin\ManuscriptFeeController::class, 'index'])->name('fees.index');
     Route::put('fees', [Admin\ManuscriptFeeController::class, 'update'])->name('fees.update');
 
+    // Content
+    Route::patch('pages/{page}/status', [Admin\PageController::class, 'toggleStatus'])->name('pages.toggle-status');
+    Route::post('pages/{page}/duplicate', [Admin\PageController::class, 'duplicate'])->name('pages.duplicate');
+    Route::resource('pages', Admin\PageController::class)->except('show');
+
     // Administration
     Route::patch('users/{user}/status', [Admin\UserController::class, 'toggleStatus'])->name('users.toggle-status');
     Route::resource('users', Admin\UserController::class)->except('show');
