@@ -23,6 +23,19 @@ class ContentCategoryTheme extends Model
         return ['period' => 'date', 'volume' => 'integer'];
     }
 
+    /**
+     * The theme authors write to this month (SOW A.14). Categories without a
+     * theme for the current month simply have none.
+     */
+    public static function currentFor(int $contentCategoryId): ?self
+    {
+        return static::query()
+            ->where('content_category_id', $contentCategoryId)
+            ->whereDate('period', now()->startOfMonth())
+            ->latest('id')
+            ->first();
+    }
+
     public function contentCategory(): BelongsTo
     {
         return $this->belongsTo(ContentCategory::class, 'content_category_id');

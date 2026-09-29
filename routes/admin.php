@@ -28,6 +28,30 @@ Route::middleware('admin')->group(function () {
     Route::get('profile', [Admin\ProfileController::class, 'edit'])->name('profile.edit');
     Route::put('profile', [Admin\ProfileController::class, 'update'])->name('profile.update');
 
+    // Manuscript pipeline
+    Route::controller(Admin\SubmissionController::class)->prefix('submissions/{submission}')->name('submissions.')->group(function () {
+        Route::get('download', 'download')->name('download');
+        Route::get('revisions/{revision}/download/{version}', 'download')->whereIn('version', ['reviewed', 'resubmitted'])->name('revision-download');
+        Route::get('certificate', 'certificate')->name('certificate');
+    });
+    Route::controller(Admin\SubmissionWorkflowController::class)->prefix('submissions/{submission}')->name('submissions.')->group(function () {
+        Route::post('assign', 'assign')->name('assign');
+        Route::post('decision', 'decide')->name('decide');
+        Route::patch('stage', 'changeStage')->name('change-stage');
+        Route::post('recheck', 'recheck')->name('recheck');
+        Route::post('awards', 'awardBestPaper')->name('awards.store');
+        Route::delete('awards/{award}', 'removeAward')->name('awards.destroy');
+    });
+    Route::resource('submissions', Admin\SubmissionController::class);
+    Route::get('payments/{payment}/invoice', [Admin\PaymentController::class, 'invoice'])->name('payments.invoice');
+    Route::resource('payments', Admin\PaymentController::class)->only(['index', 'show']);
+    Route::controller(Admin\PlagiarismCheckController::class)->prefix('plagiarism-checks/{plagiarism_check}')->name('plagiarism-checks.')->group(function () {
+        Route::post('recheck', 'recheck')->name('recheck');
+        Route::get('report', 'report')->name('report');
+        Route::get('file', 'file')->name('file');
+    });
+    Route::resource('plagiarism-checks', Admin\PlagiarismCheckController::class)->only(['index', 'show']);
+
     // Manuscript catalogue
     Route::patch('author-categories/{author_category}/status', [Admin\AuthorCategoryController::class, 'toggleStatus'])->name('author-categories.toggle-status');
     Route::resource('author-categories', Admin\AuthorCategoryController::class)->only(['index', 'store', 'update', 'destroy']);
