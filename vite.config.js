@@ -9,9 +9,9 @@ export default defineConfig({
             input: ['resources/css/app.css', 'resources/js/app.js'],
             refresh: true,
             fonts: [
-                bunny('Instrument Sans', {
-                    weights: [400, 500, 600],
-                }),
+                bunny('Crimson Pro', { weights: [400, 500, 600, 700], styles: ['normal', 'italic'] }),
+                bunny('Tangerine', { weights: [400, 700] }),
+                bunny('IBM Plex Mono', { weights: [400, 500] }),
             ],
         }),
         tailwindcss(),

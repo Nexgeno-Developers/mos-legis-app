@@ -1,9 +1,168 @@
 @import 'tailwindcss';
+@import 'trix/dist/trix.css';
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
+@source '../views';
+@source '../js';
+@source '../../app';
 
-@theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-        'Segoe UI Symbol', 'Noto Color Emoji';
+@custom-variant dark (&:is(.dark *));
+
+/*
+ * MOS Legis design system — tokens copied from the approved wireframes
+ * (mos-legis-app/src/styles.css): crimson primary, gold accent, ivory surface.
+ */
+@theme inline {
+    --radius-sm: calc(var(--radius) - 2px);
+    --radius-md: var(--radius);
+    --radius-lg: calc(var(--radius) + 2px);
+
+    --font-display: 'Crimson Pro', 'Times New Roman', Georgia, serif;
+    --font-sans: 'Times New Roman', Times, Georgia, serif;
+    --font-script: 'Tangerine', 'Monotype Corsiva', cursive;
+    --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+
+    --color-background: var(--background);
+    --color-foreground: var(--foreground);
+    --color-card: var(--card);
+    --color-card-foreground: var(--card-foreground);
+    --color-popover: var(--popover);
+    --color-primary: var(--primary);
+    --color-primary-foreground: var(--primary-foreground);
+    --color-secondary: var(--secondary);
+    --color-secondary-foreground: var(--secondary-foreground);
+    --color-muted: var(--muted);
+    --color-muted-foreground: var(--muted-foreground);
+    --color-accent: var(--accent);
+    --color-gold: var(--gold);
+    --color-gold-foreground: var(--gold-foreground);
+    --color-destructive: var(--destructive);
+    --color-destructive-foreground: var(--destructive-foreground);
+    --color-success: var(--success);
+    --color-success-foreground: var(--success-foreground);
+    --color-warning: var(--warning);
+    --color-warning-foreground: var(--warning-foreground);
+    --color-info: var(--info);
+    --color-info-foreground: var(--info-foreground);
+    --color-border: var(--border);
+    --color-input: var(--input);
+    --color-ring: var(--ring);
+    --color-sidebar: var(--sidebar);
 }
+
+:root {
+    --radius: 0.25rem;
+    --background: oklch(0.985 0.007 88.6);
+    --foreground: oklch(0.207 0.008 67.4);
+    --card: oklch(1 0 0);
+    --card-foreground: oklch(0.207 0.008 67.4);
+    --popover: oklch(1 0 0);
+    --primary: oklch(0.489 0.182 24.7);
+    --primary-foreground: oklch(0.988 0.007 88.6);
+    --secondary: oklch(0.944 0.018 86.1);
+    --secondary-foreground: oklch(0.207 0.008 67.4);
+    --muted: oklch(0.935 0.017 84.6);
+    --muted-foreground: oklch(0.501 0.023 77.1);
+    --accent: oklch(0.944 0.018 86.1);
+    --gold: oklch(0.722 0.124 87.7);
+    --gold-foreground: oklch(0.207 0.008 67.4);
+    --destructive: oklch(0.422 0.151 28.9);
+    --destructive-foreground: oklch(0.988 0.007 88.6);
+    --success: oklch(0.479 0.078 161.1);
+    --success-foreground: oklch(0.988 0.007 88.6);
+    --warning: oklch(0.599 0.116 78.5);
+    --warning-foreground: oklch(0.988 0.007 88.6);
+    --info: oklch(0.417 0.093 258.5);
+    --info-foreground: oklch(0.988 0.007 88.6);
+    --border: oklch(0.891 0.024 82.1);
+    --input: oklch(0.891 0.024 82.1);
+    --ring: oklch(0.722 0.124 87.7);
+    --sidebar: oklch(0.944 0.018 86.1);
+}
+
+@layer base {
+    * {
+        border-color: var(--color-border);
+    }
+
+    html {
+        font-size: 112.5%;
+    }
+
+    body {
+        background-color: var(--color-background);
+        color: var(--color-foreground);
+        font-family: var(--font-sans);
+        font-size: 1.08rem;
+        line-height: 1.7;
+        letter-spacing: 0.01em;
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+        font-family: var(--font-display);
+        font-weight: 700;
+        letter-spacing: -0.01em;
+        line-height: 1.1;
+    }
+
+    [x-cloak] {
+        display: none !important;
+    }
+
+    button:not(:disabled), [role='button'] {
+        cursor: pointer;
+    }
+}
+
+/* Recurring gold hairline section divider, echoing the masthead rules. */
+@utility gold-rule {
+    height: 1px;
+    width: 100%;
+    background: linear-gradient(to right, transparent, color-mix(in oklab, var(--color-gold) 70%, transparent), transparent);
+}
+
+@utility label-caps {
+    font-variant-caps: all-small-caps;
+    letter-spacing: 0.14em;
+    font-weight: 600;
+}
+
+@utility measure {
+    max-width: 68ch;
+}
+
+@utility script-flourish {
+    font-family: var(--font-script);
+    font-size: 1.9em;
+    line-height: 1.1;
+    font-weight: 400;
+}
+
+/* Long-form CMS / blog / manuscript copy. */
+@utility prose-legis {
+    & h2 { font-size: 1.75rem; margin-top: 2rem; margin-bottom: 0.75rem; color: var(--color-foreground); }
+    & h3 { font-size: 1.35rem; margin-top: 1.5rem; margin-bottom: 0.5rem; }
+    & p { margin-bottom: 1rem; }
+    & ul { list-style: disc; padding-left: 1.5rem; margin-bottom: 1rem; }
+    & ol { list-style: decimal; padding-left: 1.5rem; margin-bottom: 1rem; }
+    & li { margin-bottom: 0.35rem; }
+    & a { color: var(--color-primary); text-decoration: underline; text-underline-offset: 3px; }
+    & blockquote { border-left: 2px solid var(--color-gold); padding-left: 1rem; font-style: italic; color: var(--color-muted-foreground); }
+}
+
+@utility field-input {
+    width: 100%;
+    border: 1px solid var(--color-border);
+    background: var(--color-card);
+    padding: 0.55rem 0.9rem;
+    font-size: 1rem;
+    color: var(--color-foreground);
+    &:focus { outline: none; border-color: var(--color-gold); }
+    &::placeholder { color: var(--color-muted-foreground); }
+    &:disabled { background: var(--color-muted); }
+}
+
+trix-toolbar .trix-button-group { background: var(--color-card); }
+trix-editor { background: var(--color-card); min-height: 16rem; border-color: var(--color-border) !important; }
+trix-editor:focus { outline: none; border-color: var(--color-gold) !important; }

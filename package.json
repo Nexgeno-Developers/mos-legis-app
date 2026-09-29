@@ -15,5 +15,11 @@
     },
     "optionalDependencies": {
         "@laravel/multiplex": "^0.4.1"
+    },
+    "dependencies": {
+        "alpinejs": "^3.17.4",
+        "jszip": "^3.10.2",
+        "lucide": "^1.48.0",
+        "trix": "^2.1.19"
     }
 }
