@@ -44,6 +44,12 @@ if (! function_exists('format_date')) {
             default => 'd-m-Y',
         };
 
-        return Carbon::parse($date)->format($withTime ? $format.' H:i' : $format);
+        // Stored times are in the app timezone; display them in the "Default Timezone" setting.
+        $carbon = Carbon::parse($date);
+        if ($withTime) {
+            $carbon = $carbon->copy()->setTimezone(settings('general.default_timezone', config('app.timezone')));
+        }
+
+        return $carbon->format($withTime ? $format.' H:i' : $format);
     }
 }

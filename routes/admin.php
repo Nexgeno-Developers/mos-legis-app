@@ -41,4 +41,10 @@ Route::middleware('admin')->group(function () {
     Route::patch('users/{user}/status', [Admin\UserController::class, 'toggleStatus'])->name('users.toggle-status');
     Route::resource('users', Admin\UserController::class)->except('show');
     Route::resource('roles', Admin\RoleController::class)->except('show');
+    Route::get('settings', [Admin\SettingController::class, 'edit'])->name('settings.edit');
+    Route::put('settings', [Admin\SettingController::class, 'update'])->name('settings.update');
+
+    // Operations
+    Route::get('activity-logs', [Admin\ActivityLogController::class, 'index'])->name('activity-logs.index');
+    Route::delete('activity-logs', [Admin\ActivityLogController::class, 'purge'])->name('activity-logs.purge');
 });
