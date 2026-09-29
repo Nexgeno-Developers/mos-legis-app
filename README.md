@@ -1,67 +1,82 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# MOS Legis
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Journal and manuscript management platform built from the MOS Legis Scope of Work:
+a superadmin console (SOW section A), an author portal (B) and the public website (C).
 
-## About Laravel
+**Stack:** Laravel 13 · PHP 8.3+ · MySQL 8 (MariaDB 10.4+ works) · Blade + Alpine.js + Tailwind CSS 4 · Vite.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Requirements
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- PHP 8.3+ with `pdo_mysql`, `mbstring`, `zip`, `intl`, `fileinfo`, `openssl`, and **`gd`**
+  (dompdf needs GD to embed the logo in certificates and invoices; without GD the PDFs render without the logo).
+- Composer 2, Node 20+, MySQL 8 / MariaDB.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Setup
 
-## Learning Laravel
+```bash
+composer install
+npm install
+cp .env.example .env
+php artisan key:generate
+```
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+Edit `.env`:
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+| Key | Notes |
+| --- | --- |
+| `APP_URL`, `APP_TIMEZONE` | e.g. `http://localhost:8010`, `Asia/Kolkata` |
+| `DB_CONNECTION`, `DB_DATABASE`, `DB_USERNAME`, `DB_PASSWORD` | use `mariadb` as the connection for MariaDB |
+| `MAIL_*` | SMTP for OTP codes, password resets and workflow emails |
+| `SUPERADMIN_EMAIL`, `SUPERADMIN_PASSWORD` | first admin account created by the seeder |
+| `RAZORPAY_KEY_ID`, `RAZORPAY_KEY_SECRET`, `RAZORPAY_WEBHOOK_SECRET` | leave blank locally to use the **simulated gateway** |
+| `GOOGLE_*`, `ORCID_*` | social sign-in; buttons report "not configured" until set |
+| `PLAGIARISM_DRIVER` | `fake` until a vendor is chosen (`PLAGIARISM_FAKE_SIMILARITY` forces a score) |
+| `SMS_PROVIDER`, `WHATSAPP_PROVIDER`, `EMAIL_PROVIDER` | `log` / `mail` by default; `smsgatewayhub`, `twilio`, `wati`, `brevo` available |
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+Then:
 
-## Laravel Sponsors
+```bash
+php artisan migrate --seed      # roles, permissions, settings, superadmin, categories, CMS pages, notification templates
+php artisan storage:link
+npm run build                   # or: npm run dev
+```
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+In `local`, the seeder also adds demo data. Demo logins (password `password`):
+`admin@moslegis.com` (superadmin, at `/admin`), `reviewer@moslegis.test` (reviewer), `author@moslegis.test` (author, at `/login`).
 
-### Premium Partners
+## Running
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+```bash
+php artisan serve               # web
+php artisan queue:work          # notifications, plagiarism checks (QUEUE_CONNECTION=database)
+php artisan schedule:work       # nightly: activity logs older than 30 days, expired OTP codes
+```
 
-## Contributing
+In production run the queue worker under a supervisor and add the scheduler cron:
+`* * * * * php /path/to/artisan schedule:run >> /dev/null 2>&1`.
+Point the Razorpay webhook at `POST /payments/razorpay/webhook` (events `payment.captured`, `payment.failed`).
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+## Tests
 
-## Code of Conduct
+Tests run against the `mos_legis_test` database (see `phpunit.xml`):
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+```bash
+php artisan test
+```
 
-## Security Vulnerabilities
+## Architecture notes
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
-# mcrude-cms
+- **Roles** (Spatie): `superadmin` (every permission via `Gate::before` on permission names), `reviewer`
+  (permissions granted from Roles & Permissions; sees only assigned manuscripts unless given `submissions.view-all`),
+  `author` (website only). Custom editorial roles can be added. Permission catalogue: `app/Support/Permissions.php`.
+- **Manuscript pipeline:** `app/Services/Manuscripts/ManuscriptWorkflow.php` (stage rules, notifications),
+  `ReviewerAllocator` (lowest workload, then longest since last assignment), `FeeCalculator` (matrix + India-only tax).
+- **Payments:** `PaymentGateway` interface with `RazorpayGateway` / `SimulatedGateway`; `PaymentService` settles
+  exactly once (row lock) whether the browser callback or the webhook arrives first; each payment freezes its billing snapshot.
+- **Plagiarism:** implement `App\Services\Plagiarism\PlagiarismChecker` for the chosen vendor and register it in
+  `AppServiceProvider` under `PLAGIARISM_DRIVER`.
+- **Settings:** `app/Support/SettingsRegistry.php` defines every setting; read with `settings('group.key')` (cached).
+- **Notifications:** editable templates in `notification_templates` (email/SMS/WhatsApp), sent through
+  `App\Notifications\WorkflowNotifier` (queued after commit).
+- **Files:** manuscripts, certificates, reports and CVs are on the private `local` disk and streamed through
+  authorised controllers; images are on the `public` disk.
