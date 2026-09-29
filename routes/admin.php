@@ -54,6 +54,9 @@ Route::middleware('admin')->group(function () {
     Route::post('pages/{page}/duplicate', [Admin\PageController::class, 'duplicate'])->name('pages.duplicate');
     Route::resource('pages', Admin\PageController::class)->except('show');
 
+    Route::patch('job-postings/{job_posting}/status', [Admin\JobPostingController::class, 'toggleStatus'])->name('job-postings.toggle-status');
+    Route::resource('job-postings', Admin\JobPostingController::class);
+
     // Administration
     Route::patch('users/{user}/status', [Admin\UserController::class, 'toggleStatus'])->name('users.toggle-status');
     Route::resource('users', Admin\UserController::class)->except('show');
@@ -63,5 +66,7 @@ Route::middleware('admin')->group(function () {
 
     // Operations
     Route::get('activity-logs', [Admin\ActivityLogController::class, 'index'])->name('activity-logs.index');
+    Route::get('enquiries/{enquiry}/resume', [Admin\EnquiryController::class, 'resume'])->name('enquiries.resume');
+    Route::resource('enquiries', Admin\EnquiryController::class)->only(['index', 'show', 'destroy']);
     Route::delete('activity-logs', [Admin\ActivityLogController::class, 'purge'])->name('activity-logs.purge');
 });
