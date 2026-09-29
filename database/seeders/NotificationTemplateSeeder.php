@@ -1,0 +1,69 @@
+<?php
+
+namespace Database\Seeders;
+
+use App\Models\NotificationTemplate;
+use Illuminate\Database\Seeder;
+
+/**
+ * One editable template per workflow event (SOW A.16 "notified by email on
+ * each event"; SOW Inclusions: email, WhatsApp and SMS). Placeholders in
+ * {braces} are filled by App\Notifications\WorkflowNotifier.
+ * Existing templates are never overwritten so admin edits survive re-seeding.
+ */
+class NotificationTemplateSeeder extends Seeder
+{
+    /** slug => [name, subject, body] */
+    private const TEMPLATES = [
+        'submission_received' => ['Submission received', 'Manuscript {reference} received',
+            'Manuscript {reference} "{title}" has been received. The plagiarism pre-screening will start once the pre-screening fee is paid.'],
+        'submission_plagiarism_accepted' => ['Plagiarism check passed', 'Manuscript {reference} passed plagiarism screening',
+            'Manuscript {reference} "{title}" passed plagiarism screening with {similarity}% similarity and will now be sent for review.'],
+        'submission_plagiarism_rejected' => ['Plagiarism check failed', 'Manuscript {reference} rejected at plagiarism screening',
+            'Manuscript {reference} "{title}" returned {similarity}% similarity, above the {threshold}% limit, and has been rejected.'],
+        'submission_assigned' => ['Reviewer assigned', 'Manuscript {reference} assigned for review',
+            'Manuscript {reference} "{title}" has been assigned to {reviewer_name} for review.'],
+        'submission_unassigned' => ['No reviewer available', 'Manuscript {reference} is waiting for a reviewer',
+            'No active reviewer covers "{content_category}". Manuscript {reference} "{title}" is pending assignment — please assign a reviewer manually.'],
+        'submission_revision_requested' => ['Revision requested', 'Revision requested for manuscript {reference}',
+            'The reviewer has requested a revision of manuscript {reference} "{title}". Remarks: {remarks}'],
+        'submission_resubmitted' => ['Manuscript resubmitted', 'Manuscript {reference} resubmitted',
+            'The author has resubmitted manuscript {reference} "{title}" for review.'],
+        'submission_approved' => ['Manuscript approved', 'Manuscript {reference} approved',
+            'Manuscript {reference} "{title}" has been approved. The publication fee of {amount} is now payable from your account.'],
+        'submission_rejected' => ['Manuscript rejected', 'Manuscript {reference} rejected',
+            'Manuscript {reference} "{title}" has been rejected. Remarks: {remarks}'],
+        'submission_published' => ['Manuscript published', 'Manuscript {reference} published',
+            'Manuscript {reference} "{title}" is now published. The publication certificate is available from your account.'],
+        'submission_stage_changed' => ['Stage changed', 'Manuscript {reference} is now {stage}',
+            'The stage of manuscript {reference} "{title}" was changed to {stage}.'],
+        'payment_received' => ['Payment received', 'Payment received — {invoice_number}',
+            'We have received your payment of {amount} for {purpose}. Invoice {invoice_number} is available from your account.'],
+        'plagiarism_check_completed' => ['Plagiarism check completed', 'Your plagiarism check is ready',
+            'Your plagiarism check "{title}" is complete with {similarity}% similarity. The full report is available from your account.'],
+        'best_paper_selected' => ['Best Paper winner', 'Congratulations — Best Paper {period}',
+            'Manuscript {reference} "{title}" has been selected as the Best Paper for {period}.'],
+        'blog_pending_approval' => ['Blog awaiting approval', 'Blog post awaiting approval',
+            'The blog post "{title}" by {author_name} is awaiting approval.'],
+        'enquiry_received' => ['Enquiry received', 'New {form} enquiry from {name}',
+            'A new {form} form submission was received from {name} ({email}).'],
+    ];
+
+    public function run(): void
+    {
+        foreach (self::TEMPLATES as $slug => [$name, $subject, $body]) {
+            NotificationTemplate::firstOrCreate(['slug' => $slug], [
+                'name' => $name,
+                'email_subject' => $subject,
+                'email_template' => '<p>Dear {recipient_name},</p><p>'.$body.'</p><p>— MOS Legis Editorial Office</p>',
+                'sms_template' => 'MOS Legis: '.$body,
+                // WATI expects the approved WhatsApp template name here.
+                'whatsapp_template' => $slug,
+                'email_enabled' => true,
+                'sms_enabled' => true,
+                'whatsapp_enabled' => true,
+                'status' => true,
+            ]);
+        }
+    }
+}

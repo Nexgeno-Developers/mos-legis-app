@@ -32,35 +32,35 @@ class WatiProvider implements WhatsappProviderInterface
 
         $payload = [
             'broadcast_name' => $templateName,
-            'template_name'  => $templateName,
-            'parameters'     => $parameters,
+            'template_name' => $templateName,
+            'parameters' => $parameters,
         ];
 
         $url = rtrim($config['api_url'], '/')
-            . '/api/v1/sendTemplateMessage?whatsappNumber=' . $mobile;
+            .'/api/v1/sendTemplateMessage?whatsappNumber='.$mobile;
 
         try {
 
             $response = Http::withHeaders([
                 'Authorization' => $config['api_token'], // token should already contain "Bearer "
-                'Content-Type'  => 'text/json',
+                'Content-Type' => 'text/json',
             ])->withBody(
                 json_encode($payload),
                 'text/json'
             )->send('POST', $url);
 
             return [
-                'status'       => $response->successful(),
-                'http_status'  => $response->status(),
-                'payload'      => $payload,
-                'response'     => $response->body(),
+                'status' => $response->successful(),
+                'http_status' => $response->status(),
+                'payload' => $payload,
+                'response' => $response->body(),
             ];
 
         } catch (Throwable $e) {
 
             return [
-                'status'   => false,
-                'payload'  => $payload,
+                'status' => false,
+                'payload' => $payload,
                 'response' => $e->getMessage(),
             ];
         }
@@ -72,7 +72,7 @@ class WatiProvider implements WhatsappProviderInterface
 
         foreach ($data as $key => $value) {
             if (is_scalar($value) || $value === null) {
-                $replacements['{' . $key . '}'] = (string) $value;
+                $replacements['{'.$key.'}'] = (string) $value;
             }
         }
 

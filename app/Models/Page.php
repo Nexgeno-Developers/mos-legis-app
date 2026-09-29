@@ -2,28 +2,56 @@
 
 namespace App\Models;
 
+use App\Enums\PageTemplate;
+use App\Enums\PublishStatus;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\Scope;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * SOW A.11 — common page data here, template-specific data in page_metas.
+ */
+#[Fillable([
+    'title', 'slug', 'content', 'excerpt', 'featured_image', 'status', 'template',
+    'seo_title', 'seo_description', 'og_image', 'updated_by',
+])]
 class Page extends Model
 {
-    //use HasFactory;
+    use HasFactory;
 
-    protected $fillable = [
-        'slug',
-        'language',
-        'title',
-        'content',
-        'is_active',
-        'layout',
-        'seo_title',
-        'seo_description',
-        'seo_keywords',
-        'seo_schema',
-        'company_id',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'status' => PublishStatus::class,
+            'template' => PageTemplate::class,
+        ];
+    }
 
-    public function meta()
+    public function metas(): HasMany
     {
         return $this->hasMany(PageMeta::class);
+    }
+
+    public function editor(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'updated_by');
+    }
+
+    /** Decoded meta value by key; uses the loaded relation when available. */
+    public function meta(string $key, mixed $default = null): mixed
+    {
+        $meta = $this->metas->firstWhere('meta_key', $key);
+
+        return $meta ? $meta->value() : $default;
+    }
+
+    #[Scope]
+    protected function published(Builder $query): void
+    {
+        $query->where('status', PublishStatus::Published);
     }
 }

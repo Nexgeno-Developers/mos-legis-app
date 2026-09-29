@@ -1,0 +1,288 @@
+[
+  {
+    "title": "Author Guidelines",
+    "slug": "author-guidelines",
+    "status": "Published",
+    "template": "layout",
+    "excerpt": "Formatting, length, citation and anonymity requirements for every manuscript submitted to MOS Legis.",
+    "content": "<h2>Manuscript preparation</h2>\n<p>Manuscripts must be submitted in .doc or .docx format, in Times New Roman 12pt with 1.5 line spacing, and footnotes in Times New Roman 10pt with single spacing.</p>\n<ul><li>Research Articles: 5,000–12,000 words including footnotes</li><li>Short Articles and Essays: 2,500–5,000 words</li><li>Case Comments and Legislative Comments: 2,000–4,000 words</li><li>Book Reviews and Notes: 1,500–3,000 words</li><li>Book Chapters: as agreed with the Editorial Board</li></ul>\n<h2>Abstract and keywords</h2>\n<p>Every submission carries an abstract of not more than 250 words and between four and six keywords. The abstract must state the question, the argument and the contribution, and must not be a summary of the literature.</p>\n<h2>Anonymity</h2>\n<p>The manuscript file must not carry the author's name, institution, acknowledgements or self-identifying citations. Author details are captured separately in the submission portal so that peer review remains double-blind.</p>\n<h2>Citation</h2>\n<p>Citations follow the MOS Legis citation format, with pin cites for every judicial authority. Parallel citations are given in the order set out in the style sheet and must be used consistently throughout.</p>",
+    "seo_title": "Author Guidelines | MOS Legis",
+    "seo_description": "Formatting, length, citation and anonymity requirements.",
+    "metas": {}
+  },
+  {
+    "title": "Aim & Scope",
+    "slug": "aim-and-scope",
+    "status": "Published",
+    "template": "layout",
+    "excerpt": "What MOS Legis publishes, the disciplines it covers and the standard against which submissions are judged.",
+    "content": "<h2>Aim</h2>\n<p>MOS Legis exists to publish rigorous, accessible legal scholarship that a court, legislature or practitioner could act on, without confining that scholarship to any one jurisdiction or school of thought.</p>\n<h2>Scope</h2>\n<p>The Review accepts work across the whole of legal study, including:</p>\n<ul><li>Constitutional and administrative law</li><li>Criminal law and procedure</li><li>Commercial, corporate and securities law</li><li>Dispute resolution and arbitration</li><li>Technology, data protection and privacy</li><li>Environmental and public policy law</li><li>Comparative, international and human rights law</li><li>Jurisprudence, legal history and legal writing</li></ul>\n<h2>Standard</h2>\n<p>A manuscript is judged on originality, rigour, clarity and utility. Doctrinal, empirical, comparative and theoretical methods are all welcome provided the method is stated and followed.</p>",
+    "seo_title": "Aim & Scope | MOS Legis",
+    "seo_description": "What MOS Legis publishes and the standard against which submissions are judged.",
+    "metas": {}
+  },
+  {
+    "title": "Peer Review Policy",
+    "slug": "peer-review-policy",
+    "status": "Published",
+    "template": "layout",
+    "excerpt": "The double-blind review process, its stages and the timelines the Review commits to at each stage.",
+    "content": "<h2>Process</h2>\n<p>Every manuscript passes through pre-screening, plagiarism screening, editorial desk review and double-blind peer review by at least two reviewers with subject expertise.</p>\n<h2>Timelines</h2>\n<p>The Review commits to the following indicative timelines:</p>\n<ul><li>Acknowledgement of receipt: 2 working days</li><li>Pre-screening decision: 7 working days</li><li>Peer review outcome: 4 to 6 weeks (3 working days under Priority Review, where available)</li><li>Publication after acceptance and payment: 2 weeks</li></ul>\n<h2>Decisions and reviewer notes</h2>\n<p>Decisions are accept, accept with minor revisions, revise and resubmit, or reject. Written reviewer notes accompany every decision, including rejections. Reviewer identities are never disclosed to authors.</p>",
+    "seo_title": "Peer Review Policy | MOS Legis",
+    "seo_description": "The double-blind review process, its stages and timelines.",
+    "metas": {}
+  },
+  {
+    "title": "Publication Ethics",
+    "slug": "publication-ethics",
+    "status": "Published",
+    "template": "layout",
+    "excerpt": "Authorship, conflict of interest, correction and retraction standards binding on authors, reviewers and editors.",
+    "content": "<h2>Authorship</h2>\n<p>Authorship is limited to those who made a substantial intellectual contribution. Ghost, gift and guest authorship are prohibited. All co-authors must be declared at submission; co-authors cannot be added after acceptance.</p>\n<h2>Conflicts of interest</h2>\n<p>Authors must disclose funding, employment, advisory roles and any involvement in litigation bearing on the subject of the manuscript. Editors and reviewers recuse themselves where a conflict exists.</p>\n<h2>Corrections and retractions</h2>\n<p>Errors that do not affect the argument are addressed by a published correction. Fabrication, falsification, undisclosed duplicate publication or established plagiarism results in retraction, with a retraction notice permanently attached to the record.</p>\n<h2>Simultaneous submission</h2>\n<p>Manuscripts under consideration elsewhere may not be submitted to the Review. Authors must withdraw formally before submitting a manuscript to another journal.</p>",
+    "seo_title": "Publication Ethics | MOS Legis",
+    "seo_description": "Authorship, conflict of interest, correction and retraction standards.",
+    "metas": {}
+  },
+  {
+    "title": "Plagiarism Policy",
+    "slug": "plagiarism-policy",
+    "status": "Published",
+    "template": "layout",
+    "excerpt": "Similarity thresholds, the screening tool used and the consequences of an adverse plagiarism finding.",
+    "content": "<h2>Screening</h2>\n<p>Every manuscript is screened before peer review. The plagiarism screening fee is the only charge payable before an editorial decision; all other fees fall due only after acceptance.</p>\n<h2>Thresholds</h2>\n<p>Similarity is assessed excluding quoted matter, references and standard legal phrases.</p>\n<ul><li>Up to 10 per cent: proceeds to review</li><li>10 to 20 per cent: returned to the author for revision before review</li><li>Above 20 per cent: rejected without review</li><li>Any verbatim uncited passage, irrespective of percentage: rejected</li></ul>\n<h2>Consequences</h2>\n<p>A finding of plagiarism after publication results in retraction and notification of the author's institution. Screening fees are not refundable in any circumstance.</p>",
+    "seo_title": "Plagiarism Policy | MOS Legis",
+    "seo_description": "Similarity thresholds and the consequences of an adverse finding.",
+    "metas": {}
+  },
+  {
+    "title": "Privacy Policy",
+    "slug": "privacy-policy",
+    "status": "Published",
+    "template": "layout",
+    "excerpt": "What personal data the platform collects, why it is collected, how long it is kept and the rights available to you.",
+    "content": "<h2>Data we collect</h2>\n<p>We collect only what the editorial process requires:</p>\n<ul><li>Account data: name, email address, mobile number, affiliation and author tier</li><li>Submission data: manuscript files, declarations, correspondence and review records</li><li>Payment data: transaction references only — card and bank details are held by the payment processor, never by the Review</li><li>Technical data: log and device information used to keep the platform secure</li></ul>\n<h2>Use and disclosure</h2>\n<p>Personal data is used to operate peer review, publication, payment and notification. It is never sold. It is disclosed only to reviewers on a blinded basis, to service providers under contract, and where required by law.</p>\n<h2>Retention and your rights</h2>\n<p>Submission records are retained for seven years for editorial-integrity purposes; published records are permanent. You may request access, correction, deletion of non-published data, or withdrawal of consent by writing to the editorial desk.</p>",
+    "seo_title": "Privacy Policy | MOS Legis",
+    "seo_description": "What personal data the platform collects and how long it is kept.",
+    "metas": {}
+  },
+  {
+    "title": "Terms & Conditions",
+    "slug": "terms-and-conditions",
+    "status": "Published",
+    "template": "layout",
+    "excerpt": "The terms governing use of the platform, submission of manuscripts, payment of charges and licensing of published work.",
+    "content": "<h2>Use of the platform</h2>\n<p>Accounts are personal and may not be shared. You are responsible for the accuracy of every declaration made in the submission portal and for all activity under your account.</p>\n<h2>Charges and refunds</h2>\n<p>Applicable charges are those published on the Fees &amp; Pricing page on the date of submission. Plagiarism screening fees are payable upfront and are non-refundable. Publication charges fall due only after acceptance and are refundable only where the Review is unable to publish an accepted manuscript.</p>\n<h2>Licence</h2>\n<p>Authors retain copyright in their work and grant the Review a perpetual, non-exclusive licence to publish, archive, index and distribute it. Published articles are free to read.</p>\n<h2>Governing law</h2>\n<p>These terms are governed by the laws of India and the courts at Mumbai have exclusive jurisdiction.</p>",
+    "seo_title": "Terms & Conditions | MOS Legis",
+    "seo_description": "Terms governing use of the platform, submission and licensing.",
+    "metas": {}
+  },
+  {
+    "title": "Disclaimer",
+    "slug": "disclaimer",
+    "status": "Published",
+    "template": "layout",
+    "excerpt": "The Review publishes scholarship, not legal advice. This page sets out the limits of what publication implies.",
+    "content": "<h2>No legal advice</h2>\n<p>Nothing published by MOS Legis constitutes legal advice or creates an advocate-client relationship. Readers must take independent advice before acting on anything published here.</p>\n<h2>Views of authors</h2>\n<p>Views expressed in articles, blogs and comments are those of their authors alone. Publication does not indicate endorsement by the Review, its Editorial Board, its patrons or its partner institutions.</p>\n<h2>External links and listings</h2>\n<p>Job postings, career listings and external links are provided for information. The Review does not verify, endorse or accept responsibility for the content, accuracy or conduct of third parties.</p>",
+    "seo_title": "Disclaimer | MOS Legis",
+    "seo_description": "MOS Legis publishes scholarship, not legal advice.",
+    "metas": {}
+  },
+  {
+    "title": "Copyright & Trademark Notice",
+    "slug": "copyright-trademark-notice",
+    "status": "Published",
+    "template": "layout",
+    "excerpt": "Ownership of published work and permitted use of the MOS Legis name and marks.",
+    "content": "<p>Authors retain copyright in their work and grant MOS Legis a non-exclusive licence to publish. The MOS Legis name and logo may not be used without written permission.</p>",
+    "seo_title": "Copyright & Trademark Notice | MOS Legis",
+    "seo_description": "Copyright ownership and trademark usage terms.",
+    "metas": {}
+  },
+  {
+    "title": "Editorial Board & Founders",
+    "slug": "editorial-board",
+    "status": "Published",
+    "template": "teams",
+    "excerpt": "MOS Legis is guided by a founding editor, a working editorial board and an advisory panel drawn from the bar, the bench and the academy.",
+    "content": null,
+    "seo_title": "Editorial Board | MOS Legis",
+    "seo_description": "Founders, editors and the advisory board of MOS Legis.",
+    "metas": {
+      "members": {
+        "type": "json",
+        "value": [
+          {
+            "name": "Vishnu Yadav",
+            "designation": "Founder",
+            "overview": "Founded MOS Legis to give practitioner and student scholarship a rigorous, timely home.",
+            "group": "Founder"
+          },
+          {
+            "name": "Dr. Meera Raghavan",
+            "designation": "Chief Editor",
+            "overview": "Leads desk review and the Review's ethics protocol.",
+            "group": "Board"
+          },
+          {
+            "name": "Prof. Aditya Shenoy",
+            "designation": "Editor",
+            "overview": "Oversees commercial and dispute-resolution manuscripts.",
+            "group": "Board"
+          },
+          {
+            "name": "Dr. Kavya Nambiar",
+            "designation": "Editor",
+            "overview": "Editor for technology, data and platform regulation.",
+            "group": "Board"
+          },
+          {
+            "name": "Prof. Iqbal Qureshi",
+            "designation": "Advisory Board",
+            "overview": "Advisory panel on criminal law and evidence.",
+            "group": "Advisory"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "title": "Patron Acknowledgements",
+    "slug": "patrons",
+    "status": "Published",
+    "template": "patron",
+    "excerpt": "MOS Legis records its gratitude to the patrons whose support sustains the Best Paper Prize and the journal's academic work.",
+    "content": null,
+    "seo_title": "Patrons | MOS Legis",
+    "seo_description": "In gratitude to the patrons supporting MOS Legis.",
+    "metas": {
+      "entries": {
+        "type": "json",
+        "value": [
+          {
+            "description": "This journal's Best Paper Prize and continued academic work are made possible in part by the generous research grant of Justice (Retd.) R. N. Ganguly, Patron.",
+            "month_year": "January 2026"
+          },
+          {
+            "description": "MOS Legis recognises Prof. Sunanda Bhattacharya as a Patron, in gratitude for their support of the Best Paper Prize and the advancement of academic legal research.",
+            "month_year": "January 2026"
+          },
+          {
+            "description": "We gratefully acknowledge an anonymous well-wisher's contribution toward the Best Paper Prize and the continued sustenance of this e-journal.",
+            "month_year": "April 2026"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "title": "Best Paper Winners",
+    "slug": "best-paper-winners",
+    "status": "Published",
+    "template": "paper_winner",
+    "excerpt": null,
+    "content": null,
+    "seo_title": "Best Paper Winners | MOS Legis",
+    "seo_description": "Monthly best paper prize, criteria and past winners.",
+    "metas": {
+      "winner_choose_desc": {
+        "type": "string",
+        "value": "Each month, the editorial board selects one published manuscript as the Best Paper of the month, on the recommendation of the assigned reviewer and a final board vote."
+      },
+      "prize_desc": {
+        "type": "string",
+        "value": "The winning author receives a cash prize of Rs. 2,000, a certificate of recognition and a featured citation on the journal's home page."
+      },
+      "be_considered_desc": {
+        "type": "string",
+        "value": "Every manuscript accepted and published in a given month is automatically eligible. To be considered, simply submit your manuscript for publication."
+      }
+    }
+  },
+  {
+    "title": "Contact Us",
+    "slug": "contact",
+    "status": "Published",
+    "template": "contact",
+    "excerpt": null,
+    "content": null,
+    "seo_title": "Contact | MOS Legis",
+    "seo_description": "Reach the editorial desk, chief editor or general enquiries.",
+    "metas": {
+      "chief_editor_email": {
+        "type": "string",
+        "value": "chiefeditor@moslegis.com"
+      },
+      "general_query_email": {
+        "type": "string",
+        "value": "submissions@moslegis.com"
+      },
+      "telephone": {
+        "type": "string",
+        "value": "+91 22 4021 5588"
+      },
+      "office_address": {
+        "type": "string",
+        "value": "MOS Legis Editorial Office, 4th Floor, Fort Chambers, Mumbai 400001, India"
+      },
+      "desk_hours": {
+        "type": "string",
+        "value": "Monday–Friday, 10:00–18:00 IST"
+      },
+      "faqs": {
+        "type": "json",
+        "value": [
+          {
+            "question": "How long does desk review take?",
+            "answer": "Desk screening and plagiarism check are usually completed within 5 working days."
+          },
+          {
+            "question": "Can I withdraw a submission?",
+            "answer": "Yes, write to submissions@moslegis.com with your submission ID before a decision is recorded."
+          },
+          {
+            "question": "Is the pre-screening fee refundable?",
+            "answer": "No, the pre-screening fee is non-refundable regardless of outcome."
+          }
+        ]
+      }
+    }
+  },
+  {
+    "title": "Home",
+    "slug": "home",
+    "status": "Published",
+    "template": "layout",
+    "excerpt": "A peer-reviewed platform for rigorous legal research, commentary, and discourse.",
+    "content": "<h2>What we publish</h2><p>Best paper winners, recently published scholarship, and open calls for submission.</p>\n<h2>No fee until accepted</h2><p>Only the plagiarism pre-screening fee is payable upfront — every other charge is raised after an editorial decision.</p>",
+    "seo_title": "MOS Legis | Peer-Reviewed Legal Scholarship",
+    "seo_description": "A peer-reviewed platform for rigorous legal research, commentary and discourse. Submit a manuscript or browse the latest issue.",
+    "metas": {}
+  },
+  {
+    "title": "Submit",
+    "slug": "submit",
+    "status": "Published",
+    "template": "layout",
+    "excerpt": "Submissions are open year-round across all content categories. Every manuscript is pre-screened for similarity and then sent for double-blind peer review.",
+    "content": "<p>No publication fee until your manuscript is accepted. Only the plagiarism pre-screening fee is payable upfront.</p>",
+    "seo_title": "Submit a Manuscript | MOS Legis",
+    "seo_description": "Submission guidelines, word limits, formatting rules, declarations and the manuscript submission form for MOS Legis.",
+    "metas": {}
+  },
+  {
+    "title": "Careers",
+    "slug": "careers",
+    "status": "Published",
+    "template": "career",
+    "excerpt": "MOS Legis runs a small, working editorial team. Roles open periodically across desk review, production and the editorial board.",
+    "content": null,
+    "seo_title": "Careers | MOS Legis",
+    "seo_description": "Open roles on the MOS Legis editorial and production team.",
+    "metas": {
+      "apply_email": {
+        "type": "string",
+        "value": "careers@moslegis.com"
+      }
+    }
+  }
+]

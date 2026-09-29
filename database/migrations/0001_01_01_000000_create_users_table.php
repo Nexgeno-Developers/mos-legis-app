@@ -13,10 +13,13 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('email')->unique();
+            $table->string('name', 150);
+            $table->string('email', 190)->unique();
+            $table->string('phone', 20)->nullable();
             $table->timestamp('email_verified_at')->nullable();
-            $table->string('password');
+            // Nullable: accounts created purely via Google/ORCID have no local password (SOW B.01).
+            $table->string('password')->nullable();
+            $table->enum('status', ['Active', 'Inactive'])->default('Active')->index();
             $table->rememberToken();
             $table->timestamps();
         });
