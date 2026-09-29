@@ -1,7 +1,26 @@
 import Alpine from 'alpinejs';
 import 'trix';
-import { createIcons, icons } from 'lucide';
+// Only the icons used in the Blade views (run `grep` for icon names when adding new ones).
+import {
+    createIcons,
+    Activity, Archive, ArrowLeft, ArrowRight, Award, BadgeCheck,
+    BadgeIndianRupee, Ban, BookOpen, Briefcase, CalendarRange, Check,
+    ChevronDown, ChevronLeft, ChevronRight, CircleAlert, CircleCheck, Clock,
+    Columns, Contact, Copy, CreditCard, Delete, Download,
+    ExternalLink, Eye, EyeOff, File, FileText, Files,
+    Filter, Folder, Form, Gauge, Gavel, Ghost,
+    GitBranch, Heading, Home, Image, Inbox, Info,
+    KeyRound, Layout, Lock, LogIn, LogOut, Mail,
+    Menu, MessageSquare, Network, PanelLeft, Pencil, Phone,
+    Plus, Receipt, RefreshCw, Reply, Route, Rows,
+    Save, ScanSearch, Search, Send, Settings, ShieldCheck,
+    Shuffle, SquareUser, Star, Summary, Tag, Tags,
+    Text, ToggleLeft, ToggleRight, Trash2, Type, Upload,
+    User, UserCheck, UserPlus, Users, Volume,
+} from 'lucide';
 import { countDocxWords } from './word-count';
+
+const usedIcons = { Activity, Archive, ArrowLeft, ArrowRight, Award, BadgeCheck, BadgeIndianRupee, Ban, BookOpen, Briefcase, CalendarRange, Check, ChevronDown, ChevronLeft, ChevronRight, CircleAlert, CircleCheck, Clock, Columns, Contact, Copy, CreditCard, Delete, Download, ExternalLink, Eye, EyeOff, File, FileText, Files, Filter, Folder, Form, Gauge, Gavel, Ghost, GitBranch, Heading, Home, Image, Inbox, Info, KeyRound, Layout, Lock, LogIn, LogOut, Mail, Menu, MessageSquare, Network, PanelLeft, Pencil, Phone, Plus, Receipt, RefreshCw, Reply, Route, Rows, Save, ScanSearch, Search, Send, Settings, ShieldCheck, Shuffle, SquareUser, Star, Summary, Tag, Tags, Text, ToggleLeft, ToggleRight, Trash2, Type, Upload, User, UserCheck, UserPlus, Users, Volume };
 
 window.Alpine = Alpine;
 
@@ -67,7 +86,7 @@ Alpine.data('repeater', (rows = [], blank = {}) => ({
 }));
 
 export function renderIcons() {
-    createIcons({ icons, attrs: { 'stroke-width': 1.5 } });
+    createIcons({ icons: usedIcons, attrs: { 'stroke-width': 1.5 } });
 }
 
 window.renderIcons = renderIcons;
