@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\PasswordResetController;
+use App\Http\Controllers\Site\CertificateVerificationController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -18,6 +19,8 @@ Route::middleware('guest')->group(function () {
     Route::get('reset-password/{token}', [PasswordResetController::class, 'edit'])->name('password.reset');
     Route::post('reset-password', [PasswordResetController::class, 'update'])->name('password.update');
 });
+
+Route::get('verify/{slug}', CertificateVerificationController::class)->name('certificates.verify');
 
 // Placeholders until the public site / Author Portal modules land.
 Route::get('blogs/{slug}', fn () => abort(404))->name('blogs.show');

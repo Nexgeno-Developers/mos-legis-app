@@ -6,6 +6,11 @@ use App\Enums\RoleName;
 use App\Models\ManuscriptSubmission;
 use App\Models\PlagiarismCheck;
 use App\Models\User;
+use App\Services\Payments\PaymentGateway;
+use App\Services\Payments\RazorpayGateway;
+use App\Services\Payments\SimulatedGateway;
+use App\Services\Plagiarism\FakePlagiarismChecker;
+use App\Services\Plagiarism\PlagiarismChecker;
 use App\Support\ActivityLogger;
 use App\Support\Settings;
 use Illuminate\Database\Eloquent\Model;
@@ -21,6 +26,24 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->app->singleton(Settings::class);
         $this->app->singleton(ActivityLogger::class);
+
+        // Razorpay when keys are configured; otherwise the simulated gateway (never in production).
+        $this->app->bind(PaymentGateway::class, function () {
+            $config = config('services.razorpay');
+
+            if (filled($config['key_id']) && filled($config['key_secret'])) {
+                return new RazorpayGateway($config['key_id'], $config['key_secret'], $config['webhook_secret']);
+            }
+
+            abort_if($this->app->isProduction(), 500, 'Razorpay keys are not configured.');
+
+            return new SimulatedGateway;
+        });
+
+        // SOW A.18: the plagiarism vendor is chosen later; add its driver here.
+        $this->app->bind(PlagiarismChecker::class, fn () => match (config('services.plagiarism.driver')) {
+            default => new FakePlagiarismChecker(config('services.plagiarism.fake_similarity')),
+        });
     }
 
     public function boot(): void
