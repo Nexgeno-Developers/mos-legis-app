@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Account;
 
+use App\Support\PhoneNumbers;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
@@ -23,7 +24,7 @@ class ProfileRequest extends FormRequest
 
         return [
             'name' => ['required', 'string', 'max:150'],
-            'phone' => ['nullable', 'string', 'max:20', 'regex:/^[0-9+\-\s]{7,20}$/'],
+            'phone' => PhoneNumbers::rules(),
             'author_category_id' => ['required', 'integer', Rule::exists('manuscript_author_categories', 'id')->where('status', 'Active')],
             'institution' => ['required', 'string', 'max:190'],
             'country' => ['nullable', 'string', 'max:100'],
@@ -37,5 +38,12 @@ class ProfileRequest extends FormRequest
     public function messages(): array
     {
         return ['institution.required' => 'Enter your institution or organisation.'];
+    }
+
+    protected function prepareForValidation(): void
+    {
+        if ($this->has('phone')) {
+            $this->merge(['phone' => PhoneNumbers::normalize($this->input('phone'))]);
+        }
     }
 }

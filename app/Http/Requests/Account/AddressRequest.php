@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Account;
 
 use App\Enums\TaxIdType;
+use App\Support\PhoneNumbers;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -27,7 +28,7 @@ class AddressRequest extends FormRequest
         return [
             "{$prefix}recipient_name" => ['required', 'string', 'max:150'],
             "{$prefix}organization_name" => ['nullable', 'string', 'max:190'],
-            "{$prefix}phone" => ['nullable', 'string', 'max:30'],
+            "{$prefix}phone" => PhoneNumbers::rules(),
             "{$prefix}address_line1" => ['required', 'string', 'max:255'],
             "{$prefix}address_line2" => ['nullable', 'string', 'max:255'],
             "{$prefix}country_code" => ['required', 'string', 'size:2', Rule::in(array_keys(config('countries')))],
@@ -37,5 +38,12 @@ class AddressRequest extends FormRequest
             "{$prefix}tax_id_type" => ['required', Rule::enum(TaxIdType::class)],
             "{$prefix}tax_id_number" => ['nullable', 'required_unless:'.$prefix.'tax_id_type,none', 'string', 'max:40'],
         ];
+    }
+
+    protected function prepareForValidation(): void
+    {
+        if ($this->has('phone')) {
+            $this->merge(['phone' => PhoneNumbers::normalize($this->input('phone'))]);
+        }
     }
 }

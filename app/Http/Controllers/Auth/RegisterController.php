@@ -9,6 +9,7 @@ use App\Models\AuthorCategory;
 use App\Models\AuthorProfile;
 use App\Models\User;
 use App\Services\Auth\OtpService;
+use App\Support\PhoneNumbers;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -50,10 +51,12 @@ class RegisterController extends Controller
             $request->merge(['email' => $verifiedEmail]);
         }
 
+        $request->merge(['phone' => PhoneNumbers::normalize($request->input('phone'))]);
+
         $data = $request->validate([
             'name' => ['required', 'string', 'max:150'],
             'email' => ['required', 'email', 'max:190', Rule::unique('users', 'email')],
-            'phone' => ['nullable', 'string', 'max:20', 'regex:/^[0-9+\-\s]{7,20}$/'],
+            'phone' => PhoneNumbers::rules(),
             'author_category_id' => ['required', 'integer', Rule::exists('manuscript_author_categories', 'id')->where('status', 'Active')],
             'institution' => ['required', 'string', 'max:190'],
             'password' => [$verifiedEmail ? 'nullable' : 'required', 'confirmed', Password::defaults()],

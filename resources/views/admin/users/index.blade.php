@@ -18,7 +18,7 @@
             <tr>
                 <td class="font-medium">{{ $user->name }}</td>
                 <td>{{ $user->email }}</td>
-                <td>{{ $user->phone ?? '—' }}</td>
+                <td>{{ App\Support\PhoneNumbers::display($user->phone) ?? '—' }}</td>
                 <td>
                     @foreach ($user->roles as $role)
                         <x-badge :tone="$role->name === 'superadmin' ? 'primary' : ($role->name === 'reviewer' ? 'info' : 'gold')">{{ $role->name }}</x-badge>

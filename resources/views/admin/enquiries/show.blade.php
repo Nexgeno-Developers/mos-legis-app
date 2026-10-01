@@ -9,7 +9,7 @@
         <x-dl :items="[
             'Name' => e($enquiry->name),
             'Email' => '<a class=\'text-primary hover:underline\' href=\'mailto:'.e($enquiry->email).'\'>'.e($enquiry->email).'</a>',
-            'Phone' => e($enquiry->phone),
+            'Phone' => e(App\Support\PhoneNumbers::display($enquiry->phone)),
             'IP address' => e($enquiry->ip),
         ]" />
 

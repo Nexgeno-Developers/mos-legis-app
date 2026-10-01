@@ -12,6 +12,7 @@
 import $ from 'jquery';
 import 'jquery-validation';
 import select2 from 'select2';
+import intlTelInput from 'intl-tel-input';
 
 select2(window, $);
 
@@ -60,6 +61,8 @@ $.validator.setDefaults({
 
         if ($el.hasClass('select2-hidden-accessible')) {
             error.insertAfter($el.next('.select2'));
+        } else if ($el.closest('.iti').length) {
+            error.insertAfter($el.closest('.iti'));
         } else if (element.type === 'checkbox' || element.type === 'radio') {
             error.insertAfter($el.closest('label'));
         } else if ($el.is('[data-validate-hidden]')) {
@@ -158,8 +161,51 @@ export function refreshSelects(root) {
     $(root).find('select.select2-hidden-accessible').trigger('change.select2');
 }
 
+/** Valid for the chosen country (checked by intl-tel-input's bundled libphonenumber data). */
+$.validator.addMethod('intlphone', function (value, element) {
+    if (this.optional(element) || !element.iti) return true;
+    return element.iti.isValidNumber() !== false;
+}, 'Enter a valid phone number for the selected country.');
+
+/**
+ * Phone fields (x-form.phone): country picker with search, typed number formatted as you go.
+ * The hidden companion input always holds the full international number (E.164).
+ */
+function initPhones(root) {
+    $(root).find('input[data-phone]').each(function () {
+        if (this.iti) return;
+        const input = this;
+        const hidden = input.parentElement.querySelector('input[data-phone-value]');
+
+        input.iti = intlTelInput(input, {
+            initialCountry: input.dataset.phoneCountry || 'in',
+            countryOrder: [input.dataset.phoneCountry || 'in'],
+            separateDialCode: true,
+            strictMode: true,
+            formatAsYouType: true,
+            countrySearch: true,
+            dropdownContainer: input.closest('[role=dialog]') ? null : document.body,
+            loadUtils: () => import('intl-tel-input/utils'),
+        });
+
+        const sync = () => {
+            const typed = input.value.trim();
+            hidden.value = typed ? (input.iti.getNumber() || typed) : '';
+        };
+        const revalidate = () => {
+            const validator = input.form && $(input.form).data('validator');
+            if (validator && (input.name in validator.submitted || input.name in validator.invalid)) validator.element(input);
+        };
+
+        input.addEventListener('input', sync);
+        input.addEventListener('countrychange', () => { sync(); revalidate(); });
+        input.iti.promise.then(sync);
+    });
+}
+
 export function initForms(root = document) {
     initSelect2(root);
+    initPhones(root);
     initValidation(root);
 }
 

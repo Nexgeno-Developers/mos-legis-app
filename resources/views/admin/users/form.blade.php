@@ -15,7 +15,7 @@
             <div class="grid gap-5 md:grid-cols-2">
                 <x-form.input name="name" label="Name" :value="$user->name" required />
                 <x-form.input name="email" type="email" label="Email" :value="$user->email" required />
-                <x-form.input name="phone" label="Phone" :value="$user->phone" />
+                <x-form.phone label="Phone" :value="$user->phone" />
                 <x-form.select name="status" label="Status" :options="App\Enums\RecordStatus::options()" :value="$user->status ?? 'Active'" required />
                 <x-form.input name="password" type="password" :label="$editing ? 'New password' : 'Password'" :required="! $editing"
                     :hint="$editing ? 'Leave blank to keep the current password.' : 'At least 8 characters.'" autocomplete="new-password" />

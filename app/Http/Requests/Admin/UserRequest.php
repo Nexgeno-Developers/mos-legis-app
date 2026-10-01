@@ -5,6 +5,7 @@ namespace App\Http\Requests\Admin;
 use App\Enums\RecordStatus;
 use App\Enums\RoleName;
 use App\Models\User;
+use App\Support\PhoneNumbers;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
@@ -28,7 +29,7 @@ class UserRequest extends FormRequest
         return [
             'name' => ['required', 'string', 'max:150'],
             'email' => ['required', 'email', 'max:190', Rule::unique('users', 'email')->ignore($user?->id)],
-            'phone' => ['nullable', 'string', 'max:20'],
+            'phone' => PhoneNumbers::rules(),
             'status' => ['required', Rule::enum(RecordStatus::class)],
             'role' => ['required', 'string', Rule::exists('roles', 'name')->where('guard_name', 'web')],
             'password' => [$user ? 'nullable' : 'required', 'confirmed', Password::defaults()],
@@ -48,6 +49,10 @@ class UserRequest extends FormRequest
 
     protected function prepareForValidation(): void
     {
+        if ($this->has('phone')) {
+            $this->merge(['phone' => PhoneNumbers::normalize($this->input('phone'))]);
+        }
+
         // Only a superadmin may grant the superadmin role.
         if ($this->input('role') === RoleName::Superadmin->value && ! $this->user()->isSuperadmin()) {
             $this->merge(['role' => null]);

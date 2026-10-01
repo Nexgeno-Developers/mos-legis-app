@@ -23,7 +23,7 @@
                             @foreach ($countries as $code => $name)<option value="{{ $code }}">{{ $name }}</option>@endforeach
                         </select>
                     </x-form.field>
-                    <x-form.input name="phone" label="Phone" :value="$a?->phone ?? auth()->user()->phone" />
+                    <x-form.phone label="Phone" :value="$a?->phone ?? auth()->user()->phone" />
                     <x-form.field label="Tax registration" name="tax_id_type" required>
                         <select name="tax_id_type" x-model="taxType" class="field-input">
                             @foreach (['none' => 'None', 'gst' => 'GST (India)', 'vat' => 'VAT'] as $value => $label)<option value="{{ $value }}">{{ $label }}</option>@endforeach

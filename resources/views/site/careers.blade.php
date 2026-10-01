@@ -12,7 +12,7 @@
                 <input type="text" name="website" class="hidden" tabindex="-1" autocomplete="off">
                 <x-form.input name="name" label="Full name" required />
                 <x-form.input name="email" type="email" label="Email" required />
-                <x-form.input name="phone" label="Phone number" required />
+                <x-form.phone label="Phone number" required />
                 <x-form.input name="position" label="Position applying for" placeholder="General application" required />
                 <x-form.field label="Resume / CV" name="resume" required hint="PDF, DOC or DOCX, up to 5 MB.">
                     <input type="file" name="resume" accept=".pdf,.doc,.docx" class="field-input" required>

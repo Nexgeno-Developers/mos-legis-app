@@ -20,7 +20,7 @@
             <tr>
                 <td class="font-medium">{{ $enquiry->name }}</td>
                 <td class="text-sm"><a href="mailto:{{ $enquiry->email }}" class="hover:text-primary">{{ $enquiry->email }}</a></td>
-                <td class="text-sm">{{ $enquiry->phone ?? '—' }}</td>
+                <td class="text-sm">{{ App\Support\PhoneNumbers::display($enquiry->phone) ?? '—' }}</td>
                 <td><x-badge :tone="$enquiry->form_name->value === 'career' ? 'gold' : 'info'">{{ $enquiry->form_name->value }}</x-badge></td>
                 <td class="max-w-sm text-sm text-muted-foreground">
                     {{ Str::limit($enquiry->form_data['purpose'] ?? $enquiry->form_data['position'] ?? '', 40) }}

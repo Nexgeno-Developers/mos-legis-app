@@ -26,10 +26,10 @@
             @else
                 <x-form.input name="email" type="email" label="Email" required autocomplete="email" hint="We’ll send a 6-digit code to confirm it." />
             @endif
-            <x-form.input name="phone" label="Mobile number" placeholder="10-digit mobile number" autocomplete="tel" hint="Optional — for SMS and WhatsApp updates on your manuscripts." />
+            <x-form.phone hint="Optional — for SMS and WhatsApp updates on your manuscripts." />
 
             <x-form.select name="author_category_id" label="Author category" :options="$authorCategories" placeholder="Select your category" required
-                hint="Decides the publication fee for your manuscripts." />
+                hint="" />
             <x-form.input name="institution" label="Institution / organisation" required autocomplete="organization" placeholder="e.g. National Law School of India University" />
 
             <x-orcid-connect :orcid="$orcid['id'] ?? null" removable />

@@ -1,6 +1,7 @@
 @import 'tailwindcss';
 @import 'trix/dist/trix.css';
 @import 'select2/dist/css/select2.css';
+@import 'intl-tel-input/build/css/intlTelInput.css';
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
@@ -292,3 +293,28 @@ trix-editor.trix-invalid { border-color: var(--color-destructive) !important; }
     display: flex; align-items: center; min-height: 3rem; padding: 0 0.75rem;
     font-size: 0.875rem; color: var(--color-muted-foreground);
 }
+
+/* ------------------------------------------------------------------
+ * intl-tel-input — phone fields themed to match .field-input
+ * ------------------------------------------------------------------ */
+.iti { display: block; width: 100%; }
+.iti__country-container { padding: 1px; }
+.iti__selected-country { height: 100%; border-right: 1px solid var(--color-border); background: var(--color-secondary); }
+.iti__selected-country-primary { padding: 0 0.5rem 0 0.75rem; }
+.iti__selected-dial-code { margin-left: 0.4rem; font-size: 0.95rem; color: var(--color-foreground); }
+.iti--separate-dial-code .iti__selected-country:hover,
+.iti__selected-country:focus-visible { box-shadow: inset 0 0 0 999px rgb(0 0 0 / 0.05); outline: none; }
+.iti__dropdown-content {
+    border: 1px solid var(--color-gold); border-radius: 0; background: var(--color-popover);
+    box-shadow: 0 10px 25px -10px rgb(0 0 0 / 0.25);
+}
+.iti--container { z-index: 70; }
+.iti__search-input {
+    height: 2.5rem; margin: 0.5rem; width: calc(100% - 1rem); padding: 0 0.75rem;
+    border: 1px solid var(--color-border); font-family: inherit; font-size: 0.95rem; background: var(--color-card);
+}
+.iti__search-input:focus { outline: none; border-color: var(--color-gold); }
+.iti__country { padding: 0.5rem 0.75rem; font-size: 0.95rem; }
+.iti__country.iti__highlight { background: var(--color-primary); color: var(--color-primary-foreground); }
+.iti__country.iti__highlight .iti__dial-code { color: inherit; opacity: 0.85; }
+.iti__dial-code { color: var(--color-muted-foreground); }

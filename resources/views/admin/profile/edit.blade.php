@@ -9,7 +9,7 @@
             <div class="space-y-5">
                 <x-form.input name="name" label="Name" :value="$user->name" required />
                 <x-form.input name="email" type="email" label="Email" :value="$user->email" required />
-                <x-form.input name="phone" label="Phone" :value="$user->phone" />
+                <x-form.phone label="Phone" :value="$user->phone" />
                 <x-dl :items="['Role' => e($user->primaryRole()?->label()), 'Member since' => format_date($user->created_at)]" />
             </div>
         </x-admin.panel>

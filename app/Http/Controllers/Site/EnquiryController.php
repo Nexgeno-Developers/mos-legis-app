@@ -7,6 +7,7 @@ use App\Enums\PageTemplate;
 use App\Http\Controllers\Controller;
 use App\Models\Enquiry;
 use App\Notifications\WorkflowNotifier;
+use App\Support\PhoneNumbers;
 use App\Support\PublicPages;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -59,10 +60,12 @@ class EnquiryController extends Controller
 
     public function storeCareer(Request $request): RedirectResponse
     {
+        $request->merge(['phone' => PhoneNumbers::normalize($request->input('phone'))]);
+
         $data = $request->validate([
             'name' => ['required', 'string', 'max:150'],
             'email' => ['required', 'email', 'max:190'],
-            'phone' => ['required', 'string', 'max:20', 'regex:/^[0-9+\-\s]{7,20}$/'],
+            'phone' => PhoneNumbers::rules(required: true),
             'position' => ['required', 'string', 'max:150'],
             'resume' => ['required', 'file', 'mimes:pdf,doc,docx', 'max:5120'],
             'website' => ['prohibited'],

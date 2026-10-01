@@ -38,7 +38,7 @@
                         <x-form.field label="Email" hint="Contact the editorial office to change it.">
                             <input type="email" value="{{ $user->email }}" class="field-input" disabled>
                         </x-form.field>
-                        <x-form.input name="phone" label="Mobile number" :value="$user->phone" autocomplete="tel" />
+                        <x-form.phone :value="$user->phone" />
                         <x-form.select name="author_category_id" label="Author category" :options="$authorCategories" :value="$profile?->author_category_id" placeholder="Select your category" required />
                         <x-form.input name="institution" label="Institution / organisation" :value="$profile?->institution" required autocomplete="organization" />
                         <x-form.input name="country" label="Country" :value="$profile?->country" autocomplete="country-name" />
@@ -50,7 +50,7 @@
 
             <x-admin.panel :title="$user->password ? 'Change password' : 'Set a password'"
                 :description="$user->password ? 'Leave blank to keep your current password.' : 'You signed up with Google. Set a password to also sign in with your email.'">
-                <div class="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+                <div @class(["grid gap-5 md:grid-cols-2", "xl:grid-cols-3" => $user->password])>
                     @if ($user->password)
                         <x-form.input name="current_password" type="password" label="Current password" autocomplete="current-password" />
                     @endif
@@ -77,7 +77,7 @@
                     <x-form.input name="state" label="State / region" :value="$a?->state" autocomplete="address-level1" />
                     <x-form.input name="postal_code" label="Postal code" :value="$a?->postal_code" autocomplete="postal-code" />
                     <x-form.select name="country_code" label="Country" :options="$countries" :value="$a?->country_code ?? 'IN'" required />
-                    <x-form.input name="phone" label="Billing phone" :value="$a?->phone" />
+                    <x-form.phone id="billing_phone" label="Billing phone" :value="$a?->phone" />
                     <x-form.field label="Tax registration" name="tax_id_type">
                         <select name="tax_id_type" id="tax_id_type" x-model="taxType" class="field-input">
                             @foreach (['none' => 'None', 'gst' => 'GST (India)', 'vat' => 'VAT'] as $value => $label)<option value="{{ $value }}">{{ $label }}</option>@endforeach
