@@ -23,8 +23,8 @@
                         <div class="gold-rule my-6 max-w-md"></div>
                         <p class="measure text-lg text-muted-foreground">{{ $slide['sub'] }}</p>
                         <div class="mt-8 flex flex-wrap gap-3">
-                            <a href="{{ $slide['primary'][1] }}" class="inline-flex items-center gap-2 bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground hover:bg-primary/90">{{ $slide['primary'][0] }} <x-icon name="arrow-right" /></a>
-                            <a href="{{ $slide['secondary'][1] }}" class="inline-flex items-center gap-2 border border-gold px-6 py-3 text-sm font-semibold hover:bg-gold/10">{{ $slide['secondary'][0] }}</a>
+                            <a href="{{ $slide['primary'][1] }}" class="inline-flex h-12 items-center gap-2 border border-primary bg-primary px-6 text-sm font-semibold text-primary-foreground hover:bg-primary/90">{{ $slide['primary'][0] }} <x-icon name="arrow-right" /></a>
+                            <a href="{{ $slide['secondary'][1] }}" class="inline-flex h-12 items-center gap-2 border border-gold px-6 text-sm font-semibold hover:bg-gold/10">{{ $slide['secondary'][0] }}</a>
                         </div>
                     </div>
                 @endforeach
@@ -98,7 +98,7 @@
             <p class="label-caps text-sm text-primary">Payment Timing</p>
             <h2 class="font-display text-3xl">No fee until you&rsquo;re accepted.</h2>
             <p class="measure text-muted-foreground">Only the plagiarism pre-screening fee is due upfront. The publication fee is payable after an editorial acceptance decision.</p>
-            <a href="{{ route('submit') }}" class="mt-2 inline-flex items-center gap-2 bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground hover:bg-primary/90">Start a Submission <x-icon name="arrow-right" /></a>
+            <a href="{{ route('submit') }}" class="mt-2 inline-flex h-12 items-center gap-2 border border-primary bg-primary px-6 text-sm font-semibold text-primary-foreground hover:bg-primary/90">Start a Submission <x-icon name="arrow-right" /></a>
         </div>
     </section>
 </x-layouts.site>

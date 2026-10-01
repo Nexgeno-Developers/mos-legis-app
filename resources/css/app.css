@@ -151,16 +151,55 @@
     & blockquote { border-left: 2px solid var(--color-gold); padding-left: 1rem; font-style: italic; color: var(--color-muted-foreground); }
 }
 
+/*
+ * One form-control style for the whole app: every single-line control
+ * (text, email, number, date, select) is exactly the same height as a
+ * default button (2.75rem), so fields and buttons always line up.
+ */
 @utility field-input {
+    display: block;
     width: 100%;
+    height: 2.75rem;
     border: 1px solid var(--color-border);
-    background: var(--color-card);
-    padding: 0.55rem 0.9rem;
+    border-radius: 0;
+    background-color: var(--color-card);
+    padding: 0 0.875rem;
     font-size: 1rem;
+    line-height: 1.5;
     color: var(--color-foreground);
-    &:focus { outline: none; border-color: var(--color-gold); }
-    &::placeholder { color: var(--color-muted-foreground); }
-    &:disabled { background: var(--color-muted); }
+    transition: border-color 150ms, box-shadow 150ms;
+    &:hover:not(:disabled) { border-color: color-mix(in oklab, var(--color-gold) 55%, var(--color-border)); }
+    &:focus { outline: none; border-color: var(--color-gold); box-shadow: 0 0 0 3px color-mix(in oklab, var(--color-gold) 22%, transparent); }
+    &::placeholder { color: var(--color-muted-foreground); opacity: 1; }
+    &:disabled { background-color: var(--color-muted); color: var(--color-muted-foreground); cursor: not-allowed; }
+    &[aria-invalid="true"] { border-color: var(--color-destructive); }
+
+    /* Multi-line and multi-value controls grow with their content. */
+    &:is(textarea) { height: auto; min-height: 6rem; padding: 0.625rem 0.875rem; resize: vertical; }
+    &:is(select[multiple]) { height: auto; padding: 0.5rem; }
+
+    /* Native dropdown arrow replaced with a consistent chevron. */
+    &:is(select:not([multiple])) {
+        appearance: none;
+        padding-right: 2.5rem;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27%236f665c%27 stroke-width=%272%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27%3E%3Cpath d=%27m6 9 6 6 6-6%27/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 0.875rem center;
+        background-size: 1rem;
+        cursor: pointer;
+    }
+
+    /* Date pickers: same height, readable value, aligned calendar icon. */
+    &[type="date"], &[type="month"] { min-width: 0; }
+    &::-webkit-datetime-edit { padding: 0; line-height: 1.5; }
+    &::-webkit-calendar-picker-indicator { opacity: 0.6; cursor: pointer; }
+
+    /* File inputs: same height, styled browse button. */
+    &[type="file"] { padding: 0 0.875rem 0 0; line-height: 2.625rem; color: var(--color-muted-foreground); cursor: pointer; }
+    &::file-selector-button {
+        height: 100%; margin-right: 0.875rem; padding: 0 1rem; border: 0; border-right: 1px solid var(--color-border);
+        background-color: var(--color-secondary); color: var(--color-foreground); font: inherit; font-size: 0.875rem; cursor: pointer;
+    }
 }
 
 trix-toolbar .trix-button-group { background: var(--color-card); }

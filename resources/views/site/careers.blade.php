@@ -1,6 +1,6 @@
 <x-layouts.site :title="$page?->seo_title ?: 'Careers'" :description="$page?->seo_description">
     <x-page-header eyebrow="Careers" :title="$page?->title ?: 'Careers at MOS Legis'" :intro="$page?->excerpt" />
-    <div class="mx-auto grid max-w-[1200px] gap-12 px-6 py-16 lg:grid-cols-[1fr_1fr]">
+    <div class="mx-auto grid max-w-[1200px] gap-12 px-4 py-8 sm:px-6 md:py-10 lg:grid-cols-[1fr_1fr]">
         <section>
             @if ($page?->content)<div class="prose-legis">{!! $page->content !!}</div>@endif
             @if ($page?->meta('apply_email'))<p class="mt-6 text-muted-foreground">Questions? Write to <a class="text-primary hover:underline" href="mailto:{{ $page->meta('apply_email') }}">{{ $page->meta('apply_email') }}</a>.</p>@endif

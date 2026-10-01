@@ -1,6 +1,6 @@
 <x-layouts.site :title="$blog->meta_title ?: $blog->blog_title" :description="$blog->meta_description ?: $blog->excerpt" :og-image="$blog->og_image ?: $blog->featured_image">
-    <x-page-header :eyebrow="$blog->category->category_name" :title="$blog->blog_title" :intro="$blog->author_name.' · '.format_date($blog->publish_date)" />
-    <div class="mx-auto grid max-w-[1200px] gap-12 px-6 py-16 lg:grid-cols-[1fr_18rem]">
+    <x-page-header :crumbs="['Blogs' => route('blogs.index'), $blog->category->category_name => route('blogs.index', ['category' => $blog->category->slug])]" :title="$blog->blog_title" :intro="$blog->author_name.' · '.format_date($blog->publish_date)" />
+    <div class="mx-auto grid max-w-[1200px] gap-12 px-4 py-8 sm:px-6 md:py-10 lg:grid-cols-[1fr_18rem]">
         <article>
             @if ($blog->featured_image)<img src="{{ Storage::disk('public')->url($blog->featured_image) }}" alt="" class="mb-10 max-h-[28rem] w-full object-cover">@endif
             <div class="prose-legis measure">{!! $blog->content !!}</div>

@@ -13,10 +13,7 @@
     <x-filter-bar>
         <x-filter.search placeholder="Search remarks…" />
         <x-filter.select name="module" label="Module" :options="$modules" />
-        <label class="flex flex-col gap-1">
-            <span class="label-caps text-xs text-muted-foreground">Action</span>
-            <input type="search" name="action" value="{{ request('action') }}" placeholder="e.g. Updated" class="field-input w-48!">
-        </label>
+        <x-filter.text name="action" label="Action" placeholder="e.g. Updated" />
         <x-filter.date-range />
     </x-filter-bar>
 

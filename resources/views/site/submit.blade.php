@@ -2,7 +2,7 @@
     <x-page-header eyebrow="Submission Portal" :title="$page?->title && $page->title !== 'Submit' ? $page->title : 'Submit a Manuscript'"
         :intro="$page?->excerpt ?: 'Submissions are open year-round across all content categories. Every manuscript is pre-screened for similarity and then sent for double-blind peer review.'" />
 
-    <div class="mx-auto max-w-[1200px] space-y-16 px-6 py-16">
+    <div class="mx-auto max-w-[1200px] space-y-12 px-4 py-8 sm:px-6 md:py-10">
         @if ($page?->content)<div class="prose-legis measure">{!! $page->content !!}</div>@endif
 
         <section>

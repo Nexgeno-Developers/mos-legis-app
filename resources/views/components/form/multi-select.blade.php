@@ -22,7 +22,7 @@
             },
             labelFor(id) { return this.items.find(i => i.id === id)?.label ?? id; },
         }" @click.outside="open = false" class="relative">
-        <button type="button" @click="open = !open" class="field-input flex min-h-[2.75rem] flex-wrap items-center gap-1.5 text-left">
+        <button type="button" @click="open = !open" class="field-input flex h-auto! min-h-[2.75rem] flex-wrap items-center gap-1.5 py-1.5! text-left">
             <template x-if="!selected.length"><span class="text-muted-foreground">{{ $placeholder }}</span></template>
             <template x-for="id in selected" :key="id">
                 <span class="inline-flex items-center gap-1 border border-gold/50 bg-secondary px-2 py-0.5 text-sm">

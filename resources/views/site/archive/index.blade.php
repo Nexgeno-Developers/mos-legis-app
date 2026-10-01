@@ -1,6 +1,6 @@
 <x-layouts.site title="Journal Archive" description="Every published MOS Legis manuscript, searchable by category, title, author and keyword.">
     <x-page-header eyebrow="Archive" title="Journal Archive" intro="Every published manuscript, filterable by content category and searchable by title, author and keyword." />
-    <div class="mx-auto grid max-w-[1200px] gap-10 px-6 py-16 lg:grid-cols-[16rem_1fr]">
+    <div class="mx-auto grid max-w-[1200px] gap-10 px-4 py-8 sm:px-6 md:py-10 lg:grid-cols-[16rem_1fr]">
         <aside>
             <form method="GET" class="space-y-6">
                 <div>

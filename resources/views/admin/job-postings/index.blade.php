@@ -15,10 +15,7 @@
         <x-filter.select name="status" label="Status" :options="['Active' => 'Active', 'Inactive' => 'Inactive', 'expired' => 'Expired']" />
         <button type="button" @click="more = !more" class="text-sm text-primary hover:underline" x-text="more ? 'Fewer filters' : 'More filters'"></button>
         <div x-show="more" x-cloak class="flex w-full flex-wrap items-end gap-3">
-            <label class="flex flex-col gap-1">
-                <span class="label-caps text-xs text-muted-foreground">Experience</span>
-                <input type="search" name="experience" value="{{ request('experience') }}" placeholder="e.g. 2–4 years" class="field-input w-44!">
-            </label>
+            <x-filter.text name="experience" label="Experience" placeholder="e.g. 2–4 years" />
             <x-filter.date-range label="Published date" from="published_from" to="published_to" />
             <x-filter.date-range label="Application deadline" from="deadline_from" to="deadline_to" />
             <x-filter.date-range label="Expiry date" from="expiry_from" to="expiry_to" />

@@ -1,6 +1,6 @@
 <x-layouts.site :title="$page->seo_title ?: $page->title" :description="$page->seo_description">
     <x-page-header eyebrow="People" :title="$page->title" :intro="$page->excerpt" />
-    <div class="mx-auto max-w-[1200px] space-y-16 px-6 py-16">
+    <div class="mx-auto max-w-[1200px] space-y-12 px-4 py-8 sm:px-6 md:py-10">
         @forelse ($groups as $group => $members)
             <section>
                 <x-section-heading :eyebrow="$group" :title="match (strtolower($group)) { 'founder', 'founders' => 'Who Started the Review', 'advisory' => 'Counsel to the Board', default => 'Board of Editors' }" />

@@ -1,14 +1,14 @@
 <x-layouts.site title="Job Postings" description="Legal job listings from firms, chambers and institutions.">
     <x-page-header eyebrow="Notice Board" title="Job Postings" intro="Vacancies submitted by firms, chambers and institutions. MOS Legis publishes listings as a service to readers and takes no part in recruitment." />
-    <div class="mx-auto max-w-[1200px] px-6 py-12" x-data="{ job: null }">
+    <div class="mx-auto max-w-[1200px] px-4 pt-2 pb-10 sm:px-6" x-data="{ job: null }">
         <x-filter-bar>
             <x-filter.search placeholder="Title, organisation or skill…" />
-            <label class="flex flex-col gap-1"><span class="label-caps text-xs text-muted-foreground">Location</span><input type="search" name="location" value="{{ request('location') }}" class="field-input w-40!"></label>
+            <x-filter.text name="location" label="Location" />
             <x-filter.select name="practice_area" label="Practice area" :options="$practiceAreas" />
             <x-filter.select name="work_mode" label="Work mode" :options="App\Enums\WorkMode::options()" />
             <x-filter.select name="employment_type" label="Employment type" :options="App\Enums\EmploymentType::options()" />
-            <label class="flex flex-col gap-1"><span class="label-caps text-xs text-muted-foreground">Experience</span><input type="search" name="experience" value="{{ request('experience') }}" placeholder="e.g. 2–4" class="field-input w-32!"></label>
-            <label class="flex flex-col gap-1"><span class="label-caps text-xs text-muted-foreground">Deadline after</span><input type="date" name="deadline_after" value="{{ request('deadline_after') }}" class="field-input w-auto!"></label>
+            <x-filter.text name="experience" label="Experience" placeholder="e.g. 2–4" />
+            <x-filter.text name="deadline_after" label="Deadline after" type="date" />
         </x-filter-bar>
 
         <div class="grid gap-px bg-border md:grid-cols-2">

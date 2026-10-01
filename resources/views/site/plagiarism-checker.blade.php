@@ -1,6 +1,6 @@
 <x-layouts.site title="Plagiarism Checker" description="Check your manuscript for similarity before you submit.">
     <x-page-header eyebrow="Plagiarism Checker" title="Check Your Content for Similarity" intro="Paste your text or upload a .docx. After payment we run it through our plagiarism service and give you a similarity score and a downloadable report." />
-    <div class="mx-auto grid max-w-[1200px] gap-12 px-6 py-16 lg:grid-cols-[1.4fr_1fr]">
+    <div class="mx-auto grid max-w-[1200px] gap-12 px-4 py-8 sm:px-6 md:py-10 lg:grid-cols-[1.4fr_1fr]">
         <section>
             @auth
                 @if (auth()->user()->isAuthor())

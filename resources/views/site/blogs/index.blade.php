@@ -1,6 +1,6 @@
 <x-layouts.site title="Blogs" description="Legal commentary from the MOS Legis editorial board and contributors.">
     <x-page-header eyebrow="Blogs" title="Legal Commentary" intro="Shorter writing from the Editorial Board and outside contributors." />
-    <div class="mx-auto max-w-[1200px] px-6 py-12">
+    <div class="mx-auto max-w-[1200px] px-4 pt-2 pb-10 sm:px-6">
         <x-filter-bar>
             <x-filter.search placeholder="Search title…" />
             <x-filter.select name="category" label="Category" :options="$categories" />

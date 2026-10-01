@@ -9,10 +9,7 @@
 
     <x-filter-bar>
         <x-filter.search placeholder="Search name, email, comment…" />
-        <label class="flex flex-col gap-1">
-            <span class="label-caps text-xs text-muted-foreground">Blog</span>
-            <input type="search" name="blog" value="{{ request('blog') }}" placeholder="Blog title" class="field-input w-56!">
-        </label>
+        <x-filter.text name="blog" label="Blog" placeholder="Blog title" />
         <x-filter.select name="status" label="Status" :options="App\Enums\CommentStatus::options()" />
     </x-filter-bar>
 

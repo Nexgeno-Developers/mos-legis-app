@@ -7,8 +7,8 @@
         'danger' => 'border-destructive/40 bg-card text-destructive hover:bg-destructive hover:text-destructive-foreground',
         default => 'border-border bg-card text-foreground hover:border-gold',
     };
-    $sizes = $size === 'sm' ? 'px-3 py-1.5 text-[0.7rem]' : 'px-4 py-2.5 text-xs';
-    $classes = "label-caps inline-flex items-center justify-center gap-2 border transition-colors disabled:cursor-not-allowed disabled:opacity-50 {$sizes} {$styles}";
+    $sizes = $size === 'sm' ? 'h-9 px-3 text-[0.7rem]' : 'h-11 px-5 text-xs';
+    $classes = "label-caps inline-flex shrink-0 items-center justify-center gap-2 border whitespace-nowrap transition-colors disabled:cursor-not-allowed disabled:opacity-50 {$sizes} {$styles}";
 @endphp
 @if ($href)
     <a href="{{ $href }}" {{ $attributes->merge(['class' => $classes]) }}>

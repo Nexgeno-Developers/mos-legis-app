@@ -1,6 +1,6 @@
 <x-layouts.site title="Certificate verification">
     <x-page-header eyebrow="Verification" title="Publication Certificate" />
-    <div class="mx-auto max-w-[1200px] px-6 py-16">
+    <div class="mx-auto max-w-[1200px] px-4 py-8 sm:px-6 md:py-10">
         @if ($certificate)
             <div class="max-w-2xl border border-success/50 bg-card p-8">
                 <p class="flex items-center gap-2 font-display text-2xl text-success"><x-icon name="badge-check" class="h-6 w-6" /> This certificate is valid</p>

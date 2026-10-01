@@ -10,14 +10,8 @@
 
     <x-filter-bar>
         <x-filter.search placeholder="Search ID, payment ID or invoice…" />
-        <label class="flex flex-col gap-1">
-            <span class="label-caps text-xs text-muted-foreground">Manuscript ID</span>
-            <input type="search" name="submission" value="{{ request('submission') }}" placeholder="MOS-00042" class="field-input w-36!">
-        </label>
-        <label class="flex flex-col gap-1">
-            <span class="label-caps text-xs text-muted-foreground">User</span>
-            <input type="search" name="user" value="{{ request('user') }}" placeholder="Name or email" class="field-input w-44!">
-        </label>
+        <x-filter.text name="submission" label="Manuscript ID" placeholder="MOS-00042" />
+        <x-filter.text name="user" label="User" placeholder="Name or email" />
         <x-filter.select name="purpose" label="Type" :options="App\Enums\PaymentPurpose::options()" />
         <x-filter.select name="status" label="Status" :options="App\Enums\PaymentStatus::options()" />
         <x-filter.select name="method" label="Method" :options="$methods" />

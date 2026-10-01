@@ -4,8 +4,8 @@
         .($submission->theme ? ', Vol. '.$submission->theme->volume : '').' ('.$submission->published_at->format('Y').').';
 @endphp
 <x-layouts.site :title="$submission->title" :description="Str::limit($submission->abstract, 160)">
-    <x-page-header :eyebrow="$submission->contentCategory->name" :title="$submission->title" :intro="$authors->implode(' · ')" />
-    <div class="mx-auto grid max-w-[1200px] gap-12 px-6 py-16 lg:grid-cols-[1fr_20rem]">
+    <x-page-header :crumbs="['Archive' => route('archive.index'), $submission->contentCategory->name => route('archive.index', ['category' => $submission->content_category_id])]" :title="$submission->title" :intro="$authors->implode(' · ')" />
+    <div class="mx-auto grid max-w-[1200px] gap-12 px-4 py-8 sm:px-6 md:py-10 lg:grid-cols-[1fr_20rem]">
         <article>
             @foreach ($submission->awards as $award)<x-badge tone="gold" class="mb-4">Best Paper · {{ $award->periodLabel() }}</x-badge>@endforeach
             <h2 class="font-display text-2xl">Abstract</h2>

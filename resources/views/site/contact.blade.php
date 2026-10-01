@@ -1,6 +1,6 @@
 <x-layouts.site :title="$page?->seo_title ?: 'Contact'" :description="$page?->seo_description">
     <x-page-header eyebrow="Contact" :title="$page?->title ?: 'Write to the Editorial Desk'" :intro="$page?->excerpt ?: 'Questions on submissions, review timelines, patronage or permissions reach a member of the editorial team directly.'" />
-    <div class="mx-auto grid max-w-[1200px] gap-12 px-6 py-16 lg:grid-cols-[1.3fr_1fr]">
+    <div class="mx-auto grid max-w-[1200px] gap-12 px-4 py-8 sm:px-6 md:py-10 lg:grid-cols-[1.3fr_1fr]">
         <section>
             <x-section-heading eyebrow="Enquiry Form" title="Send Us a Message" />
             <form method="POST" action="{{ route('contact.store') }}" class="mt-8 space-y-5">
