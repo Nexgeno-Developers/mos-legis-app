@@ -23,7 +23,7 @@
     </x-admin.panel>
 
     <x-admin.panel title="Application details">
-        <div class="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+        <div class="grid gap-5 md:grid-cols-3">
             <x-form.field label="Application method" name="application_method" required>
                 <select name="application_method" id="application_method" class="field-input" x-model="method">
                     @foreach (App\Enums\ApplicationMethod::options() as $value => $label)
@@ -31,7 +31,7 @@
                     @endforeach
                 </select>
             </x-form.field>
-            <x-form.input name="application_email_url" label="Application email / URL" :value="$job->application_email_url" required class="md:col-span-2" />
+            <x-form.input name="application_email_url" label="Application email / URL" :value="$job->application_email_url" required />
             <x-form.input name="application_deadline" type="date" label="Application deadline" :value="$job->application_deadline?->toDateString()" required />
         </div>
     </x-admin.panel>
