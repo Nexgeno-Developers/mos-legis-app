@@ -6,7 +6,7 @@
         </x-slot:actions>
     </x-admin.heading>
 
-    <form method="POST" action="{{ $editing ? route('admin.job-postings.update', $job) : route('admin.job-postings.store') }}" class="mt-8 max-w-5xl">
+    <form method="POST" action="{{ $editing ? route('admin.job-postings.update', $job) : route('admin.job-postings.store') }}" class="mx-auto mt-8 max-w-5xl">
         @csrf
         @if ($editing) @method('PUT') @endif
         @include('job-postings._form-fields')

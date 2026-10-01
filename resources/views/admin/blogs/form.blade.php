@@ -9,7 +9,7 @@
         </x-slot:actions>
     </x-admin.heading>
 
-    <form method="POST" action="{{ $editing ? route('admin.blogs.update', $blog) : route('admin.blogs.store') }}" enctype="multipart/form-data" class="mt-8 max-w-5xl">
+    <form method="POST" action="{{ $editing ? route('admin.blogs.update', $blog) : route('admin.blogs.store') }}" enctype="multipart/form-data" class="mx-auto mt-8 max-w-5xl">
         @csrf
         @if ($editing) @method('PUT') @endif
         @include('blogs._form-fields', ['admin' => true])

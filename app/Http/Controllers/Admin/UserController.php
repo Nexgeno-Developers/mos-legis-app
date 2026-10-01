@@ -10,6 +10,7 @@ use App\Http\Requests\Admin\UserRequest;
 use App\Models\AuthorCategory;
 use App\Models\ContentCategory;
 use App\Models\User;
+use App\Support\Permissions;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
@@ -54,7 +55,7 @@ class UserController extends Controller
     {
         $user = $saveUser->handle($request->validated());
 
-        activity()->log('Users', 'Created user', $user, $request->safe()->except(['password', 'password_confirmation']));
+        activity()->log('Users', 'Created user', $user, $request->safe()->except(['password', 'password_confirmation', 'profile_picture']));
 
         return redirect()->route('admin.users.index')->with('success', "User {$user->name} created.");
     }
@@ -63,7 +64,7 @@ class UserController extends Controller
     {
         Gate::authorize('update', $user);
 
-        $user->load(['roles', 'reviewerContentCategories:id', 'authorProfile']);
+        $user->load(['roles', 'permissions', 'reviewerContentCategories:id', 'authorProfile', 'address']);
 
         return view('admin.users.form', ['user' => $user] + $this->formOptions());
     }
@@ -72,7 +73,7 @@ class UserController extends Controller
     {
         $saveUser->handle($request->validated(), $user);
 
-        activity()->log('Users', 'Updated user', $user, $request->safe()->except(['password', 'password_confirmation']));
+        activity()->log('Users', 'Updated user', $user, $request->safe()->except(['password', 'password_confirmation', 'profile_picture']));
 
         return redirect()->route('admin.users.index')->with('success', "User {$user->name} updated.");
     }
@@ -111,6 +112,10 @@ class UserController extends Controller
             'roles' => $roles,
             'contentCategories' => ContentCategory::active()->orderBy('name')->pluck('name', 'id'),
             'authorCategories' => AuthorCategory::active()->orderBy('name')->pluck('name', 'id'),
+            'countries' => config('countries'),
+            'modules' => Permissions::MODULES,
+            // Permissions each role already grants, so the extra-permissions card can show them as included.
+            'rolePermissions' => Role::with('permissions:id,name')->get()->mapWithKeys(fn (Role $role) => [$role->name => $role->permissions->pluck('name')->all()]),
         ];
     }
 }

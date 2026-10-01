@@ -5,7 +5,7 @@
         </x-slot:actions>
     </x-admin.heading>
 
-    <x-admin.panel class="mt-8 max-w-3xl">
+    <x-admin.panel class="mx-auto mt-8 max-w-3xl">
         <x-dl :items="[
             'Name' => e($enquiry->name),
             'Email' => '<a class=\'text-primary hover:underline\' href=\'mailto:'.e($enquiry->email).'\'>'.e($enquiry->email).'</a>',

@@ -6,7 +6,7 @@
         </x-slot:actions>
     </x-admin.heading>
 
-    <form method="POST" action="{{ $editing ? route('admin.submissions.update', $submission) : route('admin.submissions.store') }}" enctype="multipart/form-data" class="mt-8 max-w-4xl space-y-8">
+    <form method="POST" action="{{ $editing ? route('admin.submissions.update', $submission) : route('admin.submissions.store') }}" enctype="multipart/form-data" class="mx-auto mt-8 max-w-4xl space-y-8">
         @csrf
         @if ($editing) @method('PUT') @endif
 
