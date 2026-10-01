@@ -5,7 +5,7 @@
             <p class="label-caps text-xs text-muted-foreground">Co-authors</p>
             <p x-show="! rows.length" class="mt-1 text-sm text-muted-foreground">No co-authors added. Add anyone who wrote this manuscript with you.</p>
         </div>
-        <x-button size="sm" icon="plus" @click="add()">Add co-author</x-button>
+        <x-button size="sm" icon="plus" @click="add()" x-bind:disabled="rows.length >= 10">Add co-author</x-button>
     </div>
     <template x-for="(row, index) in rows" :key="index">
         <div class="mt-2 flex gap-2">
@@ -13,5 +13,6 @@
             <button type="button" @click="remove(index)" class="px-2 text-muted-foreground hover:text-destructive" aria-label="Remove co-author">&times;</button>
         </div>
     </template>
+    <p x-show="rows.length >= 10" x-cloak class="mt-2 text-sm text-muted-foreground">You can add up to 10 co-authors.</p>
     @error('co_authors.*')<p class="mt-1 text-sm text-destructive">{{ $message }}</p>@enderror
 </div>

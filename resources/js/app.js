@@ -143,25 +143,28 @@ Alpine.data('docxWordCount', () => ({
     counting: false,
     error: null,
     async count(event, target) {
-        const file = event.target.files?.[0];
+        const fileInput = event.target;
+        const file = fileInput.files?.[0];
+        const output = document.querySelector(target);
         this.error = null;
-        if (!file) return;
-        if (!file.name.toLowerCase().endsWith('.docx')) {
-            this.error = 'Please upload a .docx file.';
-            return;
-        }
+        delete fileInput.dataset.words;
+        delete fileInput.dataset.unreadable;
+        if (output) output.value = '';
+        // Type, size and word range are reported by jQuery Validate (rules on the input).
+        if (!file || !file.name.toLowerCase().endsWith('.docx')) return;
         this.counting = true;
         try {
             const words = await countDocxWords(file);
-            const input = document.querySelector(target);
-            if (input) {
-                input.value = words;
-                input.dispatchEvent(new Event('input', { bubbles: true }));
+            fileInput.dataset.words = words;
+            if (output) {
+                output.value = words;
+                output.dispatchEvent(new Event('input', { bubbles: true }));
             }
         } catch (e) {
-            this.error = 'Could not read this document. Enter the word count manually.';
+            fileInput.dataset.unreadable = '1';
         } finally {
             this.counting = false;
+            if (window.jQuery && fileInput.form && window.jQuery(fileInput.form).data('validator')) window.jQuery(fileInput).valid();
         }
     },
 }));

@@ -2,7 +2,7 @@
     $a = $address;
     $isSubmission = $payable instanceof App\Models\ManuscriptSubmission;
 @endphp
-<x-layouts.account title="Checkout" :heading="$purpose->label().' fee'">
+<x-layouts.account title="Checkout" :heading="$purpose->label().' fee'" :sidebar="false">
     <div class="grid gap-8 2xl:grid-cols-[minmax(0,1fr)_18rem]">
         <form method="POST" action="{{ route('account.checkout.store') }}" x-data="{ country: @js(old('country_code', $a?->country_code ?? 'IN')), taxType: @js(old('tax_id_type', $a?->tax_id_type?->value ?? 'none')) }">
             @csrf

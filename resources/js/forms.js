@@ -208,9 +208,89 @@ function initPhones(root) {
     });
 }
 
+/* ------------------------------------------------------------------
+ * Manuscript rules — mirror App\Http\Requests\ManuscriptSubmissionRequest
+ * so authors see problems before submitting (the server still checks).
+ * ------------------------------------------------------------------ */
+const wordCount = (text) => (text.trim().match(/\S+/g) || []).length;
+const keywordList = (text) => [...new Set(text.split(',').map((k) => k.trim().toLowerCase()).filter(Boolean))];
+
+/** data-rule-keywords="3,6": between min and max distinct comma-separated keywords. */
+$.validator.addMethod('keywords', function (value, element, param) {
+    const [min, max] = String(param).split(',').map(Number);
+    const count = keywordList(value).length;
+    return this.optional(element) || (count >= min && count <= max);
+}, (param) => {
+    const [min, max] = String(param).split(',');
+    return `Enter between ${min} and ${max} different keywords, separated by commas.`;
+});
+
+/** data-rule-maxwords="250" */
+$.validator.addMethod('maxwords', function (value, element, max) {
+    return this.optional(element) || wordCount(value) <= Number(max);
+}, (max, element) => `Keep this within ${max} words (currently ${wordCount(element.value)}).`);
+
+/** data-rule-docx: a Word .docx file. */
+$.validator.addMethod('docx', function (value, element) {
+    return this.optional(element) || [...(element.files || [])].every((file) => file.name.toLowerCase().endsWith('.docx'));
+}, 'Upload a Word document (.docx). Other formats such as .doc or .pdf are not accepted.');
+
+/**
+ * data-rule-wordrange="#content_category": the counted words (set on the file input after it is
+ * read in the browser) must fit the min/max of the selected content category option.
+ */
+$.validator.addMethod('wordrange', function (value, element, selector) {
+    if (this.optional(element)) return true;
+    if (element.dataset.unreadable === '1') return false;
+    const words = Number(element.dataset.words);
+    const option = document.querySelector(selector)?.selectedOptions?.[0];
+    if (!element.dataset.words || !option?.dataset.min) return true; // not counted yet / no category: the server checks
+    return words >= Number(option.dataset.min) && words <= Number(option.dataset.max);
+}, (selector, element) => {
+    if (element.dataset.unreadable === '1') return 'This file could not be read. Make sure it is a valid Word (.docx) document that is not password-protected.';
+    const option = document.querySelector(selector)?.selectedOptions?.[0];
+    return `Your manuscript has ${Number(element.dataset.words).toLocaleString()} words; ${option?.dataset.name} accepts ${Number(option?.dataset.min).toLocaleString()}–${Number(option?.dataset.max).toLocaleString()} words.`;
+});
+
+/** data-rule-offered: the selected option is not marked data-offered="0". */
+$.validator.addMethod('offered', function (value, element) {
+    return this.optional(element) || element.selectedOptions?.[0]?.dataset.offered !== '0';
+}, 'This content category is not open to your author category. Please choose another one.');
+
+/** Live "12 / 250 words" and "4 keywords" counters under fields with those rules. */
+function initCounters(root) {
+    $(root).find('[data-rule-maxwords], [data-rule-keywords]').each(function () {
+        if (this.dataset.counter) return;
+        this.dataset.counter = '1';
+        const field = this;
+        const counter = document.createElement('p');
+        counter.className = 'text-xs text-muted-foreground tabular-nums';
+        counter.setAttribute('aria-live', 'polite');
+        field.closest('[data-field]')?.appendChild(counter);
+
+        const update = () => {
+            if (field.dataset.ruleMaxwords) {
+                const n = wordCount(field.value);
+                const max = Number(field.dataset.ruleMaxwords);
+                counter.textContent = `${n} / ${max} words`;
+                counter.classList.toggle('text-destructive', n > max);
+            } else {
+                const [min, max] = field.dataset.ruleKeywords.split(',').map(Number);
+                const n = keywordList(field.value).length;
+                counter.textContent = n === 1 ? '1 keyword' : `${n} keywords`;
+                counter.classList.toggle('text-destructive', n > max || (n > 0 && n < min && document.activeElement !== field));
+            }
+        };
+        field.addEventListener('input', update);
+        field.addEventListener('blur', update);
+        update();
+    });
+}
+
 export function initForms(root = document) {
     initSelect2(root);
     initPhones(root);
+    initCounters(root);
     initValidation(root);
 }
 

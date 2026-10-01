@@ -1,4 +1,4 @@
-<x-layouts.account title="Payment" :heading="'Pay '.money($payment->total_amount)">
+<x-layouts.account title="Payment" :heading="'Pay '.money($payment->total_amount)" :sidebar="false">
     <div class="max-w-2xl border border-border bg-card p-8">
         <dl class="space-y-2">
             <div class="flex justify-between"><dt>{{ $payment->payment_purpose->label() }} fee</dt><dd>{{ money($payment->amount) }}</dd></div>

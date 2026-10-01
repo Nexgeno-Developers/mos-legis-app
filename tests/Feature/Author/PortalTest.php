@@ -99,7 +99,9 @@ class PortalTest extends TestCase
         $this->assertSame($theme->id, $submission->content_category_theme_id);
         $this->assertSame(ManuscriptStage::Pending, $submission->stage);
 
-        $this->actingAs($this->author)->get(route('account.checkout.submission', [$submission, 'prescreening']))->assertOk();
+        // Checkout is a focused page: no account sidebar.
+        $this->actingAs($this->author)->get(route('account.checkout.submission', [$submission, 'prescreening']))->assertOk()
+            ->assertSee('Secure checkout')->assertDontSee('aria-label="Account"', false);
         $payment = $this->checkout($submission, PaymentPurpose::Prescreening);
         $this->assertEquals(150.0, (float) $payment->amount);
         $this->assertEquals(27.0, (float) $payment->tax_amount);
@@ -153,6 +155,25 @@ class PortalTest extends TestCase
         $other = User::factory()->author($this->authorCategory)->create();
         $this->actingAs($other)->get(route('account.submissions.show', $submission))->assertForbidden();
         $this->actingAs($other)->get(route('account.checkout.submission', [$submission, 'prescreening']))->assertForbidden();
+    }
+
+    #[Test]
+    public function abstract_word_limit_and_keyword_rules_match_the_form(): void
+    {
+        $base = [
+            'title' => 'AI and Evidence Law', 'content_category_id' => $this->content->id,
+            'manuscript' => Docx::withWords(900),
+        ] + array_fill_keys(array_keys(ManuscriptSubmission::DECLARATIONS), '1');
+
+        // 251 words is over the 250-word abstract limit shown on the form.
+        $this->actingAs($this->author)->post(route('account.submissions.store'), $base + [
+            'keywords' => 'ai, evidence, courts', 'abstract' => implode(' ', array_fill(0, 251, 'word')),
+        ])->assertSessionHasErrors(['abstract' => 'Keep the abstract within 250 words.']);
+
+        // Keywords that differ only in capitals count once (as in the browser check).
+        $this->actingAs($this->author)->post(route('account.submissions.store'), $base + [
+            'keywords' => 'AI, ai, courts', 'abstract' => 'Abstract.',
+        ])->assertSessionHasErrors('keywords');
     }
 
     #[Test]

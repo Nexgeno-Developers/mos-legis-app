@@ -70,6 +70,10 @@ class ManuscriptSubmissionRequest extends FormRequest
                 return;
             }
 
+            if (preg_match_all('/\S+/u', (string) $this->input('abstract')) > 250) {
+                $validator->errors()->add('abstract', 'Keep the abstract within 250 words.');
+            }
+
             $keywords = $this->keywords();
             if (count($keywords) < 3 || count($keywords) > 6) {
                 $validator->errors()->add('keywords', 'Enter between 3 and 6 keywords, separated by commas.');
@@ -123,7 +127,7 @@ class ManuscriptSubmissionRequest extends FormRequest
     public function keywords(): array
     {
         return collect(explode(',', (string) $this->input('keywords')))
-            ->map(fn ($k) => trim($k))->filter()->unique()->values()->all();
+            ->map(fn ($k) => trim($k))->filter()->unique(fn ($k) => mb_strtolower($k))->values()->all();
     }
 
     /** @return list<string> */

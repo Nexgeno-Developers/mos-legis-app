@@ -1,4 +1,5 @@
-@props(['title', 'heading' => null, 'intro' => null])
+@props(['title', 'heading' => null, 'intro' => null, 'sidebar' => true])
+{{-- sidebar=false: focused page without the account menu (e.g. checkout). --}}
 @php
     $me = auth()->user();
     $profile = $me->authorProfile;
@@ -21,6 +22,19 @@
     $isActive = fn (string $route) => request()->routeIs($route, preg_replace('/\.(index|edit)$/', '', $route).'.*');
 @endphp
 <x-layouts.site :title="$title">
+    @unless ($sidebar)
+        <div class="mx-auto max-w-[1040px] px-6 py-10">
+            <header class="border-b border-border pb-6">
+                <a href="{{ route('account.dashboard') }}" class="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-primary"><x-icon name="arrow-left" class="h-4 w-4" /> Back to my account</a>
+                <p class="label-caps mt-4 flex items-center gap-1.5 text-xs text-primary"><x-icon name="lock" class="h-3.5 w-3.5" /> Secure checkout</p>
+                <h1 class="mt-1 font-display text-3xl leading-tight md:text-4xl">{{ $heading ?? $title }}</h1>
+                @if ($intro)<p class="measure mt-2 text-base text-muted-foreground">{{ $intro }}</p>@endif
+            </header>
+            <div class="pt-8">
+                {{ $slot }}
+            </div>
+        </div>
+    @else
     <div class="mx-auto max-w-[1200px] px-6 py-10">
         <div class="grid grid-cols-1 gap-8 lg:grid-cols-[14rem_minmax(0,1fr)] lg:gap-7 xl:grid-cols-[15rem_minmax(0,1fr)] xl:gap-10">
             {{-- Sidebar --}}
@@ -96,4 +110,5 @@
             </section>
         </div>
     </div>
+    @endunless
 </x-layouts.site>

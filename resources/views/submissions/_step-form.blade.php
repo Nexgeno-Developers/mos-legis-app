@@ -73,21 +73,23 @@
         <div class="p-6 md:p-8">
             <div x-show="step === 0" data-step="0" class="space-y-5" x-data="docxWordCount()">
                 <div class="grid gap-5 md:grid-cols-2">
-                    <x-form.input name="title" label="Title" required class="md:col-span-2" />
+                    <x-form.input name="title" label="Title" required maxlength="255" class="md:col-span-2" />
                     <x-form.field label="Content category" name="content_category_id" required>
-                        <select name="content_category_id" x-model="content" class="field-input" required>
+                        <select name="content_category_id" id="content_category" x-model="content" class="field-input" required data-rule-offered="true"
+                            data-msg-offered="This content category is not open to {{ $categoryName }} authors. Please choose another one."
+                            @change="const m = $root.querySelector('[name=manuscript]'); if (m.files.length) window.jQuery(m).valid()">
                             <option value="">Select a content category</option>
-                            @foreach ($contentCategories as $category)<option value="{{ $category->id }}">{{ $category->name }} ({{ $category->wordLimitLabel() }})</option>@endforeach
+                            @foreach ($contentCategories as $category)<option value="{{ $category->id }}" data-name="{{ $category->name }}" data-min="{{ $category->min_word_limit }}" data-max="{{ $category->max_word_limit }}" data-offered="{{ collect($fees)->has($details['author_category_id'].'-'.$category->id) ? 1 : 0 }}" @selected((string) old('content_category_id') === (string) $category->id)>{{ $category->name }} ({{ $category->wordLimitLabel() }})</option>@endforeach
                         </select>
                     </x-form.field>
-                    <x-form.input name="keywords" label="Keywords" placeholder="constitutional law, federalism, taxation" hint="3 to 6 keywords, separated by commas." required />
+                    <x-form.input name="keywords" label="Keywords" placeholder="constitutional law, federalism, taxation" hint="3 to 6 keywords, separated by commas." required maxlength="500" data-rule-keywords="3,6" />
                 </div>
                 <p x-show="themes[content]" x-cloak class="border-l-2 border-gold/60 bg-secondary px-4 py-3 text-sm">
                     This month's theme: <strong x-text="themes[content]"></strong>. Your manuscript should address this theme.
                 </p>
                 <div class="grid gap-5 md:grid-cols-2">
                     <x-form.field label="Manuscript (.docx)" name="manuscript" required :hint="'Word (.docx) only, up to '.App\Support\UploadLimits::label(20480).'. We count the words automatically.'">
-                        <input type="file" name="manuscript" accept=".docx" class="field-input" required data-rule-maxbytes="{{ App\Support\UploadLimits::bytes(20480) }}" data-msg-maxbytes="This file is larger than {{ App\Support\UploadLimits::label(20480) }}. Please upload a smaller file." @change="count($event, '#auto_word_count')">
+                        <input type="file" name="manuscript" accept=".docx" class="field-input" required data-rule-docx="true" data-rule-wordrange="#content_category" data-rule-maxbytes="{{ App\Support\UploadLimits::bytes(20480) }}" data-msg-maxbytes="This file is larger than {{ App\Support\UploadLimits::label(20480) }}. Please upload a smaller file." @change="count($event, '#auto_word_count')">
                         <p x-show="counting" class="text-sm text-muted-foreground">Counting words…</p>
                         <p x-show="error" x-text="error" class="text-sm text-destructive"></p>
                     </x-form.field>
@@ -95,7 +97,7 @@
                         <input id="auto_word_count" type="number" class="field-input" readonly placeholder="Upload your manuscript">
                     </x-form.field>
                 </div>
-                <x-form.textarea name="abstract" label="Abstract" rows="6" required hint="Not more than 250 words." />
+                <x-form.textarea name="abstract" label="Abstract" rows="6" required maxlength="5000" data-rule-maxwords="250" hint="Not more than 250 words." />
                 @include('submissions._co-authors', ['submission' => new App\Models\ManuscriptSubmission])
             </div>
 
