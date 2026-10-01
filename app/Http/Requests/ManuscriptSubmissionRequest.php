@@ -15,6 +15,9 @@ use Throwable;
 /**
  * SOW A.16 submission fields (Author details, Manuscript information, Confirmations).
  * Used by the author step form (B.04) and by admins creating/editing on an author's behalf.
+ * Author category, institution and country are not entered on the form: a new submission takes
+ * them from the author's profile (a snapshot, so later profile edits do not change it), and an
+ * edited submission keeps the values it was submitted with.
  * The word count is recounted from the uploaded .docx and must fit the category limits.
  */
 class ManuscriptSubmissionRequest extends FormRequest
@@ -37,9 +40,9 @@ class ManuscriptSubmissionRequest extends FormRequest
         $editing = $this->route('submission') !== null;
 
         $rules = [
-            'author_category_id' => ['required', 'integer', Rule::exists('manuscript_author_categories', 'id')->where('status', 'Active')],
+            'author_category_id' => ['required', 'integer', $editing ? Rule::exists('manuscript_author_categories', 'id') : Rule::exists('manuscript_author_categories', 'id')->where('status', 'Active')],
             'institution' => ['required', 'string', 'max:190'],
-            'country' => ['required', 'string', 'max:100'],
+            'country' => ['nullable', 'string', 'max:100'],
             'co_authors' => ['array', 'max:10'],
             'co_authors.*' => ['nullable', 'string', 'max:150'],
             'title' => ['required', 'string', 'max:255'],
@@ -104,10 +107,16 @@ class ManuscriptSubmissionRequest extends FormRequest
 
     public function messages(): array
     {
+        $whose = $this->isAdmin() ? 'The author’s profile' : 'Your profile';
+
         return array_combine(
             array_map(fn ($f) => "{$f}.accepted", array_keys(ManuscriptSubmission::DECLARATIONS)),
             array_fill(0, count(ManuscriptSubmission::DECLARATIONS), 'Please accept this declaration.'),
-        );
+        ) + [
+            'author_category_id.required' => "{$whose} has no author category yet. Add it to the profile first.",
+            'author_category_id.exists' => "{$whose} has an author category that is no longer offered. Update the profile first.",
+            'institution.required' => "{$whose} has no institution yet. Add it to the profile first.",
+        ];
     }
 
     /** @return list<string> */
@@ -135,13 +144,28 @@ class ManuscriptSubmissionRequest extends FormRequest
 
     protected function prepareForValidation(): void
     {
-        // Pre-fill author category/institution from the author's profile when omitted.
-        if (! $this->isAdmin() && $profile = AuthorProfile::firstWhere('user_id', $this->user()?->id)) {
-            $this->mergeIfMissing(array_filter([
-                'author_category_id' => $profile->author_category_id,
-                'institution' => $profile->institution,
-                'country' => $profile->country,
-            ]));
+        $this->merge(self::authorDetails($this->route('submission'), $this->isAdmin() ? $this->integer('user_id') : $this->user()?->id));
+    }
+
+    /**
+     * Author category, institution and country for a submission: the recorded values when editing,
+     * otherwise the author's profile (country falls back to the billing address country).
+     *
+     * @return array{author_category_id: ?int, institution: ?string, country: ?string}
+     */
+    public static function authorDetails(?ManuscriptSubmission $submission, ?int $authorId): array
+    {
+        if ($submission) {
+            return $submission->only(['author_category_id', 'institution', 'country']);
         }
+
+        $profile = $authorId ? AuthorProfile::with('user.address')->firstWhere('user_id', $authorId) : null;
+        $billingCountry = $profile?->user?->address ? (config('countries')[$profile->user->address->country_code] ?? null) : null;
+
+        return [
+            'author_category_id' => $profile?->author_category_id,
+            'institution' => $profile?->institution,
+            'country' => $profile?->country ?: $billingCountry,
+        ];
     }
 }

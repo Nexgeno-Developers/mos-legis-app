@@ -5,9 +5,18 @@
 @endphp
 <x-layouts.account title="Profile" intro="Your author profile pre-fills submissions and appears on certificates.">
     <div class="space-y-8">
+        @php $next = old('next', request('next')); @endphp
+        @if ($next)
+            <div class="flex items-start gap-3 border-l-2 border-gold bg-secondary px-4 py-3">
+                <x-icon name="info" class="mt-0.5 h-5 w-5 shrink-0 text-primary" />
+                <p>Your submission uses your author category, institution and country. Complete them below and save — you’ll go straight back to your submission.</p>
+            </div>
+        @endif
+
         {{-- Author profile + password --}}
         <form method="POST" action="{{ route('account.profile.update') }}" enctype="multipart/form-data" class="space-y-8">
             @csrf @method('PUT')
+            @if ($next)<input type="hidden" name="next" value="{{ $next }}">@endif
 
             <x-admin.panel title="Author profile" description="Author category is required before you submit a manuscript.">
                 <div class="grid gap-6 xl:grid-cols-[9rem_minmax(0,1fr)] xl:gap-8">

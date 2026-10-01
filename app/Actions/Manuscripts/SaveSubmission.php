@@ -32,13 +32,6 @@ class SaveSubmission
                 $submission->content_category_theme_id = ContentCategoryTheme::currentFor($submission->content_category_id)?->id;
                 $submission->save();
 
-                // Keep the author's profile category in step with what they submitted under.
-                $author->authorProfile()->updateOrCreate([], [
-                    'author_category_id' => $submission->author_category_id,
-                    'institution' => $submission->institution,
-                    'country' => $submission->country,
-                ]);
-
                 $this->workflow->submitted($submission);
 
                 return $submission;

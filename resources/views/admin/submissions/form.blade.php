@@ -10,15 +10,33 @@
         @csrf
         @if ($editing) @method('PUT') @endif
 
-        <x-admin.panel title="Author details">
-            <div class="grid gap-5 md:grid-cols-2">
-                @unless ($editing)
-                    <x-form.multi-select name="user_id" label="Author account" :options="$authors" :multiple="false" placeholder="Search authors…" required class="md:col-span-2" />
-                @endunless
-                <x-form.select name="author_category_id" label="Author category" :options="$authorCategories" :value="$submission->author_category_id" placeholder="Select" required />
-                <x-form.input name="institution" label="Institution" :value="$submission->institution" required />
-                <x-form.input name="country" label="Country" :value="$submission->country ?? settings('general.default_country')" required />
-            </div>
+        <x-admin.panel title="Author" :description="$editing ? 'Recorded when the manuscript was submitted.' : 'Author category, institution and country are taken from the author’s profile.'">
+            @if ($editing)
+                <dl class="grid gap-4 border border-border bg-secondary/50 p-4 sm:grid-cols-2 lg:grid-cols-4">
+                    <div><dt class="label-caps text-[0.65rem] text-muted-foreground">Author</dt><dd class="font-medium">{{ $submission->author?->name }}</dd></div>
+                    <div><dt class="label-caps text-[0.65rem] text-muted-foreground">Author category</dt><dd>{{ $submission->authorCategory?->name ?? '—' }}</dd></div>
+                    <div><dt class="label-caps text-[0.65rem] text-muted-foreground">Institution</dt><dd>{{ $submission->institution ?: '—' }}</dd></div>
+                    <div><dt class="label-caps text-[0.65rem] text-muted-foreground">Country</dt><dd>{{ $submission->country ?: '—' }}</dd></div>
+                </dl>
+            @else
+                <div x-data="{ author: @js((string) old('user_id', '')), details: @js($authorDetails) }" class="space-y-4">
+                    <x-form.multi-select name="user_id" label="Author account" :options="$authors" :multiple="false" placeholder="Search authors…" required x-model="author" />
+                    <template x-if="details[author]">
+                        <div>
+                            <dl class="grid gap-4 border border-border bg-secondary/50 p-4 sm:grid-cols-3">
+                                <div><dt class="label-caps text-[0.65rem] text-muted-foreground">Author category</dt><dd x-text="details[author].category || 'Missing'" :class="! details[author].category && 'text-destructive'"></dd></div>
+                                <div><dt class="label-caps text-[0.65rem] text-muted-foreground">Institution</dt><dd x-text="details[author].institution || 'Missing'" :class="! details[author].institution && 'text-destructive'"></dd></div>
+                                <div><dt class="label-caps text-[0.65rem] text-muted-foreground">Country</dt><dd x-text="details[author].country || '—'"></dd></div>
+                            </dl>
+                            <p x-show="! details[author].category || ! details[author].institution" class="mt-2 text-sm text-destructive">
+                                Complete this author’s profile first. <a :href="details[author].editUrl" class="underline">Edit author</a>
+                            </p>
+                        </div>
+                    </template>
+                    @error('author_category_id')<p class="text-sm text-destructive" role="alert">{{ $message }}</p>@enderror
+                    @error('institution')<p class="text-sm text-destructive" role="alert">{{ $message }}</p>@enderror
+                </div>
+            @endif
             @include('submissions._co-authors')
         </x-admin.panel>
 

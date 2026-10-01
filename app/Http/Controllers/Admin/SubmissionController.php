@@ -153,9 +153,18 @@ class SubmissionController extends Controller
 
     private function formOptions(): array
     {
+        $authors = User::role(RoleName::Author->value)->with(['authorProfile.authorCategory:id,name', 'address'])->orderBy('name')->get(['id', 'name', 'email']);
+        $countries = config('countries');
+
         return [
-            'authors' => User::role(RoleName::Author->value)->orderBy('name')->get(['id', 'name', 'email'])
-                ->mapWithKeys(fn (User $u) => [$u->id => "{$u->name} ({$u->email})"]),
+            'authors' => $authors->mapWithKeys(fn (User $u) => [$u->id => "{$u->name} ({$u->email})"]),
+            // Profile details shown when an author is picked; the submission records them on save.
+            'authorDetails' => $authors->mapWithKeys(fn (User $u) => [$u->id => [
+                'category' => $u->authorProfile?->authorCategory?->name,
+                'institution' => $u->authorProfile?->institution,
+                'country' => $u->authorProfile?->country ?: ($u->address ? ($countries[$u->address->country_code] ?? null) : null),
+                'editUrl' => route('admin.users.edit', $u),
+            ]]),
             'authorCategories' => AuthorCategory::active()->orderBy('name')->pluck('name', 'id'),
             'contentCategories' => ContentCategory::active()->orderBy('name')->get(),
         ];

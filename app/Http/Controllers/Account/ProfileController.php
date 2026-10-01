@@ -43,7 +43,12 @@ class ProfileController extends Controller
             $user->authorProfile()->updateOrCreate([], $profile);
         });
 
-        return back()->with('success', 'Profile saved.');
+        $next = (string) $request->input('next');
+
+        // Only same-site paths, e.g. back to the submission form.
+        return str_starts_with($next, '/') && ! str_starts_with($next, '//')
+            ? redirect($next)->with('success', 'Profile saved — you can continue your submission.')
+            : back()->with('success', 'Profile saved.');
     }
 
     public function updateAddress(AddressRequest $request): RedirectResponse
