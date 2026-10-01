@@ -2,8 +2,8 @@
 <div class="space-y-8">
     <x-admin.panel title="Basic information">
         <div class="space-y-5">
-            <div class="grid gap-5 md:grid-cols-2">
-                <x-form.input name="blog_title" label="Title" :value="$blog->blog_title" required />
+            <div @class(['grid gap-5', 'md:grid-cols-3' => $admin, 'md:grid-cols-2' => ! $admin])>
+                <x-form.input name="blog_title" label="Title" :value="$blog->blog_title" required class="md:col-span-full" />
                 <x-form.input name="slug" label="Slug" :value="$blog->slug" hint="Leave blank to generate from the title." />
                 <x-form.select name="category_id" label="Category" :options="$categories" :value="$blog->category_id" placeholder="Select a category" required />
                 @if ($admin)
@@ -29,7 +29,7 @@
     </x-admin.panel>
 
     <x-admin.panel title="Publication">
-        <div class="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+        <div @class(['grid gap-5', 'md:grid-cols-3' => $admin, 'md:grid-cols-2' => ! $admin])>
             <x-form.select name="status" label="Status" :value="$blog->status"
                 :options="$admin ? App\Enums\BlogStatus::options() : ['Draft' => 'Draft', 'Published' => 'Publish']" required
                 :hint="$admin ? null : (settings()->bool('general.blog_author_approval_required') ? 'Published posts are reviewed by the editors before they go live.' : null)" />
