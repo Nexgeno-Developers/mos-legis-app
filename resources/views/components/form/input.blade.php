@@ -3,6 +3,7 @@
     <input type="{{ $type }}" id="{{ $name }}" name="{{ $name }}"
         @if ($type !== 'password' && $type !== 'file') value="{{ old(str_replace(['[', ']'], ['.', ''], $name), $value) }}" @endif
         @required($required)
+        @if (str_ends_with($name, '_confirmation')) data-rule-equalto="[name={{ substr($name, 0, -13) }}]" data-msg-equalto="The passwords do not match." @endif
         {{ $attributes->except('class')->merge(['class' => 'field-input']) }}
         @error(str_replace(['[', ']'], ['.', ''], $name)) aria-invalid="true" @enderror>
 </x-form.field>

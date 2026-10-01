@@ -28,7 +28,7 @@
                 <x-form.input name="password" type="password" label="Password" required autocomplete="new-password" hint="At least 8 characters." />
                 <x-form.input name="password_confirmation" type="password" label="Confirm password" required autocomplete="new-password" />
             @endunless
-            <x-form.checkbox name="terms" label="I accept the Terms & Conditions, Privacy Policy and Publication Ethics." />
+            <x-form.checkbox name="terms" label="I accept the Terms & Conditions, Privacy Policy and Publication Ethics." required />
             <x-button type="submit" variant="primary" class="w-full" icon="mail">Send verification code</x-button>
         </form>
         <p class="mt-8 text-center text-sm text-muted-foreground">Already registered? <a href="{{ route('login') }}" class="text-primary hover:underline">Sign in</a></p>

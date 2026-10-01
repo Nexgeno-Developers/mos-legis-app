@@ -1,5 +1,6 @@
 @import 'tailwindcss';
 @import 'trix/dist/trix.css';
+@import 'select2/dist/css/select2.css';
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
@@ -211,3 +212,72 @@ trix-editor:focus { outline: none; border-color: var(--color-gold) !important; }
     scrollbar-width: none;
     &::-webkit-scrollbar { display: none; }
 }
+
+/* ------------------------------------------------------------------
+ * Select2 — themed to match .field-input (same 2.75rem height,
+ * border, gold focus ring and error state).
+ * ------------------------------------------------------------------ */
+.select2-container { font-size: 1rem; }
+.select2-container .select2-selection--single,
+.select2-container .select2-selection--multiple {
+    min-height: 2.75rem;
+    border: 1px solid var(--color-border);
+    border-radius: 0;
+    background-color: var(--color-card);
+    transition: border-color 150ms, box-shadow 150ms;
+}
+.select2-container .select2-selection--single { height: 2.75rem; display: flex; align-items: center; }
+.select2-container .select2-selection--single .select2-selection__rendered {
+    padding-left: 0.875rem; padding-right: 2.5rem; line-height: 1.5; color: var(--color-foreground);
+}
+.select2-container .select2-selection--single .select2-selection__placeholder { color: var(--color-muted-foreground); }
+.select2-container .select2-selection--single .select2-selection__arrow { height: 100%; width: 2.5rem; top: 0; right: 0; }
+.select2-container .select2-selection--single .select2-selection__arrow b {
+    border: 0; width: 1rem; height: 1rem; margin: 0; left: 50%; top: 50%; transform: translate(-50%, -50%);
+    background: url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27%236f665c%27 stroke-width=%272%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27%3E%3Cpath d=%27m6 9 6 6 6-6%27/%3E%3C/svg%3E") center / 1rem no-repeat;
+    transition: transform 150ms;
+}
+.select2-container--open .select2-selection--single .select2-selection__arrow b { transform: translate(-50%, -50%) rotate(180deg); }
+.select2-container .select2-selection--single .select2-selection__clear { margin-right: 0.25rem; font-size: 1.25rem; color: var(--color-muted-foreground); }
+.select2-container:hover .select2-selection { border-color: color-mix(in oklab, var(--color-gold) 55%, var(--color-border)); }
+.select2-container--focus .select2-selection,
+.select2-container--open .select2-selection {
+    outline: none; border-color: var(--color-gold) !important;
+    box-shadow: 0 0 0 3px color-mix(in oklab, var(--color-gold) 22%, transparent);
+}
+.select2-container.select2-invalid .select2-selection { border-color: var(--color-destructive) !important; }
+.select2-container--disabled .select2-selection { background-color: var(--color-muted); cursor: not-allowed; }
+
+/* Multi-select chips */
+.select2-container .select2-selection--multiple { padding: 0.3rem 0.5rem; cursor: text; }
+.select2-container .select2-selection--multiple .select2-selection__rendered { display: flex; flex-wrap: wrap; gap: 0.35rem; padding: 0; }
+.select2-container .select2-selection--multiple .select2-selection__choice {
+    margin: 0; display: inline-flex; align-items: center; gap: 0.35rem; padding: 0.15rem 0.6rem;
+    border: 1px solid color-mix(in oklab, var(--color-gold) 50%, transparent); border-radius: 0;
+    background-color: var(--color-secondary); font-size: 0.875rem; color: var(--color-foreground);
+}
+.select2-container .select2-selection--multiple .select2-selection__choice__remove { order: 2; margin: 0; color: var(--color-muted-foreground); font-size: 1rem; }
+.select2-container .select2-selection--multiple .select2-selection__choice__remove:hover { color: var(--color-destructive); }
+.select2-container .select2-search--inline { flex: 1; min-width: 8rem; }
+.select2-container .select2-search--inline .select2-search__field { margin: 0; height: 1.9rem; font-family: inherit; font-size: 1rem; }
+.select2-container .select2-search--inline .select2-search__field::placeholder { color: var(--color-muted-foreground); }
+
+/* Dropdown panel */
+.select2-dropdown {
+    border: 1px solid var(--color-gold); border-radius: 0; background-color: var(--color-popover);
+    box-shadow: 0 10px 25px -10px rgb(0 0 0 / 0.25); z-index: 60;
+}
+.select2-search--dropdown { padding: 0.5rem; }
+.select2-search--dropdown .select2-search__field {
+    height: 2.5rem; padding: 0 0.75rem; border: 1px solid var(--color-border); font-family: inherit; font-size: 0.95rem;
+}
+.select2-search--dropdown .select2-search__field:focus { outline: none; border-color: var(--color-gold); }
+.select2-results__options { max-height: 16rem !important; }
+.select2-results__option { padding: 0.55rem 0.875rem; font-size: 0.95rem; }
+.select2-container--default .select2-results__option--highlighted[aria-selected] { background-color: var(--color-primary); color: var(--color-primary-foreground); }
+.select2-container--default .select2-results__option[aria-selected=true] { background-color: var(--color-secondary); font-weight: 600; }
+.select2-container--default .select2-results__option--highlighted[aria-selected=true] { background-color: var(--color-primary); }
+.select2-results__message { color: var(--color-muted-foreground); }
+
+/* Error state for the rich-text editor */
+trix-editor.trix-invalid { border-color: var(--color-destructive) !important; }

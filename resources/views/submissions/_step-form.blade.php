@@ -12,7 +12,7 @@
     };
     $themes = $contentCategories->mapWithKeys(fn ($c) => [$c->id => $c->currentTheme?->fullLabel()])->filter();
 @endphp
-<form method="POST" action="{{ route('account.submissions.store') }}" enctype="multipart/form-data" novalidate class="border border-border bg-card"
+<form method="POST" action="{{ route('account.submissions.store') }}" enctype="multipart/form-data" data-steps @go-to-step="step = $event.detail" class="border border-border bg-card"
     x-data="{
         step: {{ $errorStep }},
         author: @js((string) old('author_category_id', $profile?->author_category_id)),
@@ -34,7 +34,7 @@
     </ol>
 
     <div class="p-6 md:p-8">
-        <div x-show="step === 0" class="space-y-5">
+        <div x-show="step === 0" data-step="0" class="space-y-5">
             <div class="grid gap-5 md:grid-cols-2">
                 <x-form.field label="Author category" name="author_category_id" required>
                     <select name="author_category_id" x-model="author" class="field-input" required>
@@ -48,7 +48,7 @@
             @include('submissions._co-authors', ['submission' => new App\Models\ManuscriptSubmission])
         </div>
 
-        <div x-show="step === 1" x-cloak class="space-y-5" x-data="docxWordCount()">
+        <div x-show="step === 1" data-step="1" x-cloak class="space-y-5" x-data="docxWordCount()">
             <x-form.input name="title" label="Title" required />
             <x-form.field label="Content category" name="content_category_id" required>
                 <select name="content_category_id" x-model="content" class="field-input" required>
@@ -71,13 +71,13 @@
             <x-form.textarea name="abstract" label="Abstract" rows="6" required hint="Not more than 250 words." />
         </div>
 
-        <div x-show="step === 2" x-cloak class="space-y-4">
+        <div x-show="step === 2" data-step="2" x-cloak class="space-y-4">
             @foreach (App\Models\ManuscriptSubmission::DECLARATIONS as $field => $label)
-                <x-form.checkbox :name="$field" :label="$label" />
+                <x-form.checkbox :name="$field" :label="$label" required />
             @endforeach
         </div>
 
-        <div x-show="step === 3" x-cloak class="space-y-4">
+        <div x-show="step === 3" data-step="3" x-cloak class="space-y-4">
             <div class="border border-border bg-background p-5">
                 <div class="flex justify-between"><span>Plagiarism pre-screening fee (payable now)</span><strong>{{ money($prescreeningFee) }}</strong></div>
                 <div class="mt-2 flex justify-between text-muted-foreground">
@@ -91,7 +91,7 @@
 
     <div class="flex items-center justify-between border-t border-border px-6 py-5 md:px-8">
         <x-button type="button" @click="step = Math.max(0, step - 1)" x-bind:disabled="step === 0" icon="arrow-left">Back</x-button>
-        <x-button type="button" variant="primary" x-show="step < 3" @click="step++">Next</x-button>
+        <x-button type="button" variant="primary" x-show="step < 3" @click="if (window.validateWithin($root.querySelectorAll('[data-step]')[step])) step++">Next</x-button>
         <x-button type="submit" variant="primary" icon="send" x-show="step === 3" x-cloak>Submit manuscript</x-button>
     </div>
 </form>

@@ -20,6 +20,7 @@ import {
     User, UserCheck, UserPlus, Users, Volume, X, MapPin,
 } from 'lucide';
 import { countDocxWords } from './word-count';
+import { initForms, refreshSelects } from './forms';
 
 const usedIcons = { Activity, Archive, ArrowLeft, ArrowRight, Award, BadgeCheck, BadgeIndianRupee, Ban, BookOpen, Briefcase, CalendarRange, Check, ChevronDown, ChevronLeft, ChevronRight, CircleAlert, CircleCheck, Clock, Columns, Contact, Copy, CreditCard, Delete, Download, ExternalLink, Eye, EyeOff, File, FileText, Files, Filter, Folder, Form, Gauge, Gavel, Ghost, GitBranch, Heading, Home, Image, Inbox, Info, KeyRound, Layout, Lock, LogIn, LogOut, Mail, Menu, MessageSquare, Network, PanelLeft, Pencil, Phone, Plus, Receipt, RefreshCw, Reply, Route, Rows, Save, ScanSearch, Search, Send, Settings, ShieldCheck, Shuffle, SquareUser, Star, Summary, Tag, Tags, Text, ToggleLeft, ToggleRight, Trash2, Type, Upload, User, UserCheck, UserPlus, Users, Volume, X, MapPin };
 
@@ -36,7 +37,13 @@ Alpine.data('modal', (initiallyOpen = false, defaults = {}) => ({
     show(record = {}) {
         this.form = { ...defaults, ...record };
         this.open = true;
-        this.$nextTick(() => renderIcons());
+        this.$nextTick(() => {
+            renderIcons();
+            refreshSelects(this.$el);
+            // Clear errors left from a previous open.
+            const form = this.$el.querySelector('form');
+            if (form && window.$(form).data('validator')) window.$(form).validate().resetForm();
+        });
     },
     hide() {
         this.open = false;
@@ -93,7 +100,11 @@ export function renderIcons() {
 
 window.renderIcons = renderIcons;
 
-document.addEventListener('DOMContentLoaded', renderIcons);
+document.addEventListener('DOMContentLoaded', () => {
+    renderIcons();
+    // After Alpine has applied x-model values, enhance selects and attach validation.
+    initForms(document);
+});
 document.addEventListener('alpine:initialized', renderIcons);
 
 // Block file attachments in Trix; images are managed through dedicated upload fields.

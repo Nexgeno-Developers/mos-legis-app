@@ -27,7 +27,7 @@
         <x-admin.panel title="Confirmations">
             <div class="space-y-3">
                 @foreach (App\Models\ManuscriptSubmission::DECLARATIONS as $field => $label)
-                    <x-form.checkbox :name="$field" :label="$label" :checked="$submission->{$field}" />
+                    <x-form.checkbox :name="$field" :label="$label" :checked="$submission->{$field}" :required="! $submission->exists" />
                 @endforeach
             </div>
         </x-admin.panel>
