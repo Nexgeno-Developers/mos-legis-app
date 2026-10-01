@@ -61,7 +61,7 @@
         </section>
     @endif
 
-    <div class="mt-10 grid gap-8 lg:grid-cols-[1fr_22rem]">
+    <div class="mt-10 grid gap-8 xl:grid-cols-[minmax(0,1fr)_17rem]">
         <div class="space-y-8">
             <x-admin.panel title="Manuscript information">
                 <x-dl :items="[
@@ -94,7 +94,7 @@
                 @endforelse
             </x-admin.panel>
         </div>
-        <div class="space-y-8">
+        <div class="grid content-start gap-8 md:grid-cols-2 xl:grid-cols-1">
             <x-admin.panel title="Payments">
                 <ul class="space-y-3">
                     @forelse ($submission->payments->sortByDesc('id') as $payment)

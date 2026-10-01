@@ -23,7 +23,7 @@
     </x-admin.panel>
 
     <x-admin.panel title="Application details">
-        <div class="grid gap-5 md:grid-cols-3">
+        <div class="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
             <x-form.field label="Application method" name="application_method" required>
                 <select name="application_method" id="application_method" class="field-input" x-model="method">
                     @foreach (App\Enums\ApplicationMethod::options() as $value => $label)
@@ -37,7 +37,7 @@
     </x-admin.panel>
 
     <x-admin.panel title="Publication & source">
-        <div class="grid gap-5 md:grid-cols-3">
+        <div class="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
             <x-form.input name="published_date" type="date" label="Published date" :value="$job->published_date?->toDateString()" required />
             <x-form.input name="expiry_date" type="date" label="Expiry date" :value="$job->expiry_date?->toDateString()" required hint="Hidden from the public site after this date." />
             <x-form.select name="status" label="Status" :options="App\Enums\RecordStatus::options()" :value="$job->status" required />

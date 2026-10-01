@@ -29,7 +29,7 @@
     </x-admin.panel>
 
     <x-admin.panel title="Publication">
-        <div class="grid gap-5 md:grid-cols-3">
+        <div class="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
             <x-form.select name="status" label="Status" :value="$blog->status"
                 :options="$admin ? App\Enums\BlogStatus::options() : ['Draft' => 'Draft', 'Published' => 'Publish']" required
                 :hint="$admin ? null : (settings()->bool('general.blog_author_approval_required') ? 'Published posts are reviewed by the editors before they go live.' : null)" />

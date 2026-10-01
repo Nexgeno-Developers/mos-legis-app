@@ -22,7 +22,7 @@
 @endphp
 <x-layouts.site :title="$title">
     <div class="mx-auto max-w-[1200px] px-6 py-10">
-        <div class="grid grid-cols-1 gap-8 lg:grid-cols-[16rem_minmax(0,1fr)]">
+        <div class="grid grid-cols-1 gap-8 lg:grid-cols-[14rem_minmax(0,1fr)] lg:gap-7 xl:grid-cols-[15rem_minmax(0,1fr)] xl:gap-10">
             {{-- Sidebar --}}
             <aside class="min-w-0 lg:sticky lg:top-40 lg:self-start">
                 <div class="flex flex-col gap-3 sm:flex-row lg:flex-col">

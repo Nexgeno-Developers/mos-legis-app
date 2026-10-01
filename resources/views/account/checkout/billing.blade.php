@@ -3,7 +3,7 @@
     $isSubmission = $payable instanceof App\Models\ManuscriptSubmission;
 @endphp
 <x-layouts.account title="Checkout" :heading="$purpose->label().' fee'">
-    <div class="grid gap-8 lg:grid-cols-[1fr_22rem]">
+    <div class="grid gap-8 2xl:grid-cols-[minmax(0,1fr)_18rem]">
         <form method="POST" action="{{ route('account.checkout.store') }}" x-data="{ country: @js(old('country_code', $a?->country_code ?? 'IN')), taxType: @js(old('tax_id_type', $a?->tax_id_type?->value ?? 'none')) }">
             @csrf
             <input type="hidden" name="payable_type" value="{{ $payable->getMorphClass() }}">
@@ -35,7 +35,7 @@
             <x-button type="submit" variant="primary" icon="lock" class="mt-6">Continue to payment</x-button>
         </form>
 
-        <aside class="h-fit border border-border bg-card p-6" x-data="{ get taxed() { return document.querySelector('[name=country_code]')?.value === 'IN' } }">
+        <aside class="order-first h-fit border border-border bg-card p-6 2xl:sticky 2xl:top-40 2xl:order-none" x-data="{ get taxed() { return document.querySelector('[name=country_code]')?.value === 'IN' } }">
             <p class="label-caps text-xs text-muted-foreground">Order summary</p>
             <p class="mt-2 font-display text-xl">{{ $purpose->label() }} fee</p>
             <p class="text-sm text-muted-foreground">{{ $isSubmission ? $payable->reference().' — '.Str::limit($payable->title, 60) : 'Plagiarism check: '.Str::limit($payable->title, 60) }}</p>

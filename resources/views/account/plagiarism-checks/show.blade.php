@@ -1,6 +1,6 @@
 @php $matches = $check->api_response['matches'] ?? []; @endphp
 <x-layouts.account :title="'Plagiarism check #'.$check->id" :heading="$check->title">
-    <div class="grid gap-8 lg:grid-cols-[1fr_20rem]">
+    <div class="grid gap-8 xl:grid-cols-[minmax(0,1fr)_17rem]">
         <x-admin.panel title="Result">
             @if (! $check->payment_id)
                 <p class="text-muted-foreground">Pay the checking fee to run this check.</p>

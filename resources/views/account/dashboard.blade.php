@@ -14,7 +14,7 @@
         <x-stat-card label="Fees paid" :value="money($paid)" :href="route('account.payments.index')" />
     </div>
 
-    <div class="mt-10 grid gap-10 lg:grid-cols-2">
+    <div class="mt-10 grid gap-10 xl:grid-cols-2">
         <section>
             <x-section-heading eyebrow="Action required" title="Needs your attention" />
             <ul class="mt-4 divide-y divide-border border border-border bg-card">
