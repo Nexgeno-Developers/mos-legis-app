@@ -33,7 +33,7 @@ class ProfileController extends Controller
         DB::transaction(function () use ($request, $user) {
             $user->update($request->safe()->only(['name', 'phone']) + ($request->filled('password') ? ['password' => $request->validated('password')] : []));
 
-            $profile = $request->safe()->only(['author_category_id', 'institution', 'country', 'bio', 'orcid']);
+            $profile = $request->safe()->only(['author_category_id', 'institution', 'country', 'bio']);
             if ($request->hasFile('profile_picture')) {
                 if ($old = $user->authorProfile?->profile_picture) {
                     Storage::disk('public')->delete($old);

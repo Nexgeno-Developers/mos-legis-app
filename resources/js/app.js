@@ -51,6 +51,91 @@ Alpine.data('modal', (initiallyOpen = false, defaults = {}) => ({
 }));
 
 /**
+ * "Connect your ORCID iD": opens ORCID sign-in in a pop-up; the pop-up posts the verified iD back
+ * (the server keeps the trusted copy). If pop-ups are blocked, the page redirects instead and the
+ * form's typed values are restored on return.
+ */
+const ORCID_DRAFT_KEY = 'orcid-form-draft';
+
+Alpine.data('orcidConnect', ({ orcid = null, connectUrl, forgetUrl = null }) => ({
+    orcid,
+    busy: false,
+    error: null,
+    init() {
+        this.restoreDraft();
+        window.addEventListener('message', (event) => {
+            if (event.origin !== window.location.origin || event.data?.type !== 'orcid-connect') return;
+            this.busy = false;
+            if (!event.data.ok) {
+                this.error = event.data.message;
+                return;
+            }
+            this.orcid = event.data.orcid;
+            this.error = null;
+            const name = this.$root.closest('form')?.querySelector('[name=name]');
+            if (name && !name.value && event.data.name) {
+                name.value = event.data.name.toLowerCase().replace(/\b\p{L}/gu, (c) => c.toUpperCase());
+            }
+        });
+    },
+    connect() {
+        this.error = null;
+        const popup = window.open(`${connectUrl}?popup=1`, 'orcid-connect', 'width=520,height=720,menubar=no,toolbar=no,location=yes');
+        if (!popup) {
+            this.saveDraft();
+            window.location.href = connectUrl;
+            return;
+        }
+        this.busy = true;
+        const timer = setInterval(() => {
+            if (popup.closed) {
+                clearInterval(timer);
+                this.busy = false;
+            }
+        }, 700);
+    },
+    async forget() {
+        if (!forgetUrl) return;
+        await fetch(forgetUrl, {
+            method: 'POST',
+            headers: { Accept: 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content },
+        });
+        this.orcid = null;
+    },
+    saveDraft() {
+        const form = this.$root.closest('form');
+        if (!form) return;
+        const values = {};
+        new FormData(form).forEach((value, key) => {
+            if (!/password|_token|_method/.test(key) && typeof value === 'string') values[key] = value;
+        });
+        try { sessionStorage.setItem(ORCID_DRAFT_KEY, JSON.stringify(values)); } catch (e) { /* storage unavailable */ }
+    },
+    restoreDraft() {
+        let values = null;
+        try {
+            values = JSON.parse(sessionStorage.getItem(ORCID_DRAFT_KEY) || 'null');
+            sessionStorage.removeItem(ORCID_DRAFT_KEY);
+        } catch (e) { return; }
+        const form = this.$root.closest('form');
+        if (!values || !form) return;
+        Object.entries(values).forEach(([key, value]) => {
+            const field = form.elements.namedItem(key);
+            if (!field) return;
+            if (field instanceof RadioNodeList) {
+                // e.g. a checkbox with its hidden "0" companion
+                [...field].forEach((el) => { if (el.type === 'checkbox') el.checked = value === '1'; });
+                return;
+            }
+            if (field.readOnly || field.value) return;
+            field.value = value;
+            field.dispatchEvent(new Event('change', { bubbles: true }));
+        });
+        this.$nextTick(() => refreshSelects(form));
+    },
+}));
+
+/**
  * SOW B.04: count words in the uploaded .docx and fill the word-count field.
  * The server recounts on submit, so this is only a convenience.
  */

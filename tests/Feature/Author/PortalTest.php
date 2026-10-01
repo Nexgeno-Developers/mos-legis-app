@@ -232,7 +232,9 @@ class PortalTest extends TestCase
         $this->actingAs($this->author)->put(route('account.profile.update'), [
             'name' => 'Ananya', 'author_category_id' => $this->authorCategory->id, 'orcid' => '0000-0002-1825-0097', 'institution' => 'NLSIU',
         ])->assertSessionHasNoErrors();
-        $this->assertSame('0000-0002-1825-0097', $this->author->fresh()->authorProfile->orcid);
+        // The ORCID iD can only be added through ORCID itself, never typed in the profile form.
+        $this->assertNull($this->author->fresh()->authorProfile->orcid);
+        $this->assertSame('NLSIU', $this->author->fresh()->authorProfile->institution);
 
         $this->actingAs($this->author)->put(route('account.profile.address'), [
             'recipient_name' => 'Ananya', 'address_line1' => '1 Road', 'city' => 'Pune', 'country_code' => 'IN', 'tax_id_type' => 'gst',

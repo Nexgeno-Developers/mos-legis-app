@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Actions\Auth\CreateAuthor;
 use App\Enums\SocialProvider;
 use App\Http\Controllers\Controller;
 use App\Models\User;
@@ -16,26 +15,29 @@ use Symfony\Component\HttpFoundation\RedirectResponse as SymfonyRedirect;
 use Throwable;
 
 /**
- * SOW B.01 — sign in or register with Google (Gmail) or ORCID.
- * Works for both sign-in and sign-up. When the provider returns no verified email
- * (common with ORCID, where emails are private by default) the user confirms one by OTP.
+ * SOW B.01 — sign in or sign up with Google (ORCID is used only to connect an iD, see OrcidController).
+ * Existing authors are signed in (an account with the same email is linked). A new author finishes the
+ * registration form (author category, institution, optional ORCID iD); Google has already verified the
+ * email, so no OTP is needed.
  */
 class SocialLoginController extends Controller
 {
+    public const SESSION_KEY = 'pending_registration';
+
     public function redirect(SocialProvider $provider): SymfonyRedirect|RedirectResponse
     {
         if (! config("services.{$provider->value}.client_id")) {
-            return redirect()->route('login')->withErrors(['email' => ucfirst($provider->value).' sign-in is not configured yet.']);
+            return redirect()->route('login')->withErrors(['email' => 'Google sign-in is not configured yet.']);
         }
 
         return Socialite::driver($provider->value)->redirect();
     }
 
-    public function callback(Request $request, SocialProvider $provider, CreateAuthor $createAuthor): RedirectResponse
+    public function callback(Request $request, SocialProvider $provider): RedirectResponse
     {
         if ($request->filled('error')) {
-            // The user pressed "Deny" / cancelled on the provider's page.
-            return redirect()->route('login')->withErrors(['email' => ucfirst($provider->value).' sign-in was cancelled.']);
+            // The user pressed "Cancel" on Google's page.
+            return redirect()->route('login')->withErrors(['email' => 'Google sign-in was cancelled.']);
         }
 
         try {
@@ -43,44 +45,36 @@ class SocialLoginController extends Controller
         } catch (Throwable $e) {
             Log::warning("{$provider->value} sign-in failed", ['error' => $e->getMessage()]);
 
-            return redirect()->route('login')->withErrors(['email' => ucfirst($provider->value).' sign-in failed. Please try again.']);
+            return redirect()->route('login')->withErrors(['email' => 'Google sign-in failed. Please try again.']);
         }
 
-        $isOrcid = $provider === SocialProvider::Orcid;
-        $linked = UserSocialAccount::with('user')->where('provider', $provider)->where('provider_user_id', $identity->getId())->first();
-        // Google and ORCID only return addresses they have verified.
+        // Google only returns addresses it has verified.
         $email = $identity->getEmail() ? strtolower($identity->getEmail()) : null;
+        $linked = UserSocialAccount::with('user')->where('provider', $provider)->where('provider_user_id', $identity->getId())->first();
         $user = $linked?->user ?? ($email ? User::firstWhere('email', $email) : null);
 
-        if ($user) {
-            if (! $user->isAuthor() || ! $user->isActive()) {
-                return redirect()->route('login')->withErrors(['email' => 'This account cannot sign in on the website.']);
+        if (! $user) {
+            if (! $email) {
+                return redirect()->route('register')->withErrors(['email' => 'Google did not share an email address. Please register with your email instead.']);
             }
 
-            if (! $linked) {
-                $user->socialAccounts()->firstOrCreate(['provider' => $provider, 'provider_user_id' => $identity->getId()]);
-            }
-        } elseif ($email) {
-            // Verified email from the provider: create the author account straight away.
-            $user = $createAuthor->handle([
-                'name' => $identity->getName() ?: $email,
-                'email' => $email,
-                'orcid' => $isOrcid ? $identity->getId() : null,
-            ], $provider, $identity->getId());
-        } else {
-            $request->session()->put('pending_registration', [
+            $request->session()->put(self::SESSION_KEY, [
                 'provider' => $provider->value,
                 'provider_user_id' => $identity->getId(),
                 'name' => $identity->getName(),
-                'orcid' => $provider === SocialProvider::Orcid ? $identity->getId() : null,
+                'email' => $email,
+                'email_verified' => true,
             ]);
 
-            return redirect()->route('register')->with('status', 'Almost there — confirm your email address to finish creating your account.');
+            return redirect()->route('register')->with('status', 'Almost done — add your author category and institution to create your account.');
         }
 
-        // Keep the ORCID iD on the author profile (shown on submissions and the archive).
-        if ($isOrcid && ! $user->authorProfile?->orcid) {
-            $user->authorProfile()->updateOrCreate([], ['orcid' => $identity->getId()]);
+        if (! $user->isAuthor() || ! $user->isActive()) {
+            return redirect()->route('login')->withErrors(['email' => 'This account cannot sign in on the website.']);
+        }
+
+        if (! $linked) {
+            $user->socialAccounts()->firstOrCreate(['provider' => $provider, 'provider_user_id' => $identity->getId()]);
         }
 
         Auth::login($user, remember: true);

@@ -3,6 +3,7 @@
 namespace Tests\Feature\Author;
 
 use App\Mail\OtpCodeMail;
+use App\Models\AuthorCategory;
 use App\Models\User;
 use App\Socialite\OrcidProvider;
 use GuzzleHttp\Client;
@@ -20,6 +21,9 @@ use ReflectionMethod;
 use SocialiteProviders\Manager\Config;
 use Tests\TestCase;
 
+/**
+ * Google sign-in / sign-up, and "Connect your ORCID iD" (ORCID is not a login method).
+ */
 class SocialLoginTest extends TestCase
 {
     private function fakeProvider(string $id, ?string $email, string $name = 'Test Scholar'): void
@@ -31,81 +35,51 @@ class SocialLoginTest extends TestCase
     }
 
     #[Test]
-    public function orcid_without_public_email_completes_signup_with_otp(): void
+    public function new_google_user_finishes_registration_without_an_otp(): void
     {
         Mail::fake();
-        $this->fakeProvider('0000-0002-1825-0097', null, 'Josiah Carberry');
+        $category = AuthorCategory::factory()->create();
+        $this->fakeProvider('google-777', 'new.scholar@gmail.com', 'New Scholar');
 
-        $this->get(route('social.callback', 'orcid').'?code=abc')->assertRedirect(route('register'));
-        $this->get(route('register'))->assertOk()->assertSee('Connected')->assertSee('0000-0002-1825-0097')->assertDontSee('Sign up with Google');
+        $this->get(route('social.callback', 'google').'?code=abc')->assertRedirect(route('register'));
+        $this->assertGuest();
+        $this->assertDatabaseMissing('users', ['email' => 'new.scholar@gmail.com']);
 
-        $this->post(route('register.store'), ['name' => 'Josiah Carberry', 'email' => 'josiah@example.com', 'terms' => '1'])
-            ->assertRedirect(route('register.verify'));
+        $this->get(route('register'))->assertOk()->assertSee('Verified by Google')->assertSee('new.scholar@gmail.com')->assertSee('Create my account');
 
-        $code = null;
-        Mail::assertSent(OtpCodeMail::class, function (OtpCodeMail $mail) use (&$code) {
-            $code = $mail->code;
+        // The email cannot be swapped: Google verified it.
+        $this->post(route('register.store'), [
+            'name' => 'New Scholar', 'email' => 'someone.else@example.com', 'author_category_id' => $category->id,
+            'institution' => 'NALSAR Hyderabad', 'terms' => '1',
+        ])->assertRedirect(route('account.dashboard'));
 
-            return true;
-        });
-        $this->post(route('register.verify.store'), ['otp' => $code])->assertRedirect();
-
-        $user = User::where('email', 'josiah@example.com')->firstOrFail();
+        Mail::assertNothingSent();
+        $user = User::where('email', 'new.scholar@gmail.com')->firstOrFail();
         $this->assertAuthenticatedAs($user);
+        $this->assertNotNull($user->email_verified_at);
         $this->assertNull($user->password);
-        $this->assertSame('0000-0002-1825-0097', $user->authorProfile->orcid);
-        $this->assertDatabaseHas('user_social_accounts', ['user_id' => $user->id, 'provider' => 'orcid', 'provider_user_id' => '0000-0002-1825-0097']);
+        $this->assertSame('NALSAR Hyderabad', $user->authorProfile->institution);
+        $this->assertSame($category->id, $user->authorProfile->author_category_id);
+        $this->assertDatabaseHas('user_social_accounts', ['user_id' => $user->id, 'provider' => 'google', 'provider_user_id' => 'google-777']);
+        $this->assertDatabaseMissing('users', ['email' => 'someone.else@example.com']);
     }
 
     #[Test]
-    public function orcid_with_verified_email_creates_the_account_immediately(): void
-    {
-        $this->fakeProvider('0000-0001-5109-3700', 'scholar@uni.edu');
-
-        $this->get(route('social.callback', 'orcid').'?code=abc')->assertRedirect(route('account.dashboard'));
-
-        $user = User::where('email', 'scholar@uni.edu')->firstOrFail();
-        $this->assertAuthenticatedAs($user);
-        $this->assertTrue($user->isAuthor());
-        $this->assertSame('0000-0001-5109-3700', $user->authorProfile->orcid);
-    }
-
-    #[Test]
-    public function linked_account_signs_in_and_existing_email_is_linked(): void
+    public function existing_author_signs_in_with_google_and_the_account_is_linked(): void
     {
         $author = $this->author(['email' => 'ananya@example.com']);
-
         $this->fakeProvider('google-123', 'ananya@example.com');
-        $this->get(route('social.callback', 'google').'?code=abc')->assertRedirect(route('account.dashboard'));
-        $this->assertAuthenticatedAs($author);
-        $this->assertDatabaseHas('user_social_accounts', ['user_id' => $author->id, 'provider' => 'google']);
-
-        auth()->logout();
-
-        // ORCID iD links to the same author even though ORCID returns no email.
-        $author->socialAccounts()->create(['provider' => 'orcid', 'provider_user_id' => '0000-0003-0000-0001']);
-        $this->fakeProvider('0000-0003-0000-0001', null);
-        $this->get(route('social.callback', 'orcid').'?code=abc')->assertRedirect(route('account.dashboard'));
-        $this->assertAuthenticatedAs($author);
-        $this->assertSame(1, User::count() - User::role(['superadmin', 'reviewer'])->count());
-    }
-
-    #[Test]
-    public function google_signup_creates_a_verified_author(): void
-    {
-        $this->fakeProvider('google-999', 'new.author@gmail.com', 'New Author');
 
         $this->get(route('social.callback', 'google').'?code=abc')->assertRedirect(route('account.dashboard'));
 
-        $user = User::where('email', 'new.author@gmail.com')->firstOrFail();
-        $this->assertNotNull($user->email_verified_at);
-        $this->assertTrue($user->isAuthor());
+        $this->assertAuthenticatedAs($author);
+        $this->assertDatabaseHas('user_social_accounts', ['user_id' => $author->id, 'provider' => 'google', 'provider_user_id' => 'google-123']);
     }
 
     #[Test]
     public function staff_accounts_cannot_use_website_social_login(): void
     {
-        $admin = $this->superadmin(['email' => 'boss@moslegis.com']);
+        $this->superadmin(['email' => 'boss@moslegis.com']);
         $this->fakeProvider('google-admin', 'boss@moslegis.com');
 
         $this->get(route('social.callback', 'google').'?code=abc')->assertRedirect(route('login'))->assertSessionHasErrors('email');
@@ -113,25 +87,103 @@ class SocialLoginTest extends TestCase
     }
 
     #[Test]
-    public function cancelling_on_the_provider_page_returns_to_login(): void
+    public function cancelling_on_google_returns_to_login(): void
     {
-        $this->get(route('social.callback', 'orcid').'?error=access_denied')->assertRedirect(route('login'))->assertSessionHasErrors('email');
+        $this->get(route('social.callback', 'google').'?error=access_denied')->assertRedirect(route('login'))->assertSessionHasErrors('email');
     }
 
     #[Test]
-    public function register_and_login_pages_offer_both_providers(): void
+    public function orcid_is_not_a_login_method_but_can_be_connected_when_registering(): void
     {
-        $this->get(route('register'))->assertOk()->assertSee('Sign up with Google')->assertSee('Sign up with ORCID');
-        $this->get(route('login'))->assertOk()->assertSee('Sign in with Google')->assertSee('Sign in with ORCID');
+        $this->get(route('login'))->assertOk()->assertSee('Sign in with Google')->assertDontSee('Sign in with ORCID');
+        $this->get(route('register'))->assertOk()->assertSee('Sign up with Google')->assertDontSee('Sign up with ORCID')
+            ->assertSee('Connect your ORCID iD');
     }
 
     #[Test]
-    public function start_over_clears_a_pending_social_signup(): void
+    public function orcid_connected_during_registration_is_saved_with_the_new_account(): void
     {
-        $this->withSession(['pending_registration' => ['provider' => 'orcid', 'provider_user_id' => 'x', 'name' => 'X']])
-            ->post(route('register.reset'))->assertRedirect(route('register'));
+        Mail::fake();
+        $category = AuthorCategory::factory()->create();
+        $this->fakeProvider('0000-0002-1825-0097', null, 'JOSIAH CARBERRY');
 
-        $this->get(route('register'))->assertSee('Sign up with ORCID');
+        $this->get(route('orcid.callback').'?code=abc')->assertRedirect(route('register'))->assertSessionHas('success');
+        $this->assertSame('0000-0002-1825-0097', session('verified_orcid.id'));
+        $this->get(route('register'))->assertSee('0000-0002-1825-0097');
+
+        // A typed ORCID value is ignored; only the verified one from the session counts.
+        $this->post(route('register.store'), [
+            'name' => 'Josiah Carberry', 'email' => 'josiah@example.com', 'author_category_id' => $category->id, 'institution' => 'Brown University',
+            'orcid' => '9999-9999-9999-9999', 'password' => 'secret-pass-1', 'password_confirmation' => 'secret-pass-1', 'terms' => '1',
+        ])->assertRedirect(route('register.verify'));
+
+        $code = null;
+        Mail::assertSent(OtpCodeMail::class, function (OtpCodeMail $mail) use (&$code) {
+            $code = $mail->code;
+
+            return true;
+        });
+        $this->post(route('register.verify.store'), ['otp' => $code])->assertRedirect(route('account.dashboard'));
+
+        $user = User::where('email', 'josiah@example.com')->firstOrFail();
+        $this->assertSame('0000-0002-1825-0097', $user->authorProfile->orcid);
+        $this->assertNull(session('verified_orcid'));
+    }
+
+    #[Test]
+    public function orcid_popup_hands_the_verified_id_back_to_the_form(): void
+    {
+        $this->fakeProvider('0000-0002-1825-0097', null, 'Josiah Carberry');
+
+        $this->withSession(['orcid_popup' => true])->get(route('orcid.callback').'?code=abc')
+            ->assertOk()->assertSee('postMessage', false)->assertSee('0000-0002-1825-0097');
+    }
+
+    #[Test]
+    public function an_orcid_connected_during_registration_can_be_removed(): void
+    {
+        $this->withSession(['verified_orcid' => ['id' => '0000-0002-1825-0097', 'name' => 'X']])
+            ->postJson(route('orcid.forget'))->assertOk();
+
+        $this->assertNull(session('verified_orcid'));
+    }
+
+    #[Test]
+    public function author_links_orcid_from_the_profile_once_and_it_is_then_locked(): void
+    {
+        $author = $this->author();
+
+        $this->fakeProvider('0000-0001-5109-3700', null);
+        $this->actingAs($author)->get(route('orcid.callback').'?code=abc')->assertRedirect(route('account.profile.edit'))->assertSessionHas('success');
+        $this->assertSame('0000-0001-5109-3700', $author->fresh()->authorProfile->orcid);
+
+        $this->actingAs($author)->get(route('account.profile.edit'))->assertOk()->assertSee('Locked');
+
+        // A second ORCID cannot replace it.
+        $this->fakeProvider('0000-0003-0000-0001', null);
+        $this->actingAs($author)->get(route('orcid.callback').'?code=abc')->assertSessionHas('error');
+        $this->assertSame('0000-0001-5109-3700', $author->fresh()->authorProfile->orcid);
+    }
+
+    #[Test]
+    public function an_orcid_already_on_another_account_is_refused(): void
+    {
+        $this->author()->authorProfile()->update(['orcid' => '0000-0001-5109-3700']);
+        $author = $this->author();
+
+        $this->fakeProvider('0000-0001-5109-3700', null);
+        $this->actingAs($author)->get(route('orcid.callback').'?code=abc')->assertSessionHas('error');
+        $this->assertNull($author->fresh()->authorProfile->orcid);
+
+        auth()->logout();
+        $this->get(route('orcid.callback').'?code=abc')->assertSessionHas('error');
+        $this->assertNull(session('verified_orcid'));
+    }
+
+    #[Test]
+    public function cancelling_on_orcid_returns_with_a_message(): void
+    {
+        $this->get(route('orcid.callback').'?error=access_denied')->assertRedirect(route('register'))->assertSessionHas('error');
     }
 
     #[Test]

@@ -40,16 +40,16 @@
                         </x-form.field>
                         <x-form.input name="phone" label="Mobile number" :value="$user->phone" autocomplete="tel" />
                         <x-form.select name="author_category_id" label="Author category" :options="$authorCategories" :value="$profile?->author_category_id" placeholder="Select your category" required />
-                        <x-form.input name="institution" label="Institution / organisation" :value="$profile?->institution" autocomplete="organization" />
+                        <x-form.input name="institution" label="Institution / organisation" :value="$profile?->institution" required autocomplete="organization" />
                         <x-form.input name="country" label="Country" :value="$profile?->country" autocomplete="country-name" />
-                        <x-form.input name="orcid" label="ORCID iD" placeholder="0000-0000-0000-0000" :value="$profile?->orcid" class="sm:col-span-2" />
+                        <x-orcid-connect :orcid="$profile?->orcid" locked class="sm:col-span-2" />
                         <x-form.textarea name="bio" label="Professional biography" :value="$profile?->bio" rows="4" class="sm:col-span-2" />
                     </div>
                 </div>
             </x-admin.panel>
 
             <x-admin.panel :title="$user->password ? 'Change password' : 'Set a password'"
-                :description="$user->password ? 'Leave blank to keep your current password.' : 'You signed up with Google or ORCID. Set a password to also sign in with your email.'">
+                :description="$user->password ? 'Leave blank to keep your current password.' : 'You signed up with Google. Set a password to also sign in with your email.'">
                 <div class="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
                     @if ($user->password)
                         <x-form.input name="current_password" type="password" label="Current password" autocomplete="current-password" />

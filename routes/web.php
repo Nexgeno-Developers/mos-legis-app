@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Account;
 use App\Http\Controllers\Auth\AuthorLoginController;
+use App\Http\Controllers\Auth\OrcidController;
 use App\Http\Controllers\Auth\PasswordResetController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\SocialLoginController;
@@ -57,8 +58,9 @@ Route::middleware('guest')->group(function () {
     Route::post('register/verify', [RegisterController::class, 'verify'])->middleware('throttle:10,1')->name('register.verify.store');
     Route::post('register/resend', [RegisterController::class, 'resend'])->name('register.resend');
     Route::post('register/reset', [RegisterController::class, 'reset'])->name('register.reset');
-    Route::get('auth/{provider}/redirect', [SocialLoginController::class, 'redirect'])->name('social.redirect');
-    Route::get('auth/{provider}/callback', [SocialLoginController::class, 'callback'])->name('social.callback');
+    // Google sign-in / sign-up (ORCID is not a login method; see the ORCID routes below).
+    Route::get('auth/{provider}/redirect', [SocialLoginController::class, 'redirect'])->whereIn('provider', ['google'])->name('social.redirect');
+    Route::get('auth/{provider}/callback', [SocialLoginController::class, 'callback'])->whereIn('provider', ['google'])->name('social.callback');
 
     // Shared password reset link (admin panel and author portal).
     Route::get('forgot-password', [PasswordResetController::class, 'request'])->name('password.request');
@@ -68,6 +70,11 @@ Route::middleware('guest')->group(function () {
 });
 
 Route::post('logout', [AuthorLoginController::class, 'destroy'])->middleware('auth')->name('logout');
+
+// "Connect your ORCID iD" — during registration (guest) and from the author profile.
+Route::get('auth/orcid/redirect', [OrcidController::class, 'redirect'])->middleware('throttle:20,1')->name('orcid.redirect');
+Route::get('auth/orcid/callback', [OrcidController::class, 'callback'])->name('orcid.callback');
+Route::post('auth/orcid/forget', [OrcidController::class, 'forget'])->middleware('guest')->name('orcid.forget');
 
 /*
 |--------------------------------------------------------------------------

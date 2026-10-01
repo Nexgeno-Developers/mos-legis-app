@@ -6,6 +6,7 @@ use App\Actions\Auth\CreateAuthor;
 use App\Enums\SocialProvider;
 use App\Http\Controllers\Controller;
 use App\Models\AuthorCategory;
+use App\Models\AuthorProfile;
 use App\Models\User;
 use App\Services\Auth\OtpService;
 use Illuminate\Http\RedirectResponse;
@@ -20,7 +21,8 @@ use Illuminate\View\View;
 /**
  * SOW B.01 — registration with email OTP verification. The account is only
  * created once the code is confirmed; until then the details live in the session.
- * Also completes Google/ORCID sign-ups that need an email address.
+ * Also completes Google sign-ups (email already verified by Google, so no OTP). The ORCID iD is
+ * optional and only accepted when connected through ORCID (see OrcidController).
  */
 class RegisterController extends Controller
 {
@@ -30,37 +32,63 @@ class RegisterController extends Controller
 
     public function create(Request $request): View
     {
+        $pending = $request->session()->get(self::SESSION_KEY, []);
+
         return view('auth.register', [
             'authorCategories' => AuthorCategory::active()->orderBy('name')->pluck('name', 'id'),
-            'social' => $request->session()->get(self::SESSION_KEY.'.provider') ? $request->session()->get(self::SESSION_KEY) : null,
+            'social' => isset($pending['provider']) ? $pending : null,
+            'orcid' => $request->session()->get(OrcidController::SESSION_KEY),
         ]);
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(Request $request, CreateAuthor $createAuthor): RedirectResponse
     {
         $pending = $request->session()->get(self::SESSION_KEY, []);
-        $isSocial = isset($pending['provider']);
+        // Google sign-up: the email comes from Google (already verified) and cannot be edited.
+        $verifiedEmail = ! empty($pending['email_verified']) ? $pending['email'] : null;
+        if ($verifiedEmail) {
+            $request->merge(['email' => $verifiedEmail]);
+        }
 
         $data = $request->validate([
             'name' => ['required', 'string', 'max:150'],
             'email' => ['required', 'email', 'max:190', Rule::unique('users', 'email')],
             'phone' => ['nullable', 'string', 'max:20', 'regex:/^[0-9+\-\s]{7,20}$/'],
-            'author_category_id' => ['nullable', 'integer', Rule::exists('manuscript_author_categories', 'id')->where('status', 'Active')],
-            'password' => [$isSocial ? 'nullable' : 'required', 'confirmed', Password::defaults()],
+            'author_category_id' => ['required', 'integer', Rule::exists('manuscript_author_categories', 'id')->where('status', 'Active')],
+            'institution' => ['required', 'string', 'max:190'],
+            'password' => [$verifiedEmail ? 'nullable' : 'required', 'confirmed', Password::defaults()],
             'terms' => ['accepted'],
+        ], [
+            'email.unique' => 'An account with this email already exists. Please sign in instead.',
+            'author_category_id.required' => 'Choose your author category.',
+            'institution.required' => 'Enter your institution or organisation.',
         ]);
 
-        $request->session()->put(self::SESSION_KEY, array_merge($pending, [
+        $orcid = $request->session()->get(OrcidController::SESSION_KEY.'.id');
+        if ($orcid && AuthorProfile::where('orcid', $orcid)->exists()) {
+            $request->session()->forget(OrcidController::SESSION_KEY);
+
+            return back()->withInput()->withErrors(['orcid' => 'This ORCID iD is already linked to another account.']);
+        }
+
+        $details = array_merge($pending, [
             'name' => $data['name'],
             'email' => strtolower($data['email']),
             'phone' => $data['phone'] ?? null,
-            'author_category_id' => $data['author_category_id'] ?? null,
+            'author_category_id' => (int) $data['author_category_id'],
+            'institution' => $data['institution'],
+            'orcid' => $orcid,
             'password' => ! empty($data['password']) ? Hash::make($data['password']) : null,
-        ]));
+        ]);
 
-        $this->otp->issue(strtolower($data['email']));
+        if ($verifiedEmail) {
+            return $this->complete($request, $createAuthor, $details);
+        }
 
-        return redirect()->route('register.verify')->with('status', "We've emailed a 6-digit code to {$data['email']}.");
+        $request->session()->put(self::SESSION_KEY, $details);
+        $this->otp->issue($details['email']);
+
+        return redirect()->route('register.verify')->with('status', "We've emailed a 6-digit code to {$details['email']}.");
     }
 
     public function verifyForm(Request $request): View|RedirectResponse
@@ -89,20 +117,26 @@ class RegisterController extends Controller
             return redirect()->route('login')->withErrors(['email' => 'An account with this email already exists. Please sign in.']);
         }
 
-        $user = $createAuthor->handle(
-            $pending,
-            isset($pending['provider']) ? SocialProvider::from($pending['provider']) : null,
-            $pending['provider_user_id'] ?? null,
-        );
-
-        $request->session()->forget(self::SESSION_KEY);
-        Auth::login($user);
-        $request->session()->regenerate();
-
-        return redirect()->route('account.profile.edit')->with('success', 'Welcome to '.settings('general.application_name').'! Complete your author profile before submitting.');
+        return $this->complete($request, $createAuthor, $pending);
     }
 
-    /** Abandon a half-finished (e.g. ORCID) sign-up and show the full registration options again. */
+    /** Create the author, sign them in and clear the registration state. */
+    private function complete(Request $request, CreateAuthor $createAuthor, array $details): RedirectResponse
+    {
+        $user = $createAuthor->handle(
+            $details,
+            isset($details['provider']) ? SocialProvider::from($details['provider']) : null,
+            $details['provider_user_id'] ?? null,
+        );
+
+        $request->session()->forget([self::SESSION_KEY, OrcidController::SESSION_KEY]);
+        Auth::login($user, remember: isset($details['provider']));
+        $request->session()->regenerate();
+
+        return redirect()->route('account.dashboard')->with('success', 'Welcome to '.settings('general.application_name').'! Your account is ready — you can submit a manuscript now.');
+    }
+
+    /** Abandon a half-finished Google sign-up and show the full registration options again. */
     public function reset(Request $request): RedirectResponse
     {
         $request->session()->forget(self::SESSION_KEY);

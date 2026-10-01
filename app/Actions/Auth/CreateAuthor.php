@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\DB;
 class CreateAuthor
 {
     /**
-     * @param  array{name: string, email: string, phone?: ?string, password?: ?string, author_category_id?: ?int, orcid?: ?string}  $data
+     * @param  array{name: string, email: string, phone?: ?string, password?: ?string, author_category_id?: ?int, institution?: ?string, orcid?: ?string}  $data
      */
     public function handle(array $data, ?SocialProvider $provider = null, ?string $providerUserId = null): User
     {
@@ -32,6 +32,7 @@ class CreateAuthor
             $user->assignRole(RoleName::Author->value);
             $user->authorProfile()->create([
                 'author_category_id' => $data['author_category_id'] ?? null,
+                'institution' => $data['institution'] ?? null,
                 'orcid' => $data['orcid'] ?? null,
             ]);
 

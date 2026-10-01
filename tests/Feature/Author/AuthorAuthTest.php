@@ -22,6 +22,7 @@ class AuthorAuthTest extends TestCase
             'email' => 'ananya@example.com',
             'phone' => '9876543210',
             'author_category_id' => $category->id,
+            'institution' => 'NLSIU Bengaluru',
             'password' => 'secret-pass-1',
             'password_confirmation' => 'secret-pass-1',
             'terms' => '1',
@@ -37,13 +38,23 @@ class AuthorAuthTest extends TestCase
         });
 
         $this->post(route('register.verify.store'), ['otp' => '000000'])->assertSessionHasErrors('otp');
-        $this->post(route('register.verify.store'), ['otp' => $code])->assertRedirect(route('account.profile.edit'));
+        $this->post(route('register.verify.store'), ['otp' => $code])->assertRedirect(route('account.dashboard'));
 
         $user = User::where('email', 'ananya@example.com')->firstOrFail();
         $this->assertAuthenticatedAs($user);
         $this->assertTrue($user->isAuthor());
         $this->assertNotNull($user->email_verified_at);
         $this->assertSame($category->id, $user->authorProfile->author_category_id);
+        $this->assertSame('NLSIU Bengaluru', $user->authorProfile->institution);
+        $this->assertNull($user->authorProfile->orcid);
+    }
+
+    #[Test]
+    public function registration_requires_author_category_and_institution(): void
+    {
+        $this->post(route('register.store'), [
+            'name' => 'X', 'email' => 'x@example.com', 'password' => 'secret-pass-1', 'password_confirmation' => 'secret-pass-1', 'terms' => '1',
+        ])->assertSessionHasErrors(['author_category_id', 'institution']);
     }
 
     #[Test]
@@ -52,6 +63,7 @@ class AuthorAuthTest extends TestCase
         Mail::fake();
         $this->post(route('register.store'), [
             'name' => 'X', 'email' => 'x@example.com', 'password' => 'secret-pass-1', 'password_confirmation' => 'secret-pass-1', 'terms' => '1',
+            'author_category_id' => AuthorCategory::factory()->create()->id, 'institution' => 'NLU Delhi',
         ]);
         $code = null;
         Mail::assertSent(OtpCodeMail::class, function ($mail) use (&$code) {
@@ -97,7 +109,7 @@ class AuthorAuthTest extends TestCase
             'redirect' => 'http://127.0.0.1:8000/auth/orcid/callback', 'environment' => 'sandbox',
         ]]);
 
-        $location = $this->get(route('social.redirect', 'orcid'))->assertRedirect()->headers->get('Location');
+        $location = $this->get(route('orcid.redirect'))->assertRedirect()->headers->get('Location');
 
         $this->assertStringStartsWith('https://sandbox.orcid.org/oauth/authorize', $location);
         $this->assertStringContainsString('scope=%2Fauthenticate&', $location);
