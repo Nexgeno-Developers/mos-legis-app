@@ -50,8 +50,8 @@
             @endif
             <form method="POST" action="{{ route('account.submissions.resubmit', $submission) }}" enctype="multipart/form-data" class="mt-5 grid gap-5 md:grid-cols-2" x-data="docxWordCount()">
                 @csrf
-                <x-form.field label="Revised manuscript (.docx)" name="manuscript" required :hint="'Word limit: '.$submission->contentCategory->wordLimitLabel()">
-                    <input type="file" name="manuscript" accept=".docx" class="field-input" required @change="count($event, '#revision_words')">
+                <x-form.field label="Revised manuscript (.docx)" name="manuscript" required :hint="'Word limit: '.$submission->contentCategory->wordLimitLabel().' · Up to '.App\Support\UploadLimits::label(20480).'.'">
+                    <input type="file" name="manuscript" accept=".docx" class="field-input" required data-rule-maxbytes="{{ App\Support\UploadLimits::bytes(20480) }}" data-msg-maxbytes="This file is larger than {{ App\Support\UploadLimits::label(20480) }}. Please upload a smaller file." @change="count($event, '#revision_words')">
                     <p class="text-sm text-muted-foreground">Words counted: <input id="revision_words" class="w-24 bg-transparent" readonly></p>
                     <p x-show="error" x-text="error" class="text-sm text-destructive"></p>
                 </x-form.field>

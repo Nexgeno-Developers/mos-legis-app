@@ -2,6 +2,7 @@
 
 use App\Http\Middleware\EnsureAdminAccess;
 use App\Http\Middleware\EnsureAuthor;
+use App\Http\Middleware\RejectOversizedUploads;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -25,6 +26,9 @@ return Application::configure(basePath: dirname(__DIR__))
             'admin' => EnsureAdminAccess::class,
             'author' => EnsureAuthor::class,
         ]);
+
+        // Explain uploads that PHP rejected for size instead of reporting an empty field.
+        $middleware->web(append: [RejectOversizedUploads::class]);
 
         // Razorpay posts webhooks without a CSRF token; they are verified by signature instead.
         $middleware->validateCsrfTokens(except: ['payments/razorpay/webhook']);

@@ -13,9 +13,9 @@
             </select>
         </x-form.field>
         <x-form.field label="Manuscript file (.docx)" name="manuscript" :required="! $submission->exists"
-            :hint="$submission->exists ? 'Upload only to replace the current file.' : 'Word documents (.docx) only, up to 20 MB. The word count is calculated automatically.'">
+            :hint="$submission->exists ? 'Upload only to replace the current file.' : 'Word documents (.docx) only, up to '.App\Support\UploadLimits::label(20480).'. The word count is calculated automatically.'">
             <input type="file" name="manuscript" id="manuscript" accept=".docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                class="field-input" @change="count($event, '#word_count_display')">
+                class="field-input" data-rule-maxbytes="{{ App\Support\UploadLimits::bytes(20480) }}" data-msg-maxbytes="This file is larger than {{ App\Support\UploadLimits::label(20480) }}. Please upload a smaller file." @change="count($event, '#word_count_display')">
             <p x-show="counting" class="text-sm text-muted-foreground">Counting words…</p>
             <p x-show="error" x-text="error" class="text-sm text-destructive"></p>
         </x-form.field>

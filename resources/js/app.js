@@ -167,15 +167,20 @@ Alpine.data('docxWordCount', () => ({
 }));
 
 /** Repeatable rows for JSON page metas (team members, patron entries, FAQs) and co-authors. */
-Alpine.data('repeater', (rows = [], blank = {}) => ({
-    rows: rows.length ? rows : [{ ...blank }],
+// Repeatable rows. `min` rows are always kept (0 = the list may be empty, e.g. co-authors).
+Alpine.data('repeater', (rows = [], blank = {}, min = 1) => ({
+    rows: rows.length >= min ? rows : [...rows, ...Array.from({ length: min - rows.length }, () => ({ ...blank }))],
     add() {
         this.rows.push({ ...blank });
-        this.$nextTick(() => renderIcons());
+        this.$nextTick(() => {
+            renderIcons();
+            // Put the cursor in the new row.
+            [...this.$root.querySelectorAll('input:not([type=hidden]), textarea')].pop()?.focus();
+        });
     },
     remove(index) {
         this.rows.splice(index, 1);
-        if (!this.rows.length) this.rows.push({ ...blank });
+        while (this.rows.length < min) this.rows.push({ ...blank });
     },
 }));
 

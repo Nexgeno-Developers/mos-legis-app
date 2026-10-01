@@ -161,6 +161,11 @@ export function refreshSelects(root) {
     $(root).find('select.select2-hidden-accessible').trigger('change.select2');
 }
 
+/** File no larger than data-rule-maxbytes (the server's real upload limit). */
+$.validator.addMethod('maxbytes', function (value, element, max) {
+    return this.optional(element) || [...(element.files || [])].every((file) => file.size <= Number(max));
+});
+
 /** Valid for the chosen country (checked by intl-tel-input's bundled libphonenumber data). */
 $.validator.addMethod('intlphone', function (value, element) {
     if (this.optional(element) || !element.iti) return true;
@@ -228,4 +233,10 @@ $(document).on('input change', 'form input, form select, form textarea', functio
     if (this.name in validator.submitted || this.name in validator.invalid || $(this).attr('aria-invalid') === 'true') {
         validator.element(this);
     }
+});
+
+// Check a chosen file's size straight away, before the form is submitted.
+document.addEventListener('change', (event) => {
+    const input = event.target;
+    if (input.matches?.('input[type=file][data-rule-maxbytes]') && $(input.form).data('validator')) $(input).valid();
 });

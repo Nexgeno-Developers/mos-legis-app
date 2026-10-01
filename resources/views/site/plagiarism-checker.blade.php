@@ -13,8 +13,8 @@
                         </div>
                         <div x-show="mode === 'paste'"><x-form.textarea name="content" label="Content" rows="10" x-bind:disabled="mode !== 'paste'" /></div>
                         <div x-show="mode === 'upload'" x-cloak>
-                            <x-form.field label="Document (.docx)" name="document">
-                                <input type="file" name="document" accept=".docx" class="field-input" x-bind:disabled="mode !== 'upload'">
+                            <x-form.field label="Document (.docx)" name="document" :hint="'Up to '.App\Support\UploadLimits::label(20480).'.'">
+                                <input type="file" name="document" accept=".docx" class="field-input" data-rule-maxbytes="{{ App\Support\UploadLimits::bytes(20480) }}" data-msg-maxbytes="This file is larger than {{ App\Support\UploadLimits::label(20480) }}. Please upload a smaller file." x-bind:disabled="mode !== 'upload'">
                             </x-form.field>
                         </div>
                         <x-button type="submit" variant="primary" icon="scan-search">Continue — {{ money($fee) }} + tax</x-button>

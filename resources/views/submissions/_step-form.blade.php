@@ -86,8 +86,8 @@
                     This month's theme: <strong x-text="themes[content]"></strong>. Your manuscript should address this theme.
                 </p>
                 <div class="grid gap-5 md:grid-cols-2">
-                    <x-form.field label="Manuscript (.docx)" name="manuscript" required hint="Word (.docx) only, up to 20 MB. We count the words automatically.">
-                        <input type="file" name="manuscript" accept=".docx" class="field-input" required @change="count($event, '#auto_word_count')">
+                    <x-form.field label="Manuscript (.docx)" name="manuscript" required :hint="'Word (.docx) only, up to '.App\Support\UploadLimits::label(20480).'. We count the words automatically.'">
+                        <input type="file" name="manuscript" accept=".docx" class="field-input" required data-rule-maxbytes="{{ App\Support\UploadLimits::bytes(20480) }}" data-msg-maxbytes="This file is larger than {{ App\Support\UploadLimits::label(20480) }}. Please upload a smaller file." @change="count($event, '#auto_word_count')">
                         <p x-show="counting" class="text-sm text-muted-foreground">Counting words…</p>
                         <p x-show="error" x-text="error" class="text-sm text-destructive"></p>
                     </x-form.field>
