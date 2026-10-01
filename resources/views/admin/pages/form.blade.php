@@ -60,7 +60,7 @@
                             @elseif ($field['type'] === 'textarea')
                                 <x-form.textarea :name="'meta['.$key.']'" :label="$field['label']" :value="$page->exists ? $page->meta($key) : null" rows="3" />
                             @else
-                                <x-form.input :name="'meta['.$key.']'" :type="$field['type'] === 'email' ? 'email' : 'text'" :label="$field['label']" :value="$page->exists ? $page->meta($key) : null" />
+                                <x-form.input :name="'meta['.$key.']'" :type="$field['type'] === 'email' ? 'email' : 'text'" :label="$field['label']" :hint="$field['hint'] ?? null" :value="$page->exists ? $page->meta($key) : null" />
                             @endif
                         @endforeach
                     </div>

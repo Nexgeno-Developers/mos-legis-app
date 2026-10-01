@@ -1,7 +1,8 @@
 @props(['title' => null, 'description' => null, 'ogImage' => null])
 @php
     $appName = settings('general.application_name');
-    $pageTitle = $title ? $title.' | '.$appName : settings('seo_social.default_meta_title', $appName);
+    // CMS SEO titles often already end with the site name; don't append it twice.
+    $pageTitle = $title ? (Str::contains($title, $appName) ? $title : $title.' | '.$appName) : settings('seo_social.default_meta_title', $appName);
     $metaDescription = $description ?: settings('seo_social.default_meta_description');
     $og = $ogImage ?: settings('seo_social.default_og_image');
     $user = auth()->user();

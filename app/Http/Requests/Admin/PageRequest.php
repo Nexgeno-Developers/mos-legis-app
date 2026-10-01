@@ -4,7 +4,9 @@ namespace App\Http\Requests\Admin;
 
 use App\Enums\PageTemplate;
 use App\Enums\PublishStatus;
+use App\Support\GoogleMap;
 use App\Support\PageTemplates;
+use Closure;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
@@ -43,7 +45,16 @@ class PageRequest extends FormRequest
                     $rules["meta.{$key}.*.{$column}"] = ['nullable', 'string', $definition['type'] === 'textarea' ? 'max:5000' : 'max:255'];
                 }
             } else {
-                $rules["meta.{$key}"] = ['nullable', 'string', $field['type'] === 'email' ? 'email' : 'max:5000'];
+                $rules["meta.{$key}"] = match ($field['type']) {
+                    'email' => ['nullable', 'string', 'email'],
+                    // Accepts a Google Maps embed URL or the full <iframe> snippet; only Google Maps is ever embedded.
+                    'map' => ['nullable', 'string', 'max:3000', function (string $attribute, mixed $value, Closure $fail) {
+                        if (filled($value) && ! GoogleMap::embedUrl($value)) {
+                            $fail('Paste a Google Maps embed link (Share → Embed a map) or leave this blank.');
+                        }
+                    }],
+                    default => ['nullable', 'string', 'max:5000'],
+                };
             }
         }
 

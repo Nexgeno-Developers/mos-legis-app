@@ -3,6 +3,7 @@
 namespace App\Actions\Pages;
 
 use App\Models\Page;
+use App\Support\GoogleMap;
 use App\Support\Html;
 use App\Support\PageTemplates;
 use Illuminate\Http\UploadedFile;
@@ -44,6 +45,11 @@ class SavePage
 
             foreach (PageTemplates::fields($page->template) as $key => $field) {
                 $value = $data['meta'][$key] ?? null;
+
+                if ($field['type'] === 'map') {
+                    // Store just the embed URL, even when the full <iframe> snippet was pasted.
+                    $value = GoogleMap::embedUrl($value);
+                }
 
                 if ($field['type'] === 'repeater') {
                     // Drop rows where every column is blank (e.g. the empty row the editor starts with).
