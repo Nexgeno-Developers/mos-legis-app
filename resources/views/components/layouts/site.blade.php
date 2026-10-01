@@ -6,18 +6,29 @@
     $metaDescription = $description ?: settings('seo_social.default_meta_description');
     $og = $ogImage ?: settings('seo_social.default_og_image');
     $user = auth()->user();
+    // Main menu. Items with children render as a dropdown heading (not a link), so nothing is listed twice.
     $nav = [
-        ['label' => 'Home', 'route' => 'home', 'children' => [['label' => 'About', 'route' => 'about'], ['label' => 'Editorial Board', 'route' => 'editorial-board']]],
+        ['label' => 'Home', 'route' => 'home'],
+        ['label' => 'Journal', 'children' => [
+            ['label' => 'About the Journal', 'route' => 'about'],
+            ['label' => 'Editorial Board', 'route' => 'editorial-board'],
+            ['label' => 'Patrons', 'route' => 'patrons'],
+        ]],
         ['label' => 'Submit', 'route' => 'submit'],
         ['label' => 'Archive', 'route' => 'archive.index'],
-        ['label' => 'Blogs', 'route' => 'blogs.index'],
         ['label' => 'Best Paper', 'route' => 'best-paper'],
         ['label' => 'Plagiarism Checker', 'route' => 'plagiarism-checker'],
-        ['label' => 'Jobs', 'route' => 'jobs.index', 'children' => [['label' => 'Careers', 'route' => 'careers']]],
-        ['label' => 'Patrons', 'route' => 'patrons'],
+        ['label' => 'Blogs', 'route' => 'blogs.index'],
+        ['label' => 'Jobs', 'children' => [
+            ['label' => 'Job Board', 'route' => 'jobs.index'],
+            ['label' => 'Careers at MOS Legis', 'route' => 'careers'],
+        ]],
         ['label' => 'Contact', 'route' => 'contact'],
     ];
-    $isActive = fn (array $item) => request()->routeIs($item['route'], str_replace('.index', '', $item['route']).'.*');
+    $routeActive = fn (string $route) => request()->routeIs($route, str_replace('.index', '', $route).'.*');
+    $isActive = fn (array $item) => isset($item['children'])
+        ? collect($item['children'])->contains(fn ($child) => $routeActive($child['route']))
+        : $routeActive($item['route']);
     $socials = array_filter([
         'linkedin' => settings('seo_social.linkedin_url'),
         'instagram' => settings('seo_social.instagram_url'),

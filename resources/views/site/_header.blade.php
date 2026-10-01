@@ -1,4 +1,4 @@
-{{-- Public site header. Expects $nav, $isActive and $appName from the site layout. --}}
+{{-- Public site header. Expects $nav, $isActive, $routeActive and $appName from the site layout. --}}
 @php
     $logo = settings('general.application_logo')
         ? Storage::disk('public')->url(settings('general.application_logo'))
@@ -30,26 +30,37 @@
         <nav class="mx-auto max-w-[1200px] px-6" aria-label="Main">
             <ul class="-mx-3 flex items-stretch justify-between">
                 @foreach ($nav as $item)
-                    @php $active = $isActive($item) || collect($item['children'] ?? [])->contains(fn ($c) => request()->routeIs($c['route'])); @endphp
-                    <li class="group relative">
-                        <a href="{{ route($item['route']) }}" @if ($active) aria-current="page" @endif @class([
+                    @php
+                        $active = $isActive($item);
+                        $linkClass = [
                             'relative flex h-12 items-center gap-1 px-3 text-[0.78rem] font-medium tracking-[0.08em] whitespace-nowrap uppercase transition-colors xl:px-4 xl:text-[0.8rem]',
                             'after:absolute after:inset-x-3 after:bottom-0 after:h-[2px] after:bg-primary after:transition-transform',
                             'text-primary after:scale-x-100' => $active,
                             'text-foreground/85 after:scale-x-0 hover:text-primary hover:after:scale-x-100' => ! $active,
-                        ])>
-                            {{ $item['label'] }}
-                            @isset($item['children'])<x-icon name="chevron-down" class="h-3.5 w-3.5 opacity-60 transition-transform group-hover:rotate-180" />@endisset
-                        </a>
-                        @isset($item['children'])
-                            <div class="invisible absolute top-full left-0 z-30 min-w-52 translate-y-1 border border-border bg-popover py-2 opacity-0 shadow-lg transition group-hover:visible group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100">
-                                <a href="{{ route($item['route']) }}" class="block px-4 py-2 text-sm hover:bg-secondary hover:text-primary">{{ $item['label'] }}</a>
+                        ];
+                    @endphp
+                    @isset($item['children'])
+                        <li class="group relative" x-data="{ menu: false }" @pointerenter="if ($event.pointerType === 'mouse') menu = true" @pointerleave="if ($event.pointerType === 'mouse') menu = false" @click.outside="menu = false" @keydown.escape="menu = false; $refs.toggle.focus()" @focusout="if (! $el.contains($event.relatedTarget)) menu = false">
+                            <button type="button" x-ref="toggle" @click="menu = $event.detail === 0 ? ! menu : true" :aria-expanded="menu" aria-haspopup="true" @class($linkClass)>
+                                {{ $item['label'] }}
+                                <span class="flex opacity-60 transition-transform" :class="menu && 'rotate-180'"><x-icon name="chevron-down" class="h-3.5 w-3.5" /></span>
+                            </button>
+                            <div x-show="menu" x-cloak x-transition.opacity.duration.150ms class="absolute top-full left-0 z-30 min-w-56 border border-border border-t-2 border-t-primary bg-popover py-2 shadow-lg">
                                 @foreach ($item['children'] as $child)
-                                    <a href="{{ route($child['route']) }}" @class(['block px-4 py-2 text-sm hover:bg-secondary hover:text-primary', 'text-primary' => request()->routeIs($child['route'])])>{{ $child['label'] }}</a>
+                                    @php $childActive = $routeActive($child['route']); @endphp
+                                    <a href="{{ route($child['route']) }}" @if ($childActive) aria-current="page" @endif @class([
+                                        'block border-l-2 px-4 py-2.5 text-sm whitespace-nowrap transition-colors hover:bg-secondary hover:text-primary',
+                                        'border-primary bg-secondary/60 font-medium text-primary' => $childActive,
+                                        'border-transparent' => ! $childActive,
+                                    ])>{{ $child['label'] }}</a>
                                 @endforeach
                             </div>
-                        @endisset
-                    </li>
+                        </li>
+                    @else
+                        <li class="relative">
+                            <a href="{{ route($item['route']) }}" @if ($active) aria-current="page" @endif @class($linkClass)>{{ $item['label'] }}</a>
+                        </li>
+                    @endisset
                 @endforeach
             </ul>
         </nav>
@@ -60,12 +71,18 @@
         <ul class="divide-y divide-border px-4 sm:px-6">
             @foreach ($nav as $item)
                 <li>
-                    <a href="{{ route($item['route']) }}" @class(['flex items-center justify-between py-3.5 text-[0.95rem] font-semibold tracking-[0.04em] uppercase', 'text-primary' => $isActive($item), 'text-foreground/80' => ! $isActive($item)])>
-                        {{ $item['label'] }} <x-icon name="chevron-right" class="h-4 w-4 opacity-40" />
-                    </a>
-                    @foreach ($item['children'] ?? [] as $child)
-                        <a href="{{ route($child['route']) }}" class="block pb-3 pl-4 text-sm text-muted-foreground hover:text-primary">{{ $child['label'] }}</a>
-                    @endforeach
+                    @isset($item['children'])
+                        <p class="label-caps pt-4 pb-1 text-xs text-muted-foreground">{{ $item['label'] }}</p>
+                        @foreach ($item['children'] as $child)
+                            <a href="{{ route($child['route']) }}" @class(['flex items-center justify-between py-3 text-[0.95rem] font-semibold tracking-[0.04em] uppercase', 'text-primary' => $routeActive($child['route']), 'text-foreground/80' => ! $routeActive($child['route'])])>
+                                {{ $child['label'] }} <x-icon name="chevron-right" class="h-4 w-4 opacity-40" />
+                            </a>
+                        @endforeach
+                    @else
+                        <a href="{{ route($item['route']) }}" @class(['flex items-center justify-between py-3.5 text-[0.95rem] font-semibold tracking-[0.04em] uppercase', 'text-primary' => $isActive($item), 'text-foreground/80' => ! $isActive($item)])>
+                            {{ $item['label'] }} <x-icon name="chevron-right" class="h-4 w-4 opacity-40" />
+                        </a>
+                    @endisset
                 </li>
             @endforeach
         </ul>
