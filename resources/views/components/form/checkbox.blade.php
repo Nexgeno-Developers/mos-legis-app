@@ -6,5 +6,5 @@
             @if ($required) data-msg-required="Please accept this to continue." @endif class="mt-1.5 h-4 w-4 shrink-0 accent-primary">
         <span>{{ $label }}@if ($required)<span class="text-primary"> *</span>@endif</span>
     </label>
-    @error($name)<p class="mt-1 text-sm text-destructive" role="alert" data-server-error>{{ $message }}</p>@enderror
+    @error($name)<p class="choice-error mt-1 text-sm text-destructive" role="alert" data-server-error>{{ $message }}</p>@enderror
 </div>

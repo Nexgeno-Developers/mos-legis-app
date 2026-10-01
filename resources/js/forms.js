@@ -55,16 +55,21 @@ $.validator.setDefaults({
         $(element).next('.select2').removeClass('select2-invalid');
         $(element).siblings('trix-editor').removeClass('trix-invalid');
     },
+    // Note: jQuery Validate passes `element` as a jQuery object.
     errorPlacement(error, element) {
         const $el = $(element);
+        const el = $el[0];
         error.attr('role', 'alert');
 
         if ($el.hasClass('select2-hidden-accessible')) {
             error.insertAfter($el.next('.select2'));
         } else if ($el.closest('.iti').length) {
             error.insertAfter($el.closest('.iti'));
-        } else if (element.type === 'checkbox' || element.type === 'radio') {
-            error.insertAfter($el.closest('label'));
+        } else if (el.type === 'checkbox' || el.type === 'radio') {
+            // Below the option, lined up with its text; once under the whole group for groups.
+            const group = $el.closest('[data-choice-group]');
+            if (group.length) error.appendTo(group);
+            else error.addClass('choice-error').insertAfter($el.closest('label'));
         } else if ($el.is('[data-validate-hidden]')) {
             error.insertAfter($el.siblings('trix-editor').first());
         } else if ($el.parent().is('[data-input-wrap]')) {

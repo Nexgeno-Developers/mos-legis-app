@@ -324,3 +324,5 @@ trix-editor.trix-invalid { border-color: var(--color-destructive) !important; }
 .iti__country.iti__highlight { background: var(--color-primary); color: var(--color-primary-foreground); }
 .iti__country.iti__highlight .iti__dial-code { color: inherit; opacity: 0.85; }
 .iti__dial-code { color: var(--color-muted-foreground); }
+/* Checkbox / radio errors sit under the option, aligned with its label text (1rem box + 0.75rem gap). */
+.choice-error { padding-left: 1.75rem; }
