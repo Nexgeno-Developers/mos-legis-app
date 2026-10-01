@@ -25,6 +25,7 @@ final class Permissions
         'blog-comments' => ['label' => 'Blog Comments', 'abilities' => ['view', 'create', 'edit', 'delete']],
         'job-postings' => ['label' => 'Job Postings', 'abilities' => ['view', 'create', 'edit', 'delete']],
         'pages' => ['label' => 'Pages', 'abilities' => ['view', 'create', 'edit', 'delete']],
+        'menus' => ['label' => 'Menus', 'abilities' => ['view', 'create', 'edit', 'delete']],
         'enquiries' => ['label' => 'Enquiries', 'abilities' => ['view', 'delete']],
         'activity-logs' => ['label' => 'Activity Logs', 'abilities' => ['view', 'delete']],
         'users' => ['label' => 'Users', 'abilities' => ['view', 'create', 'edit', 'delete']],

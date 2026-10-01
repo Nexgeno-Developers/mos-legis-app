@@ -78,6 +78,13 @@ Route::middleware('admin')->group(function () {
     Route::post('pages/{page}/duplicate', [Admin\PageController::class, 'duplicate'])->name('pages.duplicate');
     Route::resource('pages', Admin\PageController::class)->except('show');
 
+    Route::get('menus', [Admin\MenuController::class, 'index'])->name('menus.index');
+    Route::post('menus/{menu}/items', [Admin\MenuController::class, 'store'])->name('menus.items.store');
+    Route::patch('menus/{menu}/order', [Admin\MenuController::class, 'reorder'])->name('menus.reorder');
+    Route::put('menu-items/{menuItem}', [Admin\MenuController::class, 'update'])->name('menus.items.update');
+    Route::patch('menu-items/{menuItem}/status', [Admin\MenuController::class, 'toggleStatus'])->name('menus.items.toggle-status');
+    Route::delete('menu-items/{menuItem}', [Admin\MenuController::class, 'destroy'])->name('menus.items.destroy');
+
     Route::patch('job-postings/{job_posting}/status', [Admin\JobPostingController::class, 'toggleStatus'])->name('job-postings.toggle-status');
     Route::resource('job-postings', Admin\JobPostingController::class);
 

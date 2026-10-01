@@ -31,6 +31,7 @@ final class AdminNavigation
             ['Blog Comments', 'admin.blog-comments.index', 'message-square', 'blog-comments.view'],
             ['Job Postings', 'admin.job-postings.index', 'briefcase', 'job-postings.view'],
             ['Pages', 'admin.pages.index', 'files', 'pages.view'],
+            ['Menus', 'admin.menus.index', 'menu', 'menus.view'],
         ],
         'Operations' => [
             ['Enquiries', 'admin.enquiries.index', 'mail', 'enquiries.view'],

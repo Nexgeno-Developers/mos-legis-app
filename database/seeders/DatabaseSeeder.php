@@ -18,6 +18,7 @@ class DatabaseSeeder extends Seeder
             SuperadminSeeder::class,
             CatalogueSeeder::class,
             PageSeeder::class,
+            MenuSeeder::class,
             NotificationTemplateSeeder::class,
         ]);
 

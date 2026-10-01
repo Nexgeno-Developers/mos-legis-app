@@ -228,6 +228,7 @@ trix-editor:focus { outline: none; border-color: var(--color-gold) !important; }
 }
 .select2-container .select2-selection--single { height: 2.75rem; display: flex; align-items: center; }
 .select2-container .select2-selection--single .select2-selection__rendered {
+    flex: 1; min-width: 0;
     padding-left: 0.875rem; padding-right: 2.5rem; line-height: 1.5; color: var(--color-foreground);
 }
 .select2-container .select2-selection--single .select2-selection__placeholder { color: var(--color-muted-foreground); }
@@ -238,7 +239,8 @@ trix-editor:focus { outline: none; border-color: var(--color-gold) !important; }
     transition: transform 150ms;
 }
 .select2-container--open .select2-selection--single .select2-selection__arrow b { transform: translate(-50%, -50%) rotate(180deg); }
-.select2-container .select2-selection--single .select2-selection__clear { margin-right: 0.25rem; font-size: 1.25rem; color: var(--color-muted-foreground); }
+.select2-container .select2-selection--single .select2-selection__clear { margin-left: 0.5rem; padding: 0 0.25rem; font-size: 1.25rem; line-height: 1; color: var(--color-muted-foreground); }
+.select2-container .select2-selection--single .select2-selection__clear:hover { color: var(--color-destructive); }
 .select2-container:hover .select2-selection { border-color: color-mix(in oklab, var(--color-gold) 55%, var(--color-border)); }
 .select2-container--focus .select2-selection,
 .select2-container--open .select2-selection {
@@ -281,3 +283,12 @@ trix-editor:focus { outline: none; border-color: var(--color-gold) !important; }
 
 /* Error state for the rich-text editor */
 trix-editor.trix-invalid { border-color: var(--color-destructive) !important; }
+
+/* Admin → Menus drag and drop */
+.menu-ghost { opacity: 0.4; outline: 2px dashed var(--color-gold); outline-offset: -2px; }
+.menu-chosen { box-shadow: 0 10px 25px -12px rgb(0 0 0 / 0.35); }
+[data-children]:empty::before {
+    content: 'Drag links here, or use “Add link”.';
+    display: flex; align-items: center; min-height: 3rem; padding: 0 0.75rem;
+    font-size: 0.875rem; color: var(--color-muted-foreground);
+}

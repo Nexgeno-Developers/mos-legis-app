@@ -1,4 +1,4 @@
-{{-- Public site header. Expects $nav, $isActive, $routeActive and $appName from the site layout. --}}
+{{-- Public site header. Expects $headerMenu (App\Support\SiteMenu, managed in Admin → Menus) and $appName from the site layout. --}}
 @php
     $logo = settings('general.application_logo')
         ? Storage::disk('public')->url(settings('general.application_logo'))
@@ -29,9 +29,9 @@
     <div class="hidden border-t border-border bg-background lg:block">
         <nav class="mx-auto max-w-[1200px] px-6" aria-label="Main">
             <ul class="-mx-3 flex items-stretch justify-between">
-                @foreach ($nav as $item)
+                @foreach ($headerMenu as $item)
                     @php
-                        $active = $isActive($item);
+                        $active = $item['active'];
                         $linkClass = [
                             'relative flex h-12 items-center gap-1 px-3 text-[0.78rem] font-medium tracking-[0.08em] whitespace-nowrap uppercase transition-colors xl:px-4 xl:text-[0.8rem]',
                             'after:absolute after:inset-x-3 after:bottom-0 after:h-[2px] after:bg-primary after:transition-transform',
@@ -39,7 +39,7 @@
                             'text-foreground/85 after:scale-x-0 hover:text-primary hover:after:scale-x-100' => ! $active,
                         ];
                     @endphp
-                    @isset($item['children'])
+                    @if ($item['children'])
                         <li class="group relative" x-data="{ menu: false }" @pointerenter="if ($event.pointerType === 'mouse') menu = true" @pointerleave="if ($event.pointerType === 'mouse') menu = false" @click.outside="menu = false" @keydown.escape="menu = false; $refs.toggle.focus()" @focusout="if (! $el.contains($event.relatedTarget)) menu = false">
                             <button type="button" x-ref="toggle" @click="menu = $event.detail === 0 ? ! menu : true" :aria-expanded="menu" aria-haspopup="true" @class($linkClass)>
                                 {{ $item['label'] }}
@@ -47,8 +47,8 @@
                             </button>
                             <div x-show="menu" x-cloak x-transition.opacity.duration.150ms class="absolute top-full left-0 z-30 min-w-56 border border-border border-t-2 border-t-primary bg-popover py-2 shadow-lg">
                                 @foreach ($item['children'] as $child)
-                                    @php $childActive = $routeActive($child['route']); @endphp
-                                    <a href="{{ route($child['route']) }}" @if ($childActive) aria-current="page" @endif @class([
+                                    @php $childActive = $child['active']; @endphp
+                                    <a href="{{ $child['url'] }}" @if ($child['new_tab']) target="_blank" rel="noopener" @endif @if ($childActive) aria-current="page" @endif @class([
                                         'block border-l-2 px-4 py-2.5 text-sm whitespace-nowrap transition-colors hover:bg-secondary hover:text-primary',
                                         'border-primary bg-secondary/60 font-medium text-primary' => $childActive,
                                         'border-transparent' => ! $childActive,
@@ -58,9 +58,9 @@
                         </li>
                     @else
                         <li class="relative">
-                            <a href="{{ route($item['route']) }}" @if ($active) aria-current="page" @endif @class($linkClass)>{{ $item['label'] }}</a>
+                            <a href="{{ $item['url'] }}" @if ($item['new_tab']) target="_blank" rel="noopener" @endif @if ($active) aria-current="page" @endif @class($linkClass)>{{ $item['label'] }}</a>
                         </li>
-                    @endisset
+                    @endif
                 @endforeach
             </ul>
         </nav>
@@ -69,20 +69,20 @@
     {{-- Mobile navigation --}}
     <nav id="mobile-nav" x-show="open" x-cloak x-transition.opacity class="max-h-[calc(100vh-4.5rem)] overflow-y-auto border-t border-border bg-card lg:hidden" aria-label="Mobile">
         <ul class="divide-y divide-border px-4 sm:px-6">
-            @foreach ($nav as $item)
+            @foreach ($headerMenu as $item)
                 <li>
-                    @isset($item['children'])
+                    @if ($item['children'])
                         <p class="label-caps pt-4 pb-1 text-xs text-muted-foreground">{{ $item['label'] }}</p>
                         @foreach ($item['children'] as $child)
-                            <a href="{{ route($child['route']) }}" @class(['flex items-center justify-between py-3 text-[0.95rem] font-semibold tracking-[0.04em] uppercase', 'text-primary' => $routeActive($child['route']), 'text-foreground/80' => ! $routeActive($child['route'])])>
+                            <a href="{{ $child['url'] }}" @if ($child['new_tab']) target="_blank" rel="noopener" @endif @class(['flex items-center justify-between py-3 text-[0.95rem] font-semibold tracking-[0.04em] uppercase', 'text-primary' => $child['active'], 'text-foreground/80' => ! $child['active']])>
                                 {{ $child['label'] }} <x-icon name="chevron-right" class="h-4 w-4 opacity-40" />
                             </a>
                         @endforeach
                     @else
-                        <a href="{{ route($item['route']) }}" @class(['flex items-center justify-between py-3.5 text-[0.95rem] font-semibold tracking-[0.04em] uppercase', 'text-primary' => $isActive($item), 'text-foreground/80' => ! $isActive($item)])>
+                        <a href="{{ $item['url'] }}" @if ($item['new_tab']) target="_blank" rel="noopener" @endif @class(['flex items-center justify-between py-3.5 text-[0.95rem] font-semibold tracking-[0.04em] uppercase', 'text-primary' => $item['active'], 'text-foreground/80' => ! $item['active']])>
                             {{ $item['label'] }} <x-icon name="chevron-right" class="h-4 w-4 opacity-40" />
                         </a>
-                    @endisset
+                    @endif
                 </li>
             @endforeach
         </ul>

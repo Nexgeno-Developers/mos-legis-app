@@ -17,9 +17,27 @@ select2(window, $);
 
 const SEARCH_THRESHOLD = 8;
 
+/**
+ * A field is skipped when the user cannot see it (e.g. hidden by x-show because another option
+ * was chosen). Select2 and rich-text fields are judged by their visible widget. In multi-step
+ * forms, fields on other steps are still validated on submit.
+ */
+function isIgnored(element) {
+    if (element.type === 'hidden' && !element.hasAttribute('data-validate-hidden')) return true;
+
+    const step = element.form?.hasAttribute('data-steps') ? element.closest('[data-step]') : null;
+    const boundary = step ?? element.form;
+    let node = element.type === 'hidden' || element.classList.contains('select2-hidden-accessible') ? element.parentElement : element;
+
+    for (; node && node !== boundary; node = node.parentElement) {
+        if (getComputedStyle(node).display === 'none') return true;
+    }
+
+    return false;
+}
+
 $.validator.setDefaults({
-    // Hidden fields are skipped, except Select2 selects and rich-text (Trix) inputs.
-    ignore: ':hidden:not(.select2-hidden-accessible):not([data-validate-hidden])',
+    ignore: (index, element) => isIgnored(element),
     errorElement: 'p',
     errorClass: 'field-error text-sm text-destructive',
     validClass: '',
@@ -69,10 +87,9 @@ export function validateWithin(container) {
 
     $(container)
         .find('input, select, textarea')
-        .filter(':visible, .select2-hidden-accessible, [data-validate-hidden]')
-        .not('[type=hidden]:not([data-validate-hidden]), [type=submit], [type=button]')
+        .not('[type=submit], [type=button]')
+        .filter((index, element) => !isIgnored(element))
         .each(function () {
-            if ($(this).closest('[data-step]').is(':hidden')) return;
             if (!validator.element(this)) valid = false;
         });
 
@@ -90,7 +107,6 @@ function initValidation(root) {
 
         // Multi-step forms validate every step on submit and jump to the first invalid one.
         if ($form.is('[data-steps]')) {
-            options.ignore = '[type=hidden]:not([data-validate-hidden])';
             options.invalidHandler = (event, validator) => {
                 const first = validator.errorList[0]?.element;
                 const step = first ? $(first).closest('[data-step]').data('step') : null;

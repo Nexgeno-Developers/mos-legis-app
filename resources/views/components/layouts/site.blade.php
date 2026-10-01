@@ -6,29 +6,9 @@
     $metaDescription = $description ?: settings('seo_social.default_meta_description');
     $og = $ogImage ?: settings('seo_social.default_og_image');
     $user = auth()->user();
-    // Main menu. Items with children render as a dropdown heading (not a link), so nothing is listed twice.
-    $nav = [
-        ['label' => 'Home', 'route' => 'home'],
-        ['label' => 'Journal', 'children' => [
-            ['label' => 'About the Journal', 'route' => 'about'],
-            ['label' => 'Editorial Board', 'route' => 'editorial-board'],
-            ['label' => 'Patrons', 'route' => 'patrons'],
-        ]],
-        ['label' => 'Submit', 'route' => 'submit'],
-        ['label' => 'Archive', 'route' => 'archive.index'],
-        ['label' => 'Best Paper', 'route' => 'best-paper'],
-        ['label' => 'Plagiarism Checker', 'route' => 'plagiarism-checker'],
-        ['label' => 'Blogs', 'route' => 'blogs.index'],
-        ['label' => 'Jobs', 'children' => [
-            ['label' => 'Job Board', 'route' => 'jobs.index'],
-            ['label' => 'Careers at MOS Legis', 'route' => 'careers'],
-        ]],
-        ['label' => 'Contact', 'route' => 'contact'],
-    ];
-    $routeActive = fn (string $route) => request()->routeIs($route, str_replace('.index', '', $route).'.*');
-    $isActive = fn (array $item) => isset($item['children'])
-        ? collect($item['children'])->contains(fn ($child) => $routeActive($child['route']))
-        : $routeActive($item['route']);
+    // Header and footer menus are managed in Admin → Menus.
+    $headerMenu = App\Support\SiteMenu::for(App\Enums\MenuLocation::Header);
+    $footerMenu = App\Support\SiteMenu::for(App\Enums\MenuLocation::Footer);
     $socials = array_filter([
         'linkedin' => settings('seo_social.linkedin_url'),
         'instagram' => settings('seo_social.instagram_url'),
@@ -36,8 +16,6 @@
         'youtube' => settings('seo_social.youtube_url'),
         'twitter' => settings('seo_social.x_url'),
     ]);
-    $policies = App\Models\Page::published()->where('template', 'layout')
-        ->whereNotIn('slug', ['home', 'submit', 'about'])->orderBy('title')->get(['title', 'slug']);
 @endphp
 <!DOCTYPE html>
 <html lang="en">
@@ -67,8 +45,16 @@
 
     <footer class="mt-24 border-t border-border bg-secondary">
         <div class="mx-auto max-w-[1200px] px-6 py-14">
-            <div class="grid gap-10 md:grid-cols-[1.2fr_1fr_1.4fr]">
-                <div>
+            @php
+                // Footer columns: each group is a column; loose top-level links share one untitled column.
+                $looseLinks = array_values(array_filter($footerMenu, fn ($item) => ! $item['children']));
+                $columns = array_values(array_filter($footerMenu, fn ($item) => $item['children']));
+                if ($looseLinks) {
+                    array_unshift($columns, ['label' => null, 'children' => $looseLinks]);
+                }
+            @endphp
+            <div class="flex flex-wrap gap-x-10 gap-y-10">
+                <div class="w-full md:w-64 md:shrink-0">
                     <img src="{{ asset('images/logo-mark.png') }}" alt="" class="h-20 w-20 object-contain">
                     <p class="mt-4 font-display text-lg text-primary">{{ $appName }}</p>
                     <p class="mt-1 text-sm text-muted-foreground italic">Rooted in Tradition. Driven by Justice.</p>
@@ -83,24 +69,19 @@
                         </div>
                     @endif
                 </div>
-                <div>
-                    <h3 class="label-caps text-sm text-foreground">Quick Links</h3>
-                    <div class="gold-rule mt-3"></div>
-                    <ul class="mt-4 space-y-2 text-sm">
-                        @foreach (['home' => 'Home', 'about' => 'About', 'submit' => 'Submit', 'archive.index' => 'Archive', 'editorial-board' => 'Editorial Board', 'careers' => 'Careers', 'contact' => 'Contact'] as $route => $label)
-                            <li><a href="{{ route($route) }}" class="text-muted-foreground hover:text-primary">{{ $label }}</a></li>
-                        @endforeach
-                    </ul>
-                </div>
-                <div>
-                    <h3 class="label-caps text-sm text-foreground">Policy &amp; Compliance</h3>
-                    <div class="gold-rule mt-3"></div>
-                    <ul class="mt-4 grid grid-cols-1 gap-2 text-sm sm:grid-cols-2">
-                        @foreach ($policies as $policy)
-                            <li><a href="{{ route('pages.show', $policy->slug) }}" class="text-muted-foreground hover:text-primary">{{ $policy->title }}</a></li>
-                        @endforeach
-                    </ul>
-                </div>
+                @foreach ($columns as $column)
+                    @php $wide = count($column['children']) > 7; @endphp
+                    <div @class(['min-w-40 flex-1', 'basis-full sm:basis-auto sm:flex-[2]' => $wide])>
+                        <h3 class="label-caps text-sm text-foreground">{{ $column['label'] ?? 'Links' }}</h3>
+                        <div class="gold-rule mt-3"></div>
+                        <ul @class(['mt-4 gap-2 text-sm', 'grid grid-cols-1 sm:grid-cols-2' => $wide, 'space-y-2' => ! $wide])>
+                            @foreach ($column['children'] as $link)
+                                <li><a href="{{ $link['url'] }}" @if ($link['new_tab']) target="_blank" rel="noopener" @endif @if ($link['active']) aria-current="page" @endif
+                                    @class(['hover:text-primary', 'text-primary' => $link['active'], 'text-muted-foreground' => ! $link['active']])>{{ $link['label'] }}</a></li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endforeach
             </div>
             <div class="gold-rule mt-12"></div>
             <div class="mt-6 flex flex-wrap justify-between gap-4 text-xs text-muted-foreground">

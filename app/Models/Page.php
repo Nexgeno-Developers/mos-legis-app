@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\PageTemplate;
 use App\Enums\PublishStatus;
+use App\Support\SiteMenu;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
@@ -22,6 +23,13 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Page extends Model
 {
     use HasFactory;
+
+    protected static function booted(): void
+    {
+        // Menus show page titles/links and hide unpublished pages.
+        static::saved(fn () => SiteMenu::flush());
+        static::deleted(fn () => SiteMenu::flush());
+    }
 
     protected function casts(): array
     {
