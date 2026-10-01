@@ -166,3 +166,9 @@
 trix-toolbar .trix-button-group { background: var(--color-card); }
 trix-editor { background: var(--color-card); min-height: 16rem; border-color: var(--color-border) !important; }
 trix-editor:focus { outline: none; border-color: var(--color-gold) !important; }
+
+/* Horizontally scrollable strips (mobile menus) without a visible scrollbar. */
+@utility no-scrollbar {
+    scrollbar-width: none;
+    &::-webkit-scrollbar { display: none; }
+}

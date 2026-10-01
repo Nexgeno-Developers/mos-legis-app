@@ -1,12 +1,9 @@
 <x-layouts.account title="My Submissions" intro="Track every manuscript from screening to publication. Actions appear when something is needed from you.">
-    <div class="flex flex-wrap items-end justify-between gap-4">
-        <x-filter-bar class="py-0!">
-            <x-filter.search placeholder="Search ID or title…" />
-            <x-filter.select name="stage" label="Stage" :options="App\Enums\ManuscriptStage::options()" />
-            <x-filter.date-range label="Submitted" />
-        </x-filter-bar>
-        <x-button variant="primary" icon="plus" :href="route('submit').'#submission-form'">New submission</x-button>
-    </div>
+    <x-filter-bar class="border border-border bg-card p-4!">
+        <x-filter.search placeholder="Search ID or title…" />
+        <x-filter.select name="stage" label="Stage" :options="App\Enums\ManuscriptStage::options()" />
+        <x-filter.date-range label="Submitted" />
+    </x-filter-bar>
 
     <div class="mt-8 space-y-4">
         @forelse ($submissions as $submission)

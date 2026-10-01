@@ -9,11 +9,15 @@
     <section class="border-b border-border bg-secondary" x-data="{ i: 0, n: {{ count($slides) }} }" x-init="setInterval(() => i = (i + 1) % n, 8000)">
         <div class="mx-auto grid max-w-[1200px] items-center gap-12 px-6 py-20 md:grid-cols-[1fr_1.4fr] md:py-28">
             <div class="hidden justify-start md:flex">
-                <img src="{{ asset('images/logo.png') }}" alt="{{ settings('general.application_name') }} emblem" class="w-full max-w-[24rem] object-contain mix-blend-multiply">
+                <img src="{{ asset('images/logo-mark.png') }}" alt="{{ settings('general.application_name') }} emblem" class="w-full max-w-[24rem] object-contain">
             </div>
             <div>
+                {{-- All slides share one grid cell, so they cross-fade in place without the page jumping. --}}
+                <div class="grid">
                 @foreach ($slides as $index => $slide)
-                    <div x-show="i === {{ $index }}" @if ($index) x-cloak @endif x-transition.opacity>
+                    <div class="col-start-1 row-start-1" x-show="i === {{ $index }}" @if ($index) x-cloak @endif
+                        x-transition:enter="transition-opacity duration-500" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
+                        x-transition:leave="transition-opacity duration-300" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">
                         <p class="label-caps text-sm text-primary">{{ $slide['eyebrow'] }}</p>
                         <h1 class="mt-4 font-display text-4xl leading-[1.1] md:text-5xl">{{ $slide['headline'] }}</h1>
                         <div class="gold-rule my-6 max-w-md"></div>
@@ -24,6 +28,7 @@
                         </div>
                     </div>
                 @endforeach
+                </div>
                 <div class="mt-10 flex items-center gap-3">
                     <button type="button" @click="i = (i - 1 + n) % n" aria-label="Previous slide" class="inline-flex h-9 w-9 items-center justify-center border border-border text-muted-foreground hover:border-gold"><x-icon name="chevron-left" /></button>
                     <button type="button" @click="i = (i + 1) % n" aria-label="Next slide" class="inline-flex h-9 w-9 items-center justify-center border border-border text-muted-foreground hover:border-gold"><x-icon name="chevron-right" /></button>

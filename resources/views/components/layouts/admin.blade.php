@@ -26,7 +26,7 @@
         <aside :class="[collapsed ? 'lg:w-20' : 'lg:w-72', mobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0']"
             class="fixed inset-y-0 left-0 z-50 flex w-72 flex-col border-r border-border bg-sidebar transition-all lg:sticky lg:top-0 lg:h-screen">
             <div class="flex h-20 items-center gap-3 border-b border-border px-5">
-                <img src="{{ asset('images/logo.png') }}" alt="" class="h-12 w-12 shrink-0 object-contain mix-blend-multiply">
+                <img src="{{ asset('images/logo-mark.png') }}" alt="" class="h-12 w-12 shrink-0 object-contain">
                 <div x-show="!collapsed" class="min-w-0">
                     <p class="truncate font-display text-xl leading-none text-primary">{{ settings('general.application_name') }}</p>
                     <p class="label-caps mt-1.5 text-[0.65rem] text-muted-foreground">Superadmin Console</p>

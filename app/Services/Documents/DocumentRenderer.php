@@ -31,7 +31,7 @@ class DocumentRenderer
     /** @return array<string, mixed> */
     public function common(): array
     {
-        $logo = public_path('images/logo.png');
+        $logo = public_path('images/logo-mark.png');
 
         return [
             // dompdf needs the GD extension to embed PNG images.

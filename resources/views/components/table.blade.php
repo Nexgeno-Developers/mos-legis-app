@@ -1,5 +1,5 @@
 @props(['columns' => [], 'empty' => 'No records found.', 'rows' => null])
-<div {{ $attributes->merge(['class' => 'overflow-x-auto border border-border bg-card']) }}>
+<div {{ $attributes->merge(['class' => 'relative overflow-x-auto border border-border bg-card']) }}>
     <table class="w-full min-w-[820px] text-left">
         <thead>
             <tr class="border-b border-border">

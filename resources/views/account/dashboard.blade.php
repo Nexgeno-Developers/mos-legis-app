@@ -5,7 +5,7 @@
         </a>
     @endif
 
-    <div class="grid gap-px border border-border bg-border sm:grid-cols-3 lg:grid-cols-6">
+    <div class="grid gap-px border border-border bg-border grid-cols-2 sm:grid-cols-3">
         <x-stat-card label="Total" :value="$stats['total']" :href="route('account.submissions.index')" />
         <x-stat-card label="Pending" :value="$stats['pending']" />
         <x-stat-card label="In review" :value="$stats['in_review']" />
