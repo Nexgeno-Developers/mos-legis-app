@@ -26,6 +26,13 @@
         <env name="DB_DATABASE" value="mos_legis_test"/>
         <env name="DB_URL" value=""/>
         <env name="MAIL_MAILER" value="array"/>
+        <!-- Never call real gateways from tests: blank keys select the simulated gateway. -->
+        <env name="RAZORPAY_KEY_ID" value=""/>
+        <env name="RAZORPAY_KEY_SECRET" value=""/>
+        <env name="PLAGIARISM_DRIVER" value="fake"/>
+        <env name="SMS_PROVIDER" value="log"/>
+        <env name="WHATSAPP_PROVIDER" value="log"/>
+        <env name="EMAIL_PROVIDER" value="mail"/>
         <env name="QUEUE_CONNECTION" value="sync"/>
         <env name="SESSION_DRIVER" value="array"/>
         <env name="PULSE_ENABLED" value="false"/>

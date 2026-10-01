@@ -90,6 +90,21 @@ class AuthorAuthTest extends TestCase
     }
 
     #[Test]
+    public function orcid_requests_only_the_public_authenticate_scope(): void
+    {
+        config(['services.orcid' => [
+            'client_id' => 'APP-TEST', 'client_secret' => 'secret',
+            'redirect' => 'http://127.0.0.1:8000/auth/orcid/callback', 'environment' => 'sandbox',
+        ]]);
+
+        $location = $this->get(route('social.redirect', 'orcid'))->assertRedirect()->headers->get('Location');
+
+        $this->assertStringStartsWith('https://sandbox.orcid.org/oauth/authorize', $location);
+        $this->assertStringContainsString('scope=%2Fauthenticate&', $location);
+        $this->assertStringNotContainsString('read-limited', $location);
+    }
+
+    #[Test]
     public function unconfigured_social_login_is_reported(): void
     {
         config(['services.google.client_id' => null]);

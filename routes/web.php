@@ -56,6 +56,7 @@ Route::middleware('guest')->group(function () {
     Route::get('register/verify', [RegisterController::class, 'verifyForm'])->name('register.verify');
     Route::post('register/verify', [RegisterController::class, 'verify'])->middleware('throttle:10,1')->name('register.verify.store');
     Route::post('register/resend', [RegisterController::class, 'resend'])->name('register.resend');
+    Route::post('register/reset', [RegisterController::class, 'reset'])->name('register.reset');
     Route::get('auth/{provider}/redirect', [SocialLoginController::class, 'redirect'])->name('social.redirect');
     Route::get('auth/{provider}/callback', [SocialLoginController::class, 'callback'])->name('social.callback');
 

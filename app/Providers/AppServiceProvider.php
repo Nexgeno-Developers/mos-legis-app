@@ -11,6 +11,7 @@ use App\Services\Payments\RazorpayGateway;
 use App\Services\Payments\SimulatedGateway;
 use App\Services\Plagiarism\FakePlagiarismChecker;
 use App\Services\Plagiarism\PlagiarismChecker;
+use App\Socialite\OrcidProvider;
 use App\Support\ActivityLogger;
 use App\Support\Settings;
 use Illuminate\Database\Eloquent\Model;
@@ -21,7 +22,6 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
 use SocialiteProviders\Manager\SocialiteWasCalled;
-use SocialiteProviders\Orcid\OrcidExtendSocialite;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -71,7 +71,7 @@ class AppServiceProvider extends ServiceProvider
 
         Paginator::defaultView('components.pagination');
 
-        // SOW B.01: ORCID sign-in via the SocialiteProviders ORCID driver.
-        Event::listen(SocialiteWasCalled::class, [OrcidExtendSocialite::class, 'handle']);
+        // SOW B.01: ORCID sign-in (hardened driver, see App\Socialite\OrcidProvider).
+        Event::listen(SocialiteWasCalled::class, fn (SocialiteWasCalled $event) => $event->extendSocialite('orcid', OrcidProvider::class));
     }
 }

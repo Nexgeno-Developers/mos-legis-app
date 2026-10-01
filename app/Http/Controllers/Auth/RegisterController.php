@@ -102,6 +102,14 @@ class RegisterController extends Controller
         return redirect()->route('account.profile.edit')->with('success', 'Welcome to '.settings('general.application_name').'! Complete your author profile before submitting.');
     }
 
+    /** Abandon a half-finished (e.g. ORCID) sign-up and show the full registration options again. */
+    public function reset(Request $request): RedirectResponse
+    {
+        $request->session()->forget(self::SESSION_KEY);
+
+        return redirect()->route('register');
+    }
+
     public function resend(Request $request): RedirectResponse
     {
         $email = $request->session()->get(self::SESSION_KEY.'.email');
