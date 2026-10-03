@@ -68,11 +68,64 @@ class RazorpayGateway implements PaymentGateway
     public function paymentDetails(string $paymentId): array
     {
         try {
-            $payment = $this->api->payment->fetch($paymentId);
+            $payment = $this->api->payment->fetch($paymentId)->toArray();
         } catch (Throwable) {
             return ['method' => null, 'details' => null];
         }
 
+        return ['method' => $payment['method'] ?? null, 'details' => $this->describe($payment)];
+    }
+
+    public function orderStatus(Payment $payment): array
+    {
+        $result = ['state' => 'none', 'payment_id' => null, 'method' => null, 'details' => null, 'reason' => null];
+
+        if (! $payment->gateway_order_id) {
+            return $result;
+        }
+
+        try {
+            $attempts = $this->api->order->fetch($payment->gateway_order_id)->payments()->toArray()['items'] ?? [];
+        } catch (Throwable) {
+            return ['state' => 'unknown'] + $result;
+        }
+
+        // Newest attempt first.
+        usort($attempts, fn ($a, $b) => ($b['created_at'] ?? 0) <=> ($a['created_at'] ?? 0));
+        $expected = $payment->totalInMinorUnits();
+
+        foreach ($attempts as $attempt) {
+            if ((int) ($attempt['amount'] ?? 0) !== $expected) {
+                continue;
+            }
+
+            // Authorised but not auto-captured (e.g. a late UPI confirmation): capture it now.
+            if (($attempt['status'] ?? null) === 'authorized') {
+                try {
+                    $attempt = $this->api->payment->fetch($attempt['id'])->capture(['amount' => $expected, 'currency' => $payment->currency])->toArray();
+                } catch (Throwable) {
+                    return ['state' => 'processing'] + $result;
+                }
+            }
+
+            if (($attempt['status'] ?? null) === 'captured') {
+                return ['state' => 'paid', 'payment_id' => $attempt['id'], 'method' => $attempt['method'] ?? null, 'details' => $this->describe($attempt), 'reason' => null];
+            }
+        }
+
+        if ($attempts === []) {
+            return $result;
+        }
+
+        if (collect($attempts)->contains(fn ($a) => in_array($a['status'] ?? null, ['created', 'authorized'], true))) {
+            return ['state' => 'processing'] + $result;
+        }
+
+        return ['state' => 'failed', 'reason' => $attempts[0]['error_description'] ?? null] + $result;
+    }
+
+    private function describe(array $payment): ?string
+    {
         $details = match ($payment['method'] ?? null) {
             'card' => isset($payment['card']['last4']) ? 'Card ending '.$payment['card']['last4'] : 'Card',
             'upi' => 'UPI '.($payment['vpa'] ?? ''),
@@ -81,7 +134,7 @@ class RazorpayGateway implements PaymentGateway
             default => null,
         };
 
-        return ['method' => $payment['method'] ?? null, 'details' => $details ? trim($details) : null];
+        return $details ? trim($details) : null;
     }
 
     public function verifyWebhook(string $payload, string $signature): bool

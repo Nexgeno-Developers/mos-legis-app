@@ -24,7 +24,7 @@
                     <x-form.input name="city" label="City" :value="$a?->city" required />
                     <x-form.input name="postal_code" label="Postal code" :value="$a?->postal_code" />
                     <x-form.phone label="Phone" :value="$a?->phone ?? auth()->user()->phone" />
-                    <x-form.input name="tax_id_number" label="GST / VAT / Tax ID (optional)" :value="$a?->tax_id_number" maxlength="40" hint="Printed on your invoice, e.g. your GSTIN." />
+                    <x-form.input name="tax_id_number" label="GST / VAT / Tax ID" :value="$a?->tax_id_number" maxlength="40" hint="Printed on your invoice, e.g. your GSTIN." />
                 </div>
             </x-admin.panel>
             <x-button type="submit" variant="primary" icon="lock" class="mt-6">Continue to payment</x-button>

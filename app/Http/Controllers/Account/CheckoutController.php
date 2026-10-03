@@ -16,6 +16,7 @@ use App\Services\Payments\PaymentGateway;
 use App\Services\Payments\PaymentService;
 use App\Services\Payments\SimulatedGateway;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
@@ -25,8 +26,12 @@ use Illuminate\View\View;
 
 /**
  * Checkout for pre-screening, publication and standalone plagiarism fees:
- * billing address (tax by country) → pending payment + gateway order → Razorpay
- * checkout → signature-verified callback. Webhooks settle payments too (idempotent).
+ * billing address → pending payment + gateway order → Razorpay checkout → status page.
+ *
+ * The status page is the single place the payer learns the outcome. It asks the gateway itself
+ * (not the browser widget, which can report a failure for a UPI/bank payment that is confirmed
+ * seconds later) and keeps checking for up to a minute before showing success or failure.
+ * Webhooks settle payments too (idempotent).
  */
 class CheckoutController extends Controller
 {
@@ -83,7 +88,15 @@ class CheckoutController extends Controller
 
         $address = $user->address()->updateOrCreate([], $request->safe()->only(array_keys(AddressRequest::addressRules())));
         $payment = $this->payments->createPending($user, $payable, $purpose, $amount, $address);
-        $payment->forceFill(['gateway_order_id' => $this->gateway->createOrder($payment)])->save();
+
+        // An earlier attempt on the same order may have gone through in the meantime.
+        if ($payment->gateway_order_id && $this->payments->reconcile($payment) === 'paid') {
+            return redirect()->route('account.payments.status', $payment);
+        }
+
+        if (! $payment->gateway_order_id) {
+            $payment->forceFill(['gateway_order_id' => $this->gateway->createOrder($payment)])->save();
+        }
 
         return redirect()->route('account.payments.pay', $payment);
     }
@@ -92,12 +105,14 @@ class CheckoutController extends Controller
     {
         abort_unless($payment->user_id === $request->user()->id, 403);
 
-        if ($payment->isPaid()) {
-            return redirect()->to($this->returnUrl($payment))->with('status', 'This payment is already complete.');
+        if ($payment->isPaid() || ($payment->gateway_order_id && $this->payments->reconcile($payment) === 'paid')) {
+            return redirect()->route('account.payments.status', $payment);
         }
 
         return view('account.checkout.pay', [
             'payment' => $payment->load('payable'),
+            'item' => $this->itemLabel($payment),
+            'checkoutUrl' => $this->checkoutUrl($payment),
             'gateway' => $this->gateway->name(),
             'options' => $this->gateway->checkoutOptions($payment),
         ]);
@@ -114,16 +129,46 @@ class CheckoutController extends Controller
 
         $payment = Payment::where('gateway_order_id', $data['razorpay_order_id'])->where('user_id', $request->user()->id)->firstOrFail();
 
-        if (! $this->gateway->verifyPayment($data['razorpay_order_id'], $data['razorpay_payment_id'], $data['razorpay_signature'])) {
-            $this->payments->markFailed($payment, 'Signature verification failed');
-
-            return redirect()->route('account.payments.pay', $payment)->with('error', 'We could not verify the payment. If money was debited it will be reconciled automatically.');
+        if ($this->gateway->verifyPayment($data['razorpay_order_id'], $data['razorpay_payment_id'], $data['razorpay_signature'])) {
+            $details = $this->gateway->paymentDetails($data['razorpay_payment_id']);
+            $this->payments->markPaid($payment, $data['razorpay_payment_id'], $details['method'], $details['details']);
         }
 
-        $details = $this->gateway->paymentDetails($data['razorpay_payment_id']);
-        $this->payments->markPaid($payment, $data['razorpay_payment_id'], $details['method'], $details['details']);
+        // Unverified: the status page confirms the outcome with the gateway itself.
+        return redirect()->route('account.payments.status', $payment);
+    }
 
-        return redirect()->to($this->returnUrl($payment))->with('success', 'Payment received — thank you. Your invoice is available under Payments & Invoices.');
+    /** Outcome page: success, failure, or a processing screen that keeps checking with the gateway. */
+    public function status(Request $request, Payment $payment): View
+    {
+        abort_unless($payment->user_id === $request->user()->id, 403);
+
+        $state = $this->payments->reconcile($payment);
+        $payment->refresh()->load('payable');
+
+        $view = match (true) {
+            $state === 'paid' => 'success',
+            ! $request->boolean('final') => 'processing',
+            // Still in progress after the wait (or the gateway is unreachable): never invite a second payment.
+            in_array($state, ['processing', 'unknown'], true) => 'pending',
+            default => 'failed',
+        };
+
+        return view('account.checkout.status', [
+            'payment' => $payment,
+            'view' => $view,
+            'item' => $this->itemLabel($payment),
+            'returnUrl' => $this->returnUrl($payment),
+            'checkoutUrl' => $this->checkoutUrl($payment),
+        ]);
+    }
+
+    /** Polled by the processing screen. */
+    public function check(Request $request, Payment $payment): JsonResponse
+    {
+        abort_unless($payment->user_id === $request->user()->id, 403);
+
+        return response()->json(['state' => $this->payments->reconcile($payment)]);
     }
 
     /** Local/testing only: settle the payment without a gateway. */
@@ -132,10 +177,13 @@ class CheckoutController extends Controller
         abort_unless($this->gateway instanceof SimulatedGateway && ! app()->isProduction(), 404);
         abort_unless($payment->user_id === $request->user()->id, 403);
 
-        $paymentId = 'pay_sim_'.Str::lower(Str::random(14));
-        $this->payments->markPaid($payment, $paymentId, 'upi', 'Simulated payment');
+        if ($request->input('outcome') === 'failed') {
+            $this->payments->markFailed($payment, 'Simulated failure: the bank declined the payment.');
+        } else {
+            $this->payments->markPaid($payment, 'pay_sim_'.Str::lower(Str::random(14)), 'upi', 'Simulated payment');
+        }
 
-        return redirect()->to($this->returnUrl($payment))->with('success', 'Payment received (simulated).');
+        return redirect()->route('account.payments.status', $payment);
     }
 
     private function summary(Request $request, Model $payable, PaymentPurpose $purpose, float $amount): View
@@ -174,6 +222,24 @@ class CheckoutController extends Controller
         return $purpose === PaymentPurpose::Publication
             ? (float) $this->fees->publicationFeeFor($submission)
             : $this->fees->prescreeningFee();
+    }
+
+    /** What the payment is for, e.g. "MOS-00010 — Title". */
+    private function itemLabel(Payment $payment): string
+    {
+        $payable = $payment->payable;
+
+        return $payable instanceof ManuscriptSubmission
+            ? $payable->reference().' — '.Str::limit($payable->title, 70)
+            : 'Plagiarism check #'.$payment->payable_id.($payable?->title ? ' — '.Str::limit($payable->title, 60) : '');
+    }
+
+    /** Start of checkout (billing address) for the same charge. */
+    private function checkoutUrl(Payment $payment): string
+    {
+        return $payment->payable instanceof ManuscriptSubmission
+            ? route('account.checkout.submission', [$payment->payable, $payment->payment_purpose])
+            : route('account.checkout.plagiarism', $payment->payable_id);
     }
 
     private function returnUrl(Payment $payment): string

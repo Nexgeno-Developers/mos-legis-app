@@ -101,7 +101,7 @@
                     <x-form.input name="address[city]" label="City *" :value="$address?->city" />
                     <x-form.input name="address[postal_code]" label="Postal code" :value="$address?->postal_code" />
                     <x-form.phone name="address[phone]" label="Billing phone" :value="$address?->phone" />
-                    <x-form.input name="address[tax_id_number]" label="GST / VAT / Tax ID (optional)" :value="$address?->tax_id_number" maxlength="40" />
+                    <x-form.input name="address[tax_id_number]" label="GST / VAT / Tax ID" :value="$address?->tax_id_number" maxlength="40" />
                 </div>
             </x-admin.panel>
         </div>

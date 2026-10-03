@@ -110,7 +110,8 @@ class PortalTest extends TestCase
         $this->assertSame('Mumbai', $payment->billing_details['city']);
 
         $this->actingAs($this->author)->get(route('account.payments.pay', $payment))->assertOk()->assertSee('Simulate successful payment');
-        $this->actingAs($this->author)->post(route('account.payments.simulate', $payment))->assertRedirect(route('account.submissions.show', $submission));
+        $this->actingAs($this->author)->post(route('account.payments.simulate', $payment))->assertRedirect(route('account.payments.status', $payment));
+        $this->actingAs($this->author)->get(route('account.payments.status', $payment))->assertOk()->assertSee('Payment successful')->assertSee('Download invoice');
 
         $submission->refresh();
         $this->assertSame(ManuscriptStage::InReview, $submission->stage);

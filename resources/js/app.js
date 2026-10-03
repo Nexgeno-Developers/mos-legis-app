@@ -14,7 +14,7 @@ import {
     KeyRound, Layout, Lock, LogIn, LogOut, Mail,
     Menu, MessageSquare, Network, PanelLeft, Pencil, Phone,
     Plus, Receipt, RefreshCw, Reply, Route, Rows,
-    Save, ScanSearch, Search, Send, Settings, ShieldCheck,
+    Save, ScanSearch, Search, Send, Settings, ShieldCheck, CircleX, LoaderCircle, Hourglass,
     Shuffle, SquareUser, Star, Summary, Tag, Tags,
     Text, ToggleLeft, ToggleRight, Trash2, Type, Upload,
     User, UserCheck, UserPlus, Users, Volume, X, MapPin, GripVertical, Link,
@@ -22,7 +22,7 @@ import {
 import { countDocxWords } from './word-count';
 import { initForms, refreshSelects } from './forms';
 
-const usedIcons = { Activity, Archive, ArrowLeft, ArrowRight, Award, BadgeCheck, BadgeIndianRupee, Ban, BookOpen, Briefcase, CalendarRange, Check, ChevronDown, ChevronLeft, ChevronRight, CircleAlert, CircleCheck, Clock, Columns, Contact, Copy, CreditCard, Delete, Download, ExternalLink, Eye, EyeOff, File, FileText, Files, Filter, Folder, Form, Gauge, Gavel, Ghost, GitBranch, Heading, Home, Image, Inbox, Info, KeyRound, Layout, Lock, LogIn, LogOut, Mail, Menu, MessageSquare, Network, PanelLeft, Pencil, Phone, Plus, Receipt, RefreshCw, Reply, Route, Rows, Save, ScanSearch, Search, Send, Settings, ShieldCheck, Shuffle, SquareUser, Star, Summary, Tag, Tags, Text, ToggleLeft, ToggleRight, Trash2, Type, Upload, User, UserCheck, UserPlus, Users, Volume, X, MapPin, GripVertical, Link };
+const usedIcons = { CircleX, LoaderCircle, Hourglass, Activity, Archive, ArrowLeft, ArrowRight, Award, BadgeCheck, BadgeIndianRupee, Ban, BookOpen, Briefcase, CalendarRange, Check, ChevronDown, ChevronLeft, ChevronRight, CircleAlert, CircleCheck, Clock, Columns, Contact, Copy, CreditCard, Delete, Download, ExternalLink, Eye, EyeOff, File, FileText, Files, Filter, Folder, Form, Gauge, Gavel, Ghost, GitBranch, Heading, Home, Image, Inbox, Info, KeyRound, Layout, Lock, LogIn, LogOut, Mail, Menu, MessageSquare, Network, PanelLeft, Pencil, Phone, Plus, Receipt, RefreshCw, Reply, Route, Rows, Save, ScanSearch, Search, Send, Settings, ShieldCheck, Shuffle, CircleX, LoaderCircle, Hourglass, SquareUser, Star, Summary, Tag, Tags, Text, ToggleLeft, ToggleRight, Trash2, Type, Upload, User, UserCheck, UserPlus, Users, Volume, X, MapPin, GripVertical, Link };
 
 window.Alpine = Alpine;
 Alpine.plugin(collapse);

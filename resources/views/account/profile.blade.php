@@ -87,7 +87,7 @@
                     <x-form.input name="city" label="City" :value="$a?->city" required autocomplete="address-level2" />
                     <x-form.input name="postal_code" label="Postal code" :value="$a?->postal_code" autocomplete="postal-code" />
                     <x-form.phone id="billing_phone" label="Billing phone" :value="$a?->phone" />
-                    <x-form.input name="tax_id_number" label="GST / VAT / Tax ID (optional)" :value="$a?->tax_id_number" maxlength="40" hint="Printed on your invoices, e.g. your GSTIN." />
+                    <x-form.input name="tax_id_number" label="GST / VAT / Tax ID" :value="$a?->tax_id_number" maxlength="40" hint="Printed on your invoices, e.g. your GSTIN." />
                 </div>
                 <p class="mt-5 text-sm text-muted-foreground">All fees are inclusive of taxes. For Indian billing addresses, GST at {{ rtrim(rtrim(number_format(settings()->float('payment.tax_rate_percent'), 2), '0'), '.') }}% is included in the fee and shown on your invoice; international addresses are zero-rated.</p>
             </x-admin.panel>

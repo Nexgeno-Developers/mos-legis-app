@@ -42,6 +42,15 @@ class SimulatedGateway implements PaymentGateway
         return false;
     }
 
+    /** No real gateway: a simulated failure is recorded on the payment itself. */
+    public function orderStatus(Payment $payment): array
+    {
+        return [
+            'state' => $payment->payment_status === \App\Enums\PaymentStatus::Failed ? 'failed' : 'none',
+            'payment_id' => null, 'method' => null, 'details' => null, 'reason' => $payment->remarks,
+        ];
+    }
+
     public function signature(string $orderId, string $paymentId): string
     {
         return hash_hmac('sha256', $orderId.'|'.$paymentId, (string) config('app.key'));

@@ -21,4 +21,13 @@ interface PaymentGateway
     public function paymentDetails(string $paymentId): array;
 
     public function verifyWebhook(string $payload, string $signature): bool;
+
+    /**
+     * What the gateway knows about the payment's order right now (the source of truth after checkout):
+     * paid = an attempt was captured for the full amount; processing = an attempt is still in progress;
+     * failed = every attempt failed; none = no attempt yet; unknown = the gateway could not be reached.
+     *
+     * @return array{state: 'paid'|'processing'|'failed'|'none'|'unknown', payment_id: ?string, method: ?string, details: ?string, reason: ?string}
+     */
+    public function orderStatus(Payment $payment): array;
 }

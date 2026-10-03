@@ -1,4 +1,4 @@
-@props(['title', 'heading' => null, 'intro' => null, 'sidebar' => true])
+@props(['title', 'heading' => null, 'intro' => null, 'sidebar' => true, 'narrow' => false])
 {{-- sidebar=false: focused page without the account menu (e.g. checkout). --}}
 @php
     $me = auth()->user();
@@ -23,7 +23,8 @@
 @endphp
 <x-layouts.site :title="$title">
     @unless ($sidebar)
-        <div class="mx-auto max-w-[1040px] px-6 py-10">
+        {{-- narrow: one centred column (payment and payment status) so the header lines up with the card. --}}
+        <div class="mx-auto {{ $narrow ? 'max-w-[760px]' : 'max-w-[1040px]' }} px-6 py-10">
             <header class="border-b border-border pb-6">
                 <a href="{{ route('account.dashboard') }}" class="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-primary"><x-icon name="arrow-left" class="h-4 w-4" /> Back to my account</a>
                 <p class="label-caps mt-4 flex items-center gap-1.5 text-xs text-primary"><x-icon name="lock" class="h-3.5 w-3.5" /> Secure checkout</p>

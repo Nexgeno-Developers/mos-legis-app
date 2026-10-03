@@ -97,6 +97,8 @@ Route::middleware('author')->prefix('account')->name('account.')->group(function
     Route::post('checkout', [Account\CheckoutController::class, 'store'])->name('checkout.store');
     Route::get('payments/{payment}/pay', [Account\CheckoutController::class, 'pay'])->name('payments.pay');
     Route::post('payments/{payment}/simulate', [Account\CheckoutController::class, 'simulate'])->name('payments.simulate');
+    Route::get('payments/{payment}/status', [Account\CheckoutController::class, 'status'])->name('payments.status');
+    Route::get('payments/{payment}/status/check', [Account\CheckoutController::class, 'check'])->middleware('throttle:60,1')->name('payments.check');
     Route::get('payments', [Account\PaymentController::class, 'index'])->name('payments.index');
     Route::get('payments/{payment}/invoice', [Account\PaymentController::class, 'invoice'])->name('payments.invoice');
 
