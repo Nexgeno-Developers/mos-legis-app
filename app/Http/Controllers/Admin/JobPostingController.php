@@ -65,7 +65,7 @@ class JobPostingController extends Controller
 
     public function store(JobPostingRequest $request): RedirectResponse
     {
-        $job = JobPosting::create($request->validated() + ['user_id' => $request->user()->id]);
+        $job = JobPosting::create($request->jobData() + ['user_id' => $request->user()->id]);
         activity()->log('Job Postings', 'Created job posting', $job, $request->safe()->only(['job_title', 'organisation', 'status']));
 
         return redirect()->route('admin.job-postings.index')->with('success', 'Job posting created.');
@@ -87,7 +87,7 @@ class JobPostingController extends Controller
 
     public function update(JobPostingRequest $request, JobPosting $jobPosting): RedirectResponse
     {
-        $jobPosting->update($request->validated());
+        $jobPosting->update($request->jobData());
         activity()->log('Job Postings', 'Updated job posting', $jobPosting, $request->safe()->only(['job_title', 'organisation', 'status']));
 
         return redirect()->route('admin.job-postings.index')->with('success', 'Job posting updated.');

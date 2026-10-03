@@ -30,7 +30,7 @@ class JobPostingController extends Controller
 
     public function store(JobPostingRequest $request): RedirectResponse
     {
-        $job = $request->user()->jobPostings()->create($request->validated());
+        $job = $request->user()->jobPostings()->create($request->jobData());
         activity()->log('Job Postings', 'Author posted job', $job, ['title' => $job->job_title]);
 
         return redirect()->route('account.jobs.index')->with('success', 'Job posted.');
@@ -45,7 +45,7 @@ class JobPostingController extends Controller
 
     public function update(JobPostingRequest $request, JobPosting $job): RedirectResponse
     {
-        $job->update($request->validated());
+        $job->update($request->jobData());
 
         return redirect()->route('account.jobs.index')->with('success', 'Job updated.');
     }

@@ -57,19 +57,32 @@ class JobsAndEnquiriesTest extends TestCase
     }
 
     #[Test]
-    public function application_email_must_match_the_method(): void
+    public function a_job_needs_only_the_essential_fields(): void
     {
-        $this->actingAs($this->superadmin())->post(route('admin.job-postings.store'), $this->jobPayload([
-            'application_method' => 'Email', 'application_email_url' => 'not-an-email',
-        ]))->assertSessionHasErrors('application_email_url');
+        $this->actingAs($this->superadmin())->post(route('admin.job-postings.store'), [
+            'job_title' => 'Legal Intern', 'organisation' => 'Rao & Co', 'location' => 'Pune', 'work_mode' => 'Remote',
+            'employment_type' => 'Internship', 'experience' => 'Fresher', 'practice_area' => 'Litigation',
+            'summary' => 'Research and drafting support.', 'source_url' => 'https://raoco.example/careers',
+            'application_deadline' => today()->addDays(10)->toDateString(),
+        ])->assertSessionHasNoErrors();
+
+        $job = JobPosting::where('job_title', 'Legal Intern')->firstOrFail();
+        // Filled in automatically: posted today, listed until the deadline, Active.
+        $this->assertTrue($job->published_date->isToday());
+        $this->assertTrue($job->expiry_date->equalTo($job->application_deadline));
+        $this->assertSame(RecordStatus::Active, $job->status);
+        $this->assertNull($job->responsibilities);
+        $this->assertNull($job->source_name);
+
+        $this->get(route('jobs.index'))->assertSee('Legal Intern');
     }
 
     #[Test]
-    public function expiry_cannot_precede_publication(): void
+    public function a_new_job_cannot_have_a_past_deadline(): void
     {
         $this->actingAs($this->superadmin())->post(route('admin.job-postings.store'), $this->jobPayload([
-            'expiry_date' => today()->subDay()->toDateString(),
-        ]))->assertSessionHasErrors('expiry_date');
+            'application_deadline' => today()->subDay()->toDateString(),
+        ]))->assertSessionHasErrors(['application_deadline' => 'The application deadline cannot be in the past.']);
     }
 
     #[Test]
