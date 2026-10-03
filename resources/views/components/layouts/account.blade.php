@@ -102,7 +102,6 @@
                 <header class="border-b border-border pb-6">
                     <p class="label-caps text-xs text-primary">Author Portal</p>
                     <h1 class="mt-1 font-display text-3xl leading-tight md:text-4xl">{{ $heading ?? $title }}</h1>
-                    @if ($intro)<p class="measure mt-2 text-base text-muted-foreground">{{ $intro }}</p>@endif
                 </header>
                 <div class="pt-8">
                     {{ $slot }}
