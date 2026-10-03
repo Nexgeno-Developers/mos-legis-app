@@ -51,6 +51,13 @@ class SavePage
                     $value = GoogleMap::embedUrl($value);
                 }
 
+                if ($field['type'] === 'sections') {
+                    $value = json_encode(collect(PageTemplates::TEAM_SECTIONS)->map(fn ($d, $section) => [
+                        'label' => trim((string) ($value[$section]['label'] ?? '')),
+                        'heading' => trim((string) ($value[$section]['heading'] ?? '')),
+                    ])->all(), JSON_UNESCAPED_UNICODE);
+                }
+
                 if ($field['type'] === 'repeater') {
                     // Drop rows where every column is blank (e.g. the empty row the editor starts with).
                     $rows = collect($value ?? [])

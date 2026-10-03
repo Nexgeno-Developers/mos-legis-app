@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Site;
 
 use App\Enums\PageTemplate;
 use App\Http\Controllers\Controller;
+use App\Support\PageTemplates;
 use App\Support\PublicPages;
 use Illuminate\View\View;
 
@@ -31,7 +32,12 @@ class PageController extends Controller
         $page = PublicPages::byTemplate(PageTemplate::Teams, 'editorial-board');
         abort_unless($page, 404);
 
-        $groups = collect($page->meta('members', []))->groupBy(fn ($m) => $m['group'] ?: 'Editorial Board');
+        // Fixed sections (Founders, Editorial Board, Advisory Board) in display order, with the label and
+        // heading set in the admin; empty sections are left out.
+        $members = collect($page->meta('members', []))->groupBy(fn ($m) => PageTemplates::teamSection($m['group'] ?? null));
+        $groups = collect(PageTemplates::teamSections($page->meta('sections')))
+            ->map(fn ($section, $key) => $section + ['members' => $members->get($key, collect())])
+            ->filter(fn ($section) => $section['members']->isNotEmpty());
 
         return view('site.editorial-board', compact('page', 'groups'));
     }

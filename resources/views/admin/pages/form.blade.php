@@ -26,10 +26,33 @@
                 <x-admin.panel :title="$templates[$page->template->value].' fields'">
                     <div class="space-y-6">
                         @foreach ($fields as $key => $field)
-                            @if ($field['type'] === 'repeater')
+                            @if ($field['type'] === 'sections')
+                                @php $sections = App\Support\PageTemplates::teamSections(old("meta.{$key}", $page->exists ? $page->meta($key) : null)); @endphp
+                                <div>
+                                    <p class="label-caps text-xs text-muted-foreground">{{ $field['label'] }}</p>
+                                    <p class="mt-1 text-sm text-muted-foreground">The small label and the heading shown above each group on the public page. Leave a field empty to hide it.</p>
+                                    <div class="mt-3 divide-y divide-border border border-border bg-background">
+                                        @foreach (App\Support\PageTemplates::TEAM_SECTIONS as $section => $default)
+                                            <div class="grid gap-3 p-4 sm:grid-cols-[minmax(0,1fr)_minmax(0,2fr)]">
+                                                <p class="font-medium sm:col-span-2">{{ $default['label'] }}</p>
+                                                <x-form.input :name="'meta['.$key.']['.$section.'][label]'" label="Label" :value="$sections[$section]['label']" maxlength="60" />
+                                                <x-form.input :name="'meta['.$key.']['.$section.'][heading]'" label="Heading" :value="$sections[$section]['heading']" maxlength="120" />
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            @elseif ($field['type'] === 'repeater')
                                 @php
                                     $rows = old("meta.{$key}", $page->exists ? $page->meta($key, []) : []);
-                                    $blank = array_fill_keys(array_keys($field['columns']), '');
+                                    // Select columns can take their option labels from another field (e.g. renamed team sections).
+                                    foreach ($field['columns'] as $columnKey => $column) {
+                                        if (isset($column['labels_from'])) {
+                                            $field['columns'][$columnKey]['options'] = App\Support\PageTemplates::teamSectionNames($page->exists ? $page->meta($column['labels_from']) : null);
+                                        }
+                                    }
+                                    $blank = array_map(fn ($column) => $column['default'] ?? '', $field['columns']);
+                                    // Text and select columns share one row; textareas take the full width.
+                                    $inline = min(3, max(1, collect($field['columns'])->where('type', '!=', 'textarea')->count()));
                                 @endphp
                                 <div x-data="repeater(@js(array_values((array) $rows)), @js($blank))">
                                     <div class="flex items-center justify-between">
@@ -37,18 +60,24 @@
                                         <x-button size="sm" icon="plus" @click="add()">Add more</x-button>
                                     </div>
                                     <template x-for="(row, index) in rows" :key="index">
-                                        <div class="mt-3 grid gap-3 border border-border bg-background p-4 md:grid-cols-2">
+                                        <div @class(['mt-3 grid gap-3 border border-border bg-background p-4', 'md:grid-cols-2' => $inline === 2, 'md:grid-cols-3' => $inline === 3])>
                                             @foreach ($field['columns'] as $column => $definition)
-                                                <label class="flex flex-col gap-1 {{ $definition['type'] === 'textarea' ? 'md:col-span-2' : '' }}">
+                                                <label class="flex flex-col gap-1 {{ $definition['type'] === 'textarea' ? 'md:col-span-full' : '' }}">
                                                     <span class="label-caps text-xs text-muted-foreground">{{ $definition['label'] }}</span>
                                                     @if ($definition['type'] === 'textarea')
                                                         <textarea rows="2" class="field-input" x-model="row.{{ $column }}" :name="`meta[{{ $key }}][${index}][{{ $column }}]`"></textarea>
+                                                    @elseif ($definition['type'] === 'select')
+                                                        <select class="field-input" data-native x-model="row.{{ $column }}" :name="`meta[{{ $key }}][${index}][{{ $column }}]`">
+                                                            @foreach ($definition['options'] as $optionValue => $optionLabel)
+                                                                <option value="{{ $optionValue }}">{{ $optionLabel }}</option>
+                                                            @endforeach
+                                                        </select>
                                                     @else
                                                         <input type="text" class="field-input" x-model="row.{{ $column }}" :name="`meta[{{ $key }}][${index}][{{ $column }}]`">
                                                     @endif
                                                 </label>
                                             @endforeach
-                                            <div class="md:col-span-2">
+                                            <div class="md:col-span-full">
                                                 <button type="button" @click="remove(index)" class="inline-flex items-center gap-1 text-sm text-destructive hover:underline">
                                                     <x-icon name="x" /> Remove
                                                 </button>

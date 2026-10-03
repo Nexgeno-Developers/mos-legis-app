@@ -115,31 +115,31 @@
             "name": "Vishnu Yadav",
             "designation": "Founder",
             "overview": "Founded MOS Legis to give practitioner and student scholarship a rigorous, timely home.",
-            "group": "Founder"
+            "group": "founder"
           },
           {
             "name": "Dr. Meera Raghavan",
             "designation": "Chief Editor",
             "overview": "Leads desk review and the Review's ethics protocol.",
-            "group": "Board"
+            "group": "board"
           },
           {
             "name": "Prof. Aditya Shenoy",
             "designation": "Editor",
             "overview": "Oversees commercial and dispute-resolution manuscripts.",
-            "group": "Board"
+            "group": "board"
           },
           {
             "name": "Dr. Kavya Nambiar",
             "designation": "Editor",
             "overview": "Editor for technology, data and platform regulation.",
-            "group": "Board"
+            "group": "board"
           },
           {
             "name": "Prof. Iqbal Qureshi",
             "designation": "Advisory Board",
             "overview": "Advisory panel on criminal law and evidence.",
-            "group": "Advisory"
+            "group": "advisory"
           }
         ]
       }

@@ -11,6 +11,13 @@ use App\Enums\PageTemplate;
  */
 final class PageTemplates
 {
+    /** Editorial board sections, in display order: key => [label in the admin, heading on the site]. */
+    public const TEAM_SECTIONS = [
+        'founder' => ['label' => 'Founders', 'heading' => 'Who Started the Review'],
+        'board' => ['label' => 'Editorial Board', 'heading' => 'Board of Editors'],
+        'advisory' => ['label' => 'Advisory Board', 'heading' => 'Counsel to the Board'],
+    ];
+
     /**
      * @return array<string, array{label: string, type: string, columns?: array<string, array{label: string, type: string}>}>
      */
@@ -18,10 +25,11 @@ final class PageTemplates
     {
         return match ($template) {
             PageTemplate::Teams => [
+                'sections' => ['label' => 'Section headings', 'type' => 'sections'],
                 'members' => ['label' => 'Team members', 'type' => 'repeater', 'columns' => [
                     'name' => ['label' => 'Name', 'type' => 'text'],
                     'designation' => ['label' => 'Designation', 'type' => 'text'],
-                    'group' => ['label' => 'Group (Founder, Board, Advisory…)', 'type' => 'text'],
+                    'group' => ['label' => 'Section', 'type' => 'select', 'default' => 'board', 'options' => array_map(fn ($s) => $s['label'], self::TEAM_SECTIONS), 'labels_from' => 'sections'],
                     'overview' => ['label' => 'Overview', 'type' => 'textarea'],
                 ]],
             ],
@@ -55,10 +63,44 @@ final class PageTemplates
         };
     }
 
+    /**
+     * Team sections with the label/heading saved on the page. Saved values are used as they are —
+     * an emptied field stays empty (hidden on the site). Defaults apply only to a section that was
+     * never saved.
+     *
+     * @return array<string, array{label: string, heading: string}>
+     */
+    public static function teamSections(?array $saved): array
+    {
+        return collect(self::TEAM_SECTIONS)->map(fn ($default, $key) => [
+            'label' => isset($saved[$key]) ? trim((string) ($saved[$key]['label'] ?? '')) : $default['label'],
+            'heading' => isset($saved[$key]) ? trim((string) ($saved[$key]['heading'] ?? '')) : $default['heading'],
+        ])->all();
+    }
+
+    /** Name of each section for the admin's Section dropdown (the default name when the label is empty). */
+    public static function teamSectionNames(?array $saved): array
+    {
+        return collect(self::teamSections($saved))->map(fn ($section, $key) => $section['label'] ?: self::TEAM_SECTIONS[$key]['label'])->all();
+    }
+
+    /** Section key for a stored group value; older free-text values ("Founder", "Advisory panel"…) are mapped. */
+    public static function teamSection(?string $value): string
+    {
+        $value = strtolower(trim((string) $value));
+
+        return match (true) {
+            array_key_exists($value, self::TEAM_SECTIONS) => $value,
+            str_starts_with($value, 'found') => 'founder',
+            str_contains($value, 'advis') || str_contains($value, 'counsel') => 'advisory',
+            default => 'board',
+        };
+    }
+
     public static function metaType(array $field): MetaType
     {
         return match ($field['type']) {
-            'repeater' => MetaType::Json,
+            'repeater', 'sections' => MetaType::Json,
             'textarea' => MetaType::Text,
             default => MetaType::String,
         };

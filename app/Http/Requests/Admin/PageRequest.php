@@ -39,10 +39,18 @@ class PageRequest extends FormRequest
         ];
 
         foreach ($template ? PageTemplates::fields($template) : [] as $key => $field) {
-            if ($field['type'] === 'repeater') {
+            if ($field['type'] === 'sections') {
+                $rules["meta.{$key}"] = ['nullable', 'array'];
+                foreach (array_keys(PageTemplates::TEAM_SECTIONS) as $section) {
+                    $rules["meta.{$key}.{$section}.label"] = ['nullable', 'string', 'max:60'];
+                    $rules["meta.{$key}.{$section}.heading"] = ['nullable', 'string', 'max:120'];
+                }
+            } elseif ($field['type'] === 'repeater') {
                 $rules["meta.{$key}"] = ['array', 'max:200'];
                 foreach ($field['columns'] as $column => $definition) {
-                    $rules["meta.{$key}.*.{$column}"] = ['nullable', 'string', $definition['type'] === 'textarea' ? 'max:5000' : 'max:255'];
+                    $rules["meta.{$key}.*.{$column}"] = $definition['type'] === 'select'
+                        ? ['nullable', Rule::in(array_keys($definition['options']))]
+                        : ['nullable', 'string', $definition['type'] === 'textarea' ? 'max:5000' : 'max:255'];
                 }
             } else {
                 $rules["meta.{$key}"] = match ($field['type']) {
