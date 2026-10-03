@@ -13,6 +13,7 @@ use App\Notifications\Providers\MailProvider;
 use App\Notifications\Providers\SmsGatewayHubProvider;
 use App\Notifications\Providers\TwilioProvider;
 use App\Notifications\Providers\WatiProvider;
+use App\Support\BrandedEmail;
 use Illuminate\Support\Facades\Log;
 use InvalidArgumentException;
 
@@ -99,7 +100,8 @@ class NotificationService
     {
         $providerName = config('notification.email_provider');
         $provider = $this->resolveEmailProvider($providerName);
-        $result = $provider->send($email, $subject, $body);
+        // Every email goes out in the branded MOS Legis frame; the log keeps the template body.
+        $result = $provider->send($email, $subject, BrandedEmail::render($subject, $body));
 
         $this->logNotification($templateSlug, 'email', $providerName, $email, $body, $result, $subject);
     }

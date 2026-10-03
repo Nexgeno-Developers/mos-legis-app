@@ -2,6 +2,7 @@
 
 namespace App\Mail;
 
+use App\Support\BrandedEmail;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
@@ -24,6 +25,11 @@ class OtpCodeMail extends Mailable
 
     public function content(): Content
     {
-        return new Content(markdown: 'emails.otp-code');
+        // Same branded frame as every other email.
+        return new Content(htmlString: BrandedEmail::render(
+            'Verify your email',
+            view('emails.otp-code', ['code' => $this->code, 'minutes' => $this->minutes])->render(),
+            ['preheader' => "Your verification code is {$this->code}. It expires in {$this->minutes} minutes."],
+        ));
     }
 }
