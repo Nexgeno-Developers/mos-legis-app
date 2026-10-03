@@ -28,8 +28,8 @@
                     <div class="grid gap-5 md:grid-cols-2">
                         <x-form.input name="name" label="Name" :value="auth()->user()?->name" required autocomplete="name" />
                         <x-form.input name="email" type="email" label="Email" :value="auth()->user()?->email" required autocomplete="email" />
+                        <x-form.phone label="Phone" :value="auth()->user()?->phone" />
                         <x-form.select name="purpose" label="Purpose of enquiry" :options="array_combine($purposes, $purposes)" placeholder="Select" required />
-                        <x-form.input name="submission_id" label="Submission ID (if any)" placeholder="MOS-00042" />
                     </div>
                     <x-form.textarea name="message" label="Message" rows="5" required class="flex-1 [&_textarea]:h-full [&_textarea]:min-h-32" />
                     <div class="flex flex-wrap items-center justify-between gap-3">

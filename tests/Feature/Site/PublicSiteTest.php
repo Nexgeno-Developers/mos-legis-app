@@ -94,8 +94,14 @@ class PublicSiteTest extends TestCase
         Mail::fake();
 
         $this->post(route('contact.store'), [
-            'name' => 'Visitor', 'email' => 'v@example.com', 'purpose' => 'General query', 'message' => 'Hello',
+            'name' => 'Visitor', 'email' => 'v@example.com', 'phone' => '98765 43210', 'purpose' => 'General query', 'message' => 'Hello',
         ])->assertSessionHas('success');
+
+        // Phone is stored with its country code; the form no longer asks for a submission ID.
+        $contact = Enquiry::where('form_name', 'contact')->firstOrFail();
+        $this->assertSame('+919876543210', $contact->phone);
+        $this->assertArrayNotHasKey('submission_id', $contact->form_data);
+        $this->get(route('contact'))->assertSee('data-phone="phone"', false)->assertDontSee('Submission ID');
 
         $this->post(route('careers.store'), [
             'name' => 'Applicant', 'email' => 'a@example.com', 'phone' => '9876543210', 'position' => 'Editorial Assistant',

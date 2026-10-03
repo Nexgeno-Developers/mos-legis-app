@@ -29,11 +29,13 @@ class EnquiryController extends Controller
 
     public function storeContact(Request $request): RedirectResponse
     {
+        $request->merge(['phone' => PhoneNumbers::normalize($request->input('phone'))]);
+
         $data = $request->validate([
             'name' => ['required', 'string', 'max:150'],
             'email' => ['required', 'email', 'max:190'],
+            'phone' => PhoneNumbers::rules(),
             'purpose' => ['required', 'string', 'in:'.implode(',', self::PURPOSES)],
-            'submission_id' => ['nullable', 'string', 'max:30'],
             'message' => ['required', 'string', 'max:5000'],
             'website' => ['prohibited'], // honeypot
         ]);
@@ -42,8 +44,9 @@ class EnquiryController extends Controller
             'form_name' => EnquiryForm::Contact,
             'name' => $data['name'],
             'email' => $data['email'],
+            'phone' => $data['phone'] ?? null,
             'ip' => $request->ip(),
-            'form_data' => ['purpose' => $data['purpose'], 'submission_id' => $data['submission_id'] ?? null, 'message' => $data['message']],
+            'form_data' => ['purpose' => $data['purpose'], 'message' => $data['message']],
         ]);
 
         $this->notifyOffice($enquiry);
