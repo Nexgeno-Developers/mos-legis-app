@@ -10,7 +10,7 @@ use Illuminate\Http\Response;
 use Illuminate\View\View;
 
 /**
- * Certificates & Invoices tab: payment history, invoice PDFs, publication certificates.
+ * Payments & Invoices tab: payment history and invoice PDFs (certificates are on each published manuscript).
  */
 class PaymentController extends Controller
 {
@@ -20,7 +20,6 @@ class PaymentController extends Controller
 
         return view('account.payments.index', [
             'payments' => $user->payments()->with('payable')->latest('id')->paginate(15),
-            'certificates' => $user->submissions()->whereHas('certificate')->with('certificate')->latest('published_at')->get(),
         ]);
     }
 

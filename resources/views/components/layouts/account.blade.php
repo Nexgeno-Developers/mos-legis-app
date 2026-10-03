@@ -8,7 +8,7 @@
         'Manuscripts' => [
             'account.dashboard' => ['Dashboard', 'gauge'],
             'account.submissions.index' => ['My Submissions', 'inbox'],
-            'account.payments.index' => ['Certificates & Invoices', 'receipt'],
+            'account.payments.index' => ['Payments & Invoices', 'receipt'],
             'account.plagiarism-checks.index' => ['Plagiarism Checks', 'scan-search'],
         ],
         'Contribute' => [

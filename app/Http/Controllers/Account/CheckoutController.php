@@ -123,7 +123,7 @@ class CheckoutController extends Controller
         $details = $this->gateway->paymentDetails($data['razorpay_payment_id']);
         $this->payments->markPaid($payment, $data['razorpay_payment_id'], $details['method'], $details['details']);
 
-        return redirect()->to($this->returnUrl($payment))->with('success', 'Payment received — thank you. Your invoice is available under Certificates & Invoices.');
+        return redirect()->to($this->returnUrl($payment))->with('success', 'Payment received — thank you. Your invoice is available under Payments & Invoices.');
     }
 
     /** Local/testing only: settle the payment without a gateway. */

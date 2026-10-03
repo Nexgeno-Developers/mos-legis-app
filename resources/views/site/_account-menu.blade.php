@@ -18,7 +18,7 @@
             ? [
                 ['Dashboard', 'gauge', route('account.dashboard')],
                 ['My Submissions', 'inbox', route('account.submissions.index')],
-                ['Certificates & Invoices', 'receipt', route('account.payments.index')],
+                ['Payments & Invoices', 'receipt', route('account.payments.index')],
                 ['Profile', 'user', route('account.profile.edit')],
             ]
             : [['Admin console', 'gauge', route('admin.dashboard')]];
