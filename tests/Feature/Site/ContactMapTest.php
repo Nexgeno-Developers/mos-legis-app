@@ -26,7 +26,7 @@ class ContactMapTest extends TestCase
     }
 
     #[Test]
-    public function contact_page_shows_map_from_address_and_full_width_faqs(): void
+    public function contact_page_has_no_map_until_one_is_set_and_shows_full_width_faqs(): void
     {
         $page = Page::factory()->create(['template' => PageTemplate::Contact, 'slug' => 'contact']);
         $page->metas()->createMany([
@@ -34,10 +34,18 @@ class ContactMapTest extends TestCase
             ['meta_key' => 'faqs', 'meta_value' => json_encode([['question' => 'Is the fee refundable?', 'answer' => 'No.']]), 'meta_type' => 'json'],
         ]);
 
+        // No map field: no map, even though there is an office address.
         $this->get(route('contact'))->assertOk()
-            ->assertSee('https://www.google.com/maps?q=Fort%20Chambers%2C%20Mumbai%20400001&amp;output=embed', false)
-            ->assertSee('Get directions')
+            ->assertDontSee('<iframe', false)
+            ->assertDontSee('Get directions')
+            ->assertSee('Fort Chambers, Mumbai 400001')
             ->assertSee('Is the fee refundable?');
+
+        // Map set: it is shown, with the address card.
+        $page->metas()->create(['meta_key' => 'map_embed_url', 'meta_value' => 'https://www.google.com/maps/embed?pb=abc', 'meta_type' => 'string']);
+        $this->get(route('contact'))->assertOk()
+            ->assertSee('https://www.google.com/maps/embed?pb=abc', false)
+            ->assertSee('Get directions');
     }
 
     #[Test]

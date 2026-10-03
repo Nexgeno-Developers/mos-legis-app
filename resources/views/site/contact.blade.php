@@ -1,6 +1,7 @@
 @php
     $address = $page?->meta('office_address');
-    $mapUrl = App\Support\GoogleMap::embedUrl($page?->meta('map_embed_url')) ?? App\Support\GoogleMap::forAddress($address);
+    // The map appears only when one is set in Admin → Pages → Contact.
+    $mapUrl = App\Support\GoogleMap::embedUrl($page?->meta('map_embed_url'));
     $directions = App\Support\GoogleMap::directionsUrl($address);
     $faqs = $page?->meta('faqs', []) ?: [];
     $generalEmail = $page?->meta('general_query_email');

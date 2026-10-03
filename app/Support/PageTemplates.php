@@ -50,7 +50,7 @@ final class PageTemplates
                 'telephone' => ['label' => 'Telephone', 'type' => 'text'],
                 'office_address' => ['label' => 'Office address', 'type' => 'textarea'],
                 'desk_hours' => ['label' => 'Desk hours', 'type' => 'text'],
-                'map_embed_url' => ['label' => 'Google Maps embed URL', 'type' => 'map', 'hint' => 'Optional. In Google Maps choose Share → Embed a map and paste the link or the whole <iframe> code. Leave blank to map the office address.'],
+                'map_embed_url' => ['label' => 'Google Maps embed URL', 'type' => 'map', 'hint' => 'Optional. In Google Maps choose Share → Embed a map and paste the link or the whole <iframe> code. Leave blank to hide the map.'],
                 'faqs' => ['label' => 'FAQs', 'type' => 'repeater', 'columns' => [
                     'question' => ['label' => 'Question', 'type' => 'text'],
                     'answer' => ['label' => 'Answer', 'type' => 'textarea'],
