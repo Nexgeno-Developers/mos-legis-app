@@ -1,5 +1,13 @@
-<x-layouts.site title="Plagiarism Checker" description="Check your manuscript for similarity before you submit.">
-    <x-page-header eyebrow="Plagiarism Checker" title="Check Your Content for Similarity" intro="Paste your text or upload a .docx. After payment we run it through our plagiarism service and give you a similarity score and a downloadable report." />
+{{-- Page text and SEO from Admin → Pages ("Plagiarism checker" template); the check form is dynamic. --}}
+@php
+    $defaults = App\Support\PageTemplates::plagiarismDefaults();
+    $meta = fn (string $key) => $page ? $page->meta($key) : $defaults[$key];
+    // {fee} and {threshold} in the steps come from Settings.
+    $fill = fn (?string $text) => strtr((string) $text, ['{fee}' => money($fee), '{threshold}' => rtrim(rtrim(number_format($threshold, 2), '0'), '.')]);
+    $steps = collect($page ? $page->meta('steps', []) : $defaults['steps'])->pluck('text')->filter()->map($fill)->values();
+@endphp
+<x-layouts.site :title="$page?->seo_title ?: ($page?->title ?: 'Plagiarism Checker')" :description="$page?->seo_description ?: ($page?->excerpt ?: 'Check your manuscript for similarity before you submit.')" :og-image="$page?->og_image">
+    <x-page-header :title="$page?->title ?: 'Check Your Content for Similarity'" :intro="$page ? $page->excerpt : 'Paste your text or upload a .docx. After payment we run it through our plagiarism service and give you a similarity score and a downloadable report.'" />
     <div class="mx-auto grid max-w-[1200px] gap-12 px-4 py-8 sm:px-6 md:py-10 lg:grid-cols-[1.4fr_1fr]">
         <section>
             @auth
@@ -24,8 +32,8 @@
                 @endif
             @else
                 <div class="border border-border bg-card p-8">
-                    <p class="font-display text-2xl">Sign in to run a check</p>
-                    <p class="mt-2 text-muted-foreground">Results and reports are saved to your author account.</p>
+                    @if ($meta('guest_heading'))<p class="font-display text-2xl">{{ $meta('guest_heading') }}</p>@endif
+                    @if ($meta('guest_text'))<p class="mt-2 text-muted-foreground">{{ $meta('guest_text') }}</p>@endif
                     <div class="mt-5 flex gap-3">
                         <x-button variant="primary" icon="log-in" :href="route('login')">Sign in</x-button>
                         <x-button icon="user-plus" :href="route('register')">Create account</x-button>
@@ -34,13 +42,16 @@
             @endauth
         </section>
         <aside>
-            <x-section-heading eyebrow="How it works" title="What happens after you pay" />
+            @if ($meta('steps_label') || $meta('steps_heading'))
+                <x-section-heading :eyebrow="$meta('steps_label')" :title="$meta('steps_heading')" />
+            @endif
             <ol class="mt-6 space-y-4">
-                @foreach (['Pay the checking fee of '.money($fee).' (+ tax for Indian billing addresses).', 'Your content is sent securely to the plagiarism service.', 'See your similarity percentage and matched sources.', 'Download the report. Manuscripts above '.$threshold.'% similarity are not accepted for review.'] as $step)
+                @foreach ($steps as $step)
                     <li class="flex gap-3"><span class="font-mono text-sm text-primary">{{ str_pad($loop->iteration, 2, '0', STR_PAD_LEFT) }}</span><span>{{ $step }}</span></li>
                 @endforeach
             </ol>
-            <p class="mt-6 text-sm text-muted-foreground">Standalone checks never create or change a manuscript submission.</p>
+            @if ($meta('steps_note'))<p class="mt-6 text-sm text-muted-foreground">{{ $fill($meta('steps_note')) }}</p>@endif
+            @if ($page?->content)<div class="prose-legis mt-8">{!! $page->content !!}</div>@endif
         </aside>
     </div>
 </x-layouts.site>

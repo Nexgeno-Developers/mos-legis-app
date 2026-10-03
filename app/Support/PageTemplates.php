@@ -61,6 +61,17 @@ final class PageTemplates
             ],
             // Job Postings: title, intro, content and SEO only — the filters and listings are dynamic.
             PageTemplate::Jobs => [],
+            // Plagiarism Checker: everything except the check form.
+            PageTemplate::PlagiarismChecker => [
+                'steps_label' => ['label' => '“How it works” label', 'type' => 'text'],
+                'steps_heading' => ['label' => '“How it works” heading', 'type' => 'text'],
+                'steps' => ['label' => 'Steps', 'type' => 'repeater', 'hint' => 'Use {fee} for the checking fee and {threshold} for the similarity limit — both are filled in from Settings.', 'columns' => [
+                    'text' => ['label' => 'Step', 'type' => 'textarea'],
+                ]],
+                'steps_note' => ['label' => 'Note below the steps', 'type' => 'textarea'],
+                'guest_heading' => ['label' => 'Signed-out heading (instead of the form)', 'type' => 'text'],
+                'guest_text' => ['label' => 'Signed-out text', 'type' => 'textarea'],
+            ],
             PageTemplate::Layout => [],
         };
     }
@@ -99,6 +110,28 @@ final class PageTemplates
         };
     }
 
+    /**
+     * Plagiarism Checker wording used until the CMS page exists (and seeded into it).
+     *
+     * @return array<string, mixed>
+     */
+    public static function plagiarismDefaults(): array
+    {
+        return [
+            'steps_label' => 'How it works',
+            'steps_heading' => 'What happens after you pay',
+            'steps' => [
+                ['text' => 'Pay the checking fee of {fee} (+ tax for Indian billing addresses).'],
+                ['text' => 'Your content is sent securely to the plagiarism service.'],
+                ['text' => 'See your similarity percentage and matched sources.'],
+                ['text' => 'Download the report. Manuscripts above {threshold}% similarity are not accepted for review.'],
+            ],
+            'steps_note' => 'Standalone checks never create or change a manuscript submission.',
+            'guest_heading' => 'Sign in to run a check',
+            'guest_text' => 'Results and reports are saved to your author account.',
+        ];
+    }
+
     public static function metaType(array $field): MetaType
     {
         return match ($field['type']) {
@@ -119,6 +152,7 @@ final class PageTemplates
             PageTemplate::Contact->value => 'Contact',
             PageTemplate::Career->value => 'Careers',
             PageTemplate::Jobs->value => 'Job postings',
+            PageTemplate::PlagiarismChecker->value => 'Plagiarism checker',
         ];
     }
 }

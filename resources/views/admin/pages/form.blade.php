@@ -56,7 +56,10 @@
                                 @endphp
                                 <div x-data="repeater(@js(array_values((array) $rows)), @js($blank))">
                                     <div class="flex items-center justify-between">
-                                        <p class="label-caps text-xs text-muted-foreground">{{ $field['label'] }}</p>
+                                        <div>
+                                            <p class="label-caps text-xs text-muted-foreground">{{ $field['label'] }}</p>
+                                            @isset($field['hint'])<p class="mt-1 text-sm text-muted-foreground">{{ $field['hint'] }}</p>@endisset
+                                        </div>
                                         <x-button size="sm" icon="plus" @click="add()">Add more</x-button>
                                     </div>
                                     <p x-show="rows.length > 1" class="mt-1 text-xs text-muted-foreground">Drag ⋮⋮ to change the order shown on the website.</p>

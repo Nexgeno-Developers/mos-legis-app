@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Enums\PageTemplate;
 use App\Enums\PublishStatus;
 use App\Models\Page;
+use App\Support\PageTemplates;
 use Illuminate\Database\Seeder;
 
 /**
@@ -18,6 +19,7 @@ class PageSeeder extends Seeder
         $pages = json_decode(file_get_contents(database_path('seeders/data/pages.json')), true, flags: JSON_THROW_ON_ERROR);
         $pages[] = $this->aboutPage();
         $pages[] = $this->jobsPage();
+        $pages[] = $this->plagiarismCheckerPage();
 
         foreach ($pages as $data) {
             $page = Page::firstOrCreate(['slug' => $data['slug']], [
@@ -42,6 +44,23 @@ class PageSeeder extends Seeder
                 ]);
             }
         }
+    }
+
+    /** Plagiarism Checker: CMS text around the dynamic check form. */
+    private function plagiarismCheckerPage(): array
+    {
+        return [
+            'title' => 'Check Your Content for Similarity',
+            'slug' => 'plagiarism-checker',
+            'status' => 'Published',
+            'template' => 'plagiarism_checker',
+            'excerpt' => 'Paste your text or upload a .docx. After payment we run it through our plagiarism service and give you a similarity score and a downloadable report.',
+            'content' => null,
+            'seo_title' => 'Plagiarism Checker',
+            'seo_description' => 'Check your manuscript for similarity before you submit.',
+            'metas' => collect(PageTemplates::plagiarismDefaults())
+                ->map(fn ($value) => ['type' => is_array($value) ? 'json' : 'string', 'value' => $value])->all(),
+        ];
     }
 
     /** Job Postings: CMS title/intro/SEO above the dynamic filters and listings. */
