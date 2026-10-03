@@ -59,6 +59,8 @@ final class PageTemplates
             PageTemplate::Career => [
                 'apply_email' => ['label' => 'Careers email (shown on the page)', 'type' => 'email'],
             ],
+            // Job Postings: title, intro, content and SEO only — the filters and listings are dynamic.
+            PageTemplate::Jobs => [],
             PageTemplate::Layout => [],
         };
     }
@@ -116,6 +118,7 @@ final class PageTemplates
             PageTemplate::PaperWinner->value => 'Paper winner',
             PageTemplate::Contact->value => 'Contact',
             PageTemplate::Career->value => 'Careers',
+            PageTemplate::Jobs->value => 'Job postings',
         ];
     }
 }

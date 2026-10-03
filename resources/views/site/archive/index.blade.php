@@ -33,11 +33,11 @@
                     <x-button :href="route('archive.zip', request()->query())" icon="archive">Download all as ZIP</x-button>
                 @endif
             </div>
-            <div class="mt-8 grid gap-px bg-border md:grid-cols-2">
+            <div class="mt-8 grid gap-4 md:grid-cols-2">
                 @forelse ($submissions as $submission)
                     @include('site._article-card')
                 @empty
-                    <p class="bg-card p-8 text-muted-foreground md:col-span-2">No published manuscripts match your search.</p>
+                    <p class="border border-border bg-card p-8 text-muted-foreground md:col-span-2">No published manuscripts match your search.</p>
                 @endforelse
             </div>
             {{ $submissions->links() }}

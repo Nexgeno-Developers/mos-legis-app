@@ -7,9 +7,9 @@
 
         <section>
             <x-section-heading eyebrow="Step 1 — Choose a category" title="Categories & Word Limits" />
-            <div class="mt-8 grid gap-px bg-border md:grid-cols-2">
+            <div class="mt-8 grid gap-4 md:grid-cols-2">
                 @foreach ($contentCategories as $category)
-                    <div class="bg-card p-6">
+                    <div class="border border-border bg-card p-6">
                         <div class="flex items-baseline justify-between gap-4">
                             <p class="font-display text-xl">{{ $category->name }}</p>
                             <span class="font-mono text-xs whitespace-nowrap text-muted-foreground">{{ $category->wordLimitLabel() }}</span>

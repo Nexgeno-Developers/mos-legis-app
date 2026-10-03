@@ -14,4 +14,5 @@ enum PageTemplate: string
     case PaperWinner = 'paper_winner';
     case Contact = 'contact';
     case Career = 'career';
+    case Jobs = 'jobs';
 }

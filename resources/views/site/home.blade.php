@@ -54,7 +54,7 @@
         @if ($publications->isEmpty())
             <p class="mt-10 text-muted-foreground">The first articles will appear here once published.</p>
         @else
-            <div class="mt-10 grid gap-px bg-border sm:grid-cols-2 lg:grid-cols-3">
+            <div class="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 @foreach ($publications as $submission)@include('site._article-card')@endforeach
             </div>
         @endif

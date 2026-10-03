@@ -1,5 +1,6 @@
-<x-layouts.site title="Job Postings" description="Legal job listings from firms, chambers and institutions.">
-    <x-page-header eyebrow="Notice Board" title="Job Postings" intro="Vacancies submitted by firms, chambers and institutions. MOS Legis publishes listings as a service to readers and takes no part in recruitment." />
+{{-- Title, intro, content and SEO from Admin → Pages ("Job postings" template); filters and listings are dynamic. --}}
+<x-layouts.site :title="$page?->seo_title ?: ($page?->title ?: 'Job Postings')" :description="$page?->seo_description ?: ($page?->excerpt ?: 'Legal job listings from firms, chambers and institutions.')" :og-image="$page?->og_image">
+    <x-page-header :title="$page?->title ?: 'Job Postings'" :intro="$page ? $page->excerpt : 'Vacancies submitted by firms, chambers and institutions. MOS Legis publishes listings as a service to readers and takes no part in recruitment.'" />
     <div class="mx-auto max-w-[1200px] px-4 pt-2 pb-10 sm:px-6" x-data="{ job: null }">
         <x-filter-bar>
             <x-filter.search placeholder="Title, organisation or skill…" />
@@ -11,9 +12,9 @@
             <x-filter.text name="deadline_after" label="Deadline after" type="date" />
         </x-filter-bar>
 
-        <div class="grid gap-px bg-border md:grid-cols-2">
+        <div class="grid gap-4 md:grid-cols-2">
             @forelse ($jobs as $job)
-                <article class="flex flex-col bg-card p-6">
+                <article class="flex flex-col border border-border bg-card p-6">
                     <p class="label-caps text-xs text-muted-foreground">{{ $job->practice_area }} · {{ $job->employment_type->value }} · {{ $job->work_mode->value }}</p>
                     <h2 class="mt-2 font-display text-2xl">{{ $job->job_title }}</h2>
                     <p class="text-muted-foreground">{{ $job->organisation }} — {{ $job->location }}</p>
@@ -48,15 +49,12 @@
                     </div>
                 </template>
             @empty
-                <p class="bg-card p-8 text-muted-foreground md:col-span-2">No open listings match your filters.</p>
+                <p class="border border-border bg-card p-8 text-muted-foreground md:col-span-2">No open listings match your filters.</p>
             @endforelse
         </div>
         {{ $jobs->links() }}
 
-        <div class="mt-12 border border-border bg-secondary p-6">
-            <p class="label-caps text-sm text-primary">For Employers</p>
-            <p class="mt-1 font-display text-xl">Post a Vacancy</p>
-            <p class="mt-2 text-muted-foreground">Registered members can post listings from their account. <a href="{{ auth()->user()?->isAuthor() ? route('account.jobs.create') : route('register') }}" class="text-primary hover:underline">Post a job</a></p>
-        </div>
+        @if ($page?->content)<div class="prose-legis mt-12">{!! $page->content !!}</div>@endif
+
     </div>
 </x-layouts.site>

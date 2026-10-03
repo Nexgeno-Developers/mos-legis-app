@@ -38,15 +38,15 @@
                     <x-button type="submit" icon="filter">Filter</x-button>
                 </form>
             </div>
-            <div class="mt-8 grid gap-px bg-border md:grid-cols-2">
+            <div class="mt-8 grid gap-4 md:grid-cols-2">
                 @forelse ($past as $award)
-                    <div class="bg-card p-6">
+                    <div class="border border-border bg-card p-6">
                         <p class="label-caps text-xs text-primary">{{ $award->periodLabel() }} · {{ ucfirst($award->period_type->value) }}</p>
                         <p class="mt-2 font-display text-xl"><a href="{{ route('archive.show', $award->submission) }}" class="hover:text-primary">{{ $award->submission->title }}</a></p>
                         <p class="text-sm text-muted-foreground">{{ $award->submission->author->name }} · {{ $award->submission->contentCategory->name }}</p>
                     </div>
                 @empty
-                    <p class="bg-card p-6 text-muted-foreground md:col-span-2">No past winners match these filters.</p>
+                    <p class="border border-border bg-card p-6 text-muted-foreground md:col-span-2">No past winners match these filters.</p>
                 @endforelse
             </div>
         </section>

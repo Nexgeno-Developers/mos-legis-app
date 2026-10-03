@@ -17,6 +17,7 @@ class PageSeeder extends Seeder
     {
         $pages = json_decode(file_get_contents(database_path('seeders/data/pages.json')), true, flags: JSON_THROW_ON_ERROR);
         $pages[] = $this->aboutPage();
+        $pages[] = $this->jobsPage();
 
         foreach ($pages as $data) {
             $page = Page::firstOrCreate(['slug' => $data['slug']], [
@@ -41,6 +42,22 @@ class PageSeeder extends Seeder
                 ]);
             }
         }
+    }
+
+    /** Job Postings: CMS title/intro/SEO above the dynamic filters and listings. */
+    private function jobsPage(): array
+    {
+        return [
+            'title' => 'Job Postings',
+            'slug' => 'job-postings',
+            'status' => 'Published',
+            'template' => 'jobs',
+            'excerpt' => 'Vacancies submitted by firms, chambers and institutions. MOS Legis publishes listings as a service to readers and takes no part in recruitment.',
+            'content' => null,
+            'seo_title' => 'Job Postings',
+            'seo_description' => 'Legal job listings from firms, chambers and institutions.',
+            'metas' => [],
+        ];
     }
 
     /** "About" is built as a standard layout page (wireframe screen, managed through Pages). */

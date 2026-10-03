@@ -1,5 +1,5 @@
 {{-- Published manuscript card. Expects $submission. --}}
-<article class="flex flex-col bg-card p-6 transition-colors hover:bg-secondary/60">
+<article class="flex flex-col border border-border bg-card p-6 transition-colors hover:border-gold hover:bg-secondary/60">
     <span class="font-mono text-[11px] tracking-wider text-muted-foreground uppercase">
         @if ($submission->theme) Vol. {{ $submission->theme->volume }} · @endif {{ $submission->contentCategory->name }} · {{ format_date($submission->published_at) }}
     </span>
