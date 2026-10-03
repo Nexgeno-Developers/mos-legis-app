@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests\Account;
 
-use App\Enums\TaxIdType;
 use App\Support\PhoneNumbers;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -32,12 +31,19 @@ class AddressRequest extends FormRequest
             "{$prefix}address_line1" => ['required', 'string', 'max:255'],
             "{$prefix}address_line2" => ['nullable', 'string', 'max:255'],
             "{$prefix}country_code" => ['required', 'string', 'size:2', Rule::in(array_keys(config('countries')))],
-            "{$prefix}state" => ['nullable', 'string', 'max:150'],
+            // Indian addresses: the state decides CGST+SGST vs IGST, so it is required and from the list.
+            "{$prefix}state" => ['nullable', 'required_if:'.$prefix.'country_code,IN', 'string', 'max:150',
+                Rule::when(fn ($input) => data_get($input, $prefix.'country_code') === 'IN', [Rule::in(config('indian_states'))])],
             "{$prefix}city" => ['required', 'string', 'max:150'],
             "{$prefix}postal_code" => ['nullable', 'string', 'max:20'],
-            "{$prefix}tax_id_type" => ['required', Rule::enum(TaxIdType::class)],
-            "{$prefix}tax_id_number" => ['nullable', 'required_unless:'.$prefix.'tax_id_type,none', 'string', 'max:40'],
+            // Optional GST / VAT / tax ID, printed on the invoice.
+            "{$prefix}tax_id_number" => ['nullable', 'string', 'max:40'],
         ];
+    }
+
+    public function messages(): array
+    {
+        return ['state.required_if' => 'Select the state — it is needed for GST.', 'state.in' => 'Select a state from the list.'];
     }
 
     protected function prepareForValidation(): void

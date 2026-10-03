@@ -73,7 +73,7 @@ class PortalTest extends TestCase
             'address_line1' => '1 Court Road',
             'city' => 'Mumbai',
             'country_code' => $country,
-            'tax_id_type' => 'none',
+            'state' => $country === 'IN' ? 'Maharashtra' : 'California',
         ])->assertRedirect();
 
         return Payment::latest('id')->firstOrFail();
@@ -103,8 +103,10 @@ class PortalTest extends TestCase
         $this->actingAs($this->author)->get(route('account.checkout.submission', [$submission, 'prescreening']))->assertOk()
             ->assertSee('Secure checkout')->assertDontSee('aria-label="Account"', false);
         $payment = $this->checkout($submission, PaymentPurpose::Prescreening);
-        $this->assertEquals(150.0, (float) $payment->amount);
-        $this->assertEquals(27.0, (float) $payment->tax_amount);
+        // Fees are tax-inclusive: ₹150 charged = ₹127.12 taxable value + ₹22.88 GST (18%).
+        $this->assertEquals(127.12, (float) $payment->amount);
+        $this->assertEquals(22.88, (float) $payment->tax_amount);
+        $this->assertEquals(150.0, (float) $payment->fresh()->total_amount);
         $this->assertSame('Mumbai', $payment->billing_details['city']);
 
         $this->actingAs($this->author)->get(route('account.payments.pay', $payment))->assertOk()->assertSee('Simulate successful payment');
@@ -236,7 +238,7 @@ class PortalTest extends TestCase
 
         $this->actingAs($this->author)->post(route('account.checkout.store'), [
             'payable_type' => 'plagiarism_checks', 'payable_id' => $check->id, 'purpose' => 'plagiarism_check',
-            'recipient_name' => 'A', 'address_line1' => 'x', 'city' => 'Pune', 'country_code' => 'IN', 'tax_id_type' => 'none',
+            'recipient_name' => 'A', 'address_line1' => 'x', 'city' => 'Pune', 'country_code' => 'IN', 'state' => 'Maharashtra',
         ]);
         $this->actingAs($this->author)->post(route('account.payments.simulate', Payment::latest('id')->first()));
 
@@ -257,8 +259,13 @@ class PortalTest extends TestCase
         $this->assertNull($this->author->fresh()->authorProfile->orcid);
         $this->assertSame('NLSIU', $this->author->fresh()->authorProfile->institution);
 
-        $this->actingAs($this->author)->put(route('account.profile.address'), [
-            'recipient_name' => 'Ananya', 'address_line1' => '1 Road', 'city' => 'Pune', 'country_code' => 'IN', 'tax_id_type' => 'gst',
-        ])->assertSessionHasErrors('tax_id_number');
+        // Indian addresses need a state from the list (it decides CGST + SGST vs IGST).
+        $billing = ['recipient_name' => 'Ananya', 'address_line1' => '1 Road', 'city' => 'Pune', 'country_code' => 'IN'];
+        $this->actingAs($this->author)->put(route('account.profile.address'), $billing)->assertSessionHasErrors('state');
+        $this->actingAs($this->author)->put(route('account.profile.address'), $billing + ['state' => 'Pune'])->assertSessionHasErrors('state');
+
+        // The tax ID is optional; its kind follows the country.
+        $this->actingAs($this->author)->put(route('account.profile.address'), $billing + ['state' => 'Maharashtra', 'tax_id_number' => '27AAPFU0939F1ZV'])->assertSessionHasNoErrors();
+        $this->assertSame('gst', $this->author->fresh()->address->tax_id_type->value);
     }
 }

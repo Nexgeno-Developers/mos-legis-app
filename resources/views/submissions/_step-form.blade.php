@@ -114,7 +114,7 @@
                         <span>Publication fee (only if accepted)</span>
                         <span x-text="fee !== undefined ? @js(settings('payment.currency_symbol')) + Number(fee).toLocaleString('en-IN', { minimumFractionDigits: 2 }) : (content ? 'Not offered for this combination' : 'Select a content category')"></span>
                     </div>
-                    <p class="mt-3 text-sm text-muted-foreground">Tax is added for Indian billing addresses. The manuscript is screened for plagiarism once the pre-screening fee is paid.</p>
+                    <p class="mt-3 text-sm text-muted-foreground">All fees are inclusive of taxes. The manuscript is screened for plagiarism once the pre-screening fee is paid.</p>
                 </div>
             </div>
         </div>

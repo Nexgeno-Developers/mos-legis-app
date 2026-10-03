@@ -60,7 +60,7 @@ class ManuscriptWorkflowTest extends TestCase
     private function address(User $user, string $country = 'IN'): Address
     {
         return $user->address()->create([
-            'recipient_name' => $user->name, 'address_line1' => '1 Court Road', 'city' => 'Mumbai', 'country_code' => $country,
+            'recipient_name' => $user->name, 'address_line1' => '1 Court Road', 'city' => 'Mumbai', 'state' => $country === 'IN' ? 'Maharashtra' : null, 'country_code' => $country,
         ]);
     }
 
@@ -86,7 +86,9 @@ class ManuscriptWorkflowTest extends TestCase
 
         // Pre-screening fee (India → 18% tax) triggers the plagiarism check (sync queue in tests).
         $payment = $payments->createPending($submission->author, $submission, PaymentPurpose::Prescreening, 150, $this->address($submission->author));
-        $this->assertEquals(27.0, (float) $payment->tax_amount);
+        // Tax-inclusive: the payer is charged exactly ₹150, of which ₹22.88 is GST.
+        $this->assertEquals(22.88, (float) $payment->tax_amount);
+        $this->assertEquals(150.0, (float) $payment->fresh()->total_amount);
         $payments->markPaid($payment, 'pay_test_1', 'upi', 'UPI test@upi');
 
         $submission->refresh();
@@ -167,6 +169,7 @@ class ManuscriptWorkflowTest extends TestCase
         $payment = $payments->createPending($submission->author, $submission, PaymentPurpose::Prescreening, 150, $this->address($submission->author, 'US'));
 
         $this->assertEquals(0.0, (float) $payment->tax_amount);
+        $this->assertEquals(150.0, (float) $payment->fresh()->total_amount); // same price, zero-rated
 
         $payments->markPaid($payment, 'pay_a');
         $payments->markPaid($payment->fresh(), 'pay_b');

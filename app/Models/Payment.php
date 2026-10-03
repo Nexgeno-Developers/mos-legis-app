@@ -13,10 +13,11 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 /**
  * SOW A.17 — every pre-screening, publication and standalone plagiarism fee.
  * total_amount is a generated column (amount + tax_amount); never write it.
+ * Fees are tax-inclusive: total_amount is the fee charged, amount is its taxable value.
  */
 #[Fillable([
     'user_id', 'payable_type', 'payable_id', 'payment_purpose', 'invoice_number', 'amount', 'tax_amount',
-    'currency', 'tax_rate', 'billing_address_id', 'billing_country_code', 'billing_details',
+    'currency', 'tax_rate', 'gst_type', 'billing_address_id', 'billing_country_code', 'billing_details',
     'payment_method', 'payment_status', 'payment_details', 'gateway_order_id', 'payment_id', 'remarks', 'paid_at',
 ])]
 class Payment extends Model
@@ -50,6 +51,32 @@ class Payment extends Model
     public function isPaid(): bool
     {
         return $this->payment_status === PaymentStatus::Paid;
+    }
+
+    /**
+     * GST lines of the (inclusive) tax: CGST + SGST (half each) within the business state, IGST otherwise.
+     *
+     * @return list<array{label: string, rate: float, amount: float}>
+     */
+    public function taxLines(): array
+    {
+        if (! $this->hasTax()) {
+            return [];
+        }
+
+        $rate = (float) $this->tax_rate;
+        $tax = (float) $this->tax_amount;
+
+        if ($this->gst_type === 'intra') {
+            $cgst = round($tax / 2, 2);
+
+            return [
+                ['label' => 'CGST', 'rate' => $rate / 2, 'amount' => $cgst],
+                ['label' => 'SGST', 'rate' => $rate / 2, 'amount' => round($tax - $cgst, 2)],
+            ];
+        }
+
+        return [['label' => 'IGST', 'rate' => $rate, 'amount' => $tax]];
     }
 
     public function hasTax(): bool

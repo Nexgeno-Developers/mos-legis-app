@@ -50,7 +50,7 @@ class UserRoleDataTest extends TestCase
             'profile_picture' => UploadedFile::fake()->createWithContent('asha.png', base64_decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==')),
             'address' => [
                 'recipient_name' => 'Asha Rao', 'phone' => '98765 43210', 'address_line1' => '1 MG Road',
-                'city' => 'Bengaluru', 'country_code' => 'IN', 'tax_id_type' => 'none',
+                'city' => 'Bengaluru', 'state' => 'Karnataka', 'country_code' => 'IN',
             ],
         ]))->assertSessionHasNoErrors()->assertRedirect(route('admin.users.index'));
 
@@ -72,11 +72,11 @@ class UserRoleDataTest extends TestCase
         $admin = $this->superadmin();
         $data = $this->base(['role' => 'author', 'author_category_id' => $category->id]);
 
-        $this->actingAs($admin)->post(route('admin.users.store'), $data + ['address' => ['country_code' => 'IN', 'tax_id_type' => 'none']])
+        $this->actingAs($admin)->post(route('admin.users.store'), $data + ['address' => ['country_code' => 'IN']])
             ->assertSessionHasNoErrors();
         $this->assertNull(User::where('email', 'asha@example.com')->first()->address);
 
-        $this->actingAs($admin)->post(route('admin.users.store'), ['email' => 'second@example.com'] + $data + ['address' => ['city' => 'Pune', 'country_code' => 'IN', 'tax_id_type' => 'none']])
+        $this->actingAs($admin)->post(route('admin.users.store'), ['email' => 'second@example.com'] + $data + ['address' => ['city' => 'Pune', 'country_code' => 'IN']])
             ->assertSessionHasErrors(['address.recipient_name', 'address.address_line1']);
     }
 

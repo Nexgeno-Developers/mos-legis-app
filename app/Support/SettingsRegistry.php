@@ -44,7 +44,8 @@ final class SettingsRegistry
                 'payment_gateway' => ['label' => 'Payment Gateway', 'type' => 'select', 'default' => 'Razorpay', 'options' => ['Razorpay']],
                 'payment_gateway_mode' => ['label' => 'Payment Gateway Mode', 'type' => 'select', 'default' => 'Test', 'options' => ['Test', 'Live']],
                 'payment_enabled' => ['label' => 'Payments Enabled', 'type' => 'boolean', 'default' => '1'],
-                'tax_rate_percent' => ['label' => 'Tax Rate Percentage (Indian payers)', 'type' => 'number', 'default' => '18'],
+                'tax_rate_percent' => ['label' => 'Tax Rate Percentage (Indian payers, included in all fees)', 'type' => 'number', 'default' => '18'],
+                'business_state' => ['label' => 'Business State (buyers here: CGST + SGST; other Indian states: IGST)', 'type' => 'text', 'default' => 'Maharashtra'],
             ],
         ],
         'seo_social' => [

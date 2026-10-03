@@ -32,7 +32,7 @@
             {{ collect([$b['city'] ?? null, $b['state'] ?? null, $b['postal_code'] ?? null])->filter()->implode(', ') }}<br>
             {{ $payment->billing_country_code }}<br>
             {{ $payment->user->email }}
-            @if (($b['tax_id_type'] ?? 'none') !== 'none' && ! empty($b['tax_id_number']))<br>{{ strtoupper($b['tax_id_type']) }}: {{ $b['tax_id_number'] }}@endif
+            @if (! empty($b['tax_id_number']))<br>{{ $payment->billing_country_code === 'IN' ? 'GSTIN' : 'Tax ID' }}: {{ $b['tax_id_number'] }}@endif
         </td>
         <td>
             <div class="caps muted">Payment</div>
@@ -47,12 +47,18 @@
 <table class="lines" style="margin-top:18px">
     <thead><tr><th>Description</th><th class="right">Amount ({{ $payment->currency }})</th></tr></thead>
     <tbody>
-        <tr><td>{{ $payment->payment_purpose->label() }} fee</td><td class="right">{{ number_format((float) $payment->amount, 2) }}</td></tr>
-        {{-- Zero-rated (international) payers get no tax line (clarification #5). --}}
+        {{-- Fees are inclusive of all taxes: the breakup shows the taxable value and the tax within the fee.
+             Zero-rated (international) payers get no tax line (clarification #5). --}}
         @if ($payment->hasTax())
-            <tr><td>Tax @ {{ rtrim(rtrim(number_format((float) $payment->tax_rate, 2), '0'), '.') }}%</td><td class="right">{{ number_format((float) $payment->tax_amount, 2) }}</td></tr>
+            <tr><td>{{ $payment->payment_purpose->label() }} fee — taxable value</td><td class="right">{{ number_format((float) $payment->amount, 2) }}</td></tr>
+            {{-- CGST + SGST within the business state, IGST for other Indian states. --}}
+            @foreach ($payment->taxLines() as $line)
+                <tr><td>{{ $line['label'] }} @ {{ rtrim(rtrim(number_format($line['rate'], 2), '0'), '.') }}%</td><td class="right">{{ number_format($line['amount'], 2) }}</td></tr>
+            @endforeach
+        @else
+            <tr><td>{{ $payment->payment_purpose->label() }} fee (zero-rated)</td><td class="right">{{ number_format((float) $payment->amount, 2) }}</td></tr>
         @endif
-        <tr><td><strong>Total</strong></td><td class="right"><strong>{{ number_format((float) $payment->total_amount, 2) }}</strong></td></tr>
+        <tr><td><strong>Total (inclusive of all taxes)</strong></td><td class="right"><strong>{{ number_format((float) $payment->total_amount, 2) }}</strong></td></tr>
     </tbody>
 </table>
 <p class="muted" style="margin-top:30px">This is a computer-generated document and does not require a signature.</p>

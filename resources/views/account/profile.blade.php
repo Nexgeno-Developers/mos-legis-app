@@ -74,7 +74,7 @@
         </form>
 
         {{-- Billing address --}}
-        <form method="POST" action="{{ route('account.profile.address') }}" x-data="{ taxType: @js(old('tax_id_type', $a?->tax_id_type?->value ?? 'none')) }" class="space-y-8">
+        <form method="POST" action="{{ route('account.profile.address') }}" x-data="{ country: @js(old('country_code', $a?->country_code ?? 'IN')) }" class="space-y-8">
             @csrf @method('PUT')
             <x-admin.panel title="Billing address" description="Printed on your invoices. Each payment keeps its own copy, so editing this never changes past invoices.">
                 <div class="grid gap-5 md:grid-cols-2">
@@ -82,21 +82,14 @@
                     <x-form.input name="organization_name" label="Organisation (optional)" :value="$a?->organization_name" />
                     <x-form.input name="address_line1" label="Address line 1" :value="$a?->address_line1" required class="md:col-span-2" autocomplete="address-line1" />
                     <x-form.input name="address_line2" label="Address line 2" :value="$a?->address_line2" class="md:col-span-2" autocomplete="address-line2" />
+                    <x-form.select name="country_code" label="Country" :options="$countries" :value="$a?->country_code ?? 'IN'" required x-model="country" />
+                    <x-form.billing-state :value="$a?->state" />
                     <x-form.input name="city" label="City" :value="$a?->city" required autocomplete="address-level2" />
-                    <x-form.input name="state" label="State / region" :value="$a?->state" autocomplete="address-level1" />
                     <x-form.input name="postal_code" label="Postal code" :value="$a?->postal_code" autocomplete="postal-code" />
-                    <x-form.select name="country_code" label="Country" :options="$countries" :value="$a?->country_code ?? 'IN'" required />
                     <x-form.phone id="billing_phone" label="Billing phone" :value="$a?->phone" />
-                    <x-form.field label="Tax registration" name="tax_id_type">
-                        <select name="tax_id_type" id="tax_id_type" x-model="taxType" class="field-input">
-                            @foreach (['none' => 'None', 'gst' => 'GST (India)', 'vat' => 'VAT'] as $value => $label)<option value="{{ $value }}">{{ $label }}</option>@endforeach
-                        </select>
-                    </x-form.field>
-                    <div x-show="taxType !== 'none'" x-cloak class="md:col-span-2">
-                        <x-form.input name="tax_id_number" label="Tax registration number" :value="$a?->tax_id_number" />
-                    </div>
+                    <x-form.input name="tax_id_number" label="GST / VAT / Tax ID (optional)" :value="$a?->tax_id_number" maxlength="40" hint="Printed on your invoices, e.g. your GSTIN." />
                 </div>
-                <p class="mt-5 text-sm text-muted-foreground">Indian billing addresses are charged tax at {{ rtrim(rtrim(number_format(settings()->float('payment.tax_rate_percent'), 2), '0'), '.') }}%; international addresses are zero-rated.</p>
+                <p class="mt-5 text-sm text-muted-foreground">All fees are inclusive of taxes. For Indian billing addresses, GST at {{ rtrim(rtrim(number_format(settings()->float('payment.tax_rate_percent'), 2), '0'), '.') }}% is included in the fee and shown on your invoice; international addresses are zero-rated.</p>
             </x-admin.panel>
             <div class="flex justify-end">
                 <x-button type="submit" icon="save">Save billing address</x-button>

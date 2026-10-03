@@ -121,7 +121,7 @@ final class PageTemplates
             'steps_label' => 'How it works',
             'steps_heading' => 'What happens after you pay',
             'steps' => [
-                ['text' => 'Pay the checking fee of {fee} (+ tax for Indian billing addresses).'],
+                ['text' => 'Pay the checking fee of {fee} (inclusive of all taxes).'],
                 ['text' => 'Your content is sent securely to the plagiarism service.'],
                 ['text' => 'See your similarity percentage and matched sources.'],
                 ['text' => 'Download the report. Manuscripts above {threshold}% similarity are not accepted for review.'],

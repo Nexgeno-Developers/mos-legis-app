@@ -39,13 +39,18 @@ class FeeCalculator
         return $this->publicationFee($submission->author_category_id, $submission->content_category_id);
     }
 
-    /** @return array{rate: float, tax: float, total: float} */
+    /**
+     * Fees are inclusive of all taxes: the payer is charged exactly $amount. For Indian billing
+     * addresses the tax is carved out of it (taxable value + tax = fee); others are zero-rated.
+     *
+     * @return array{rate: float, base: float, tax: float, total: float}
+     */
     public function withTax(float $amount, ?string $countryCode): array
     {
         $rate = strtoupper((string) $countryCode) === 'IN' ? settings()->float('payment.tax_rate_percent') : 0.0;
-        $tax = round($amount * $rate / 100, 2);
+        $tax = $rate > 0 ? round($amount * $rate / (100 + $rate), 2) : 0.0;
 
-        return ['rate' => $rate, 'tax' => $tax, 'total' => round($amount + $tax, 2)];
+        return ['rate' => $rate, 'base' => round($amount - $tax, 2), 'tax' => $tax, 'total' => round($amount, 2)];
     }
 
     public function paymentsEnabled(): bool

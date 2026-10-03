@@ -16,12 +16,14 @@ class PaymentFactory extends Factory
     public function definition(): array
     {
         return [
-            'user_id' => fn (array $attributes) => ManuscriptSubmission::find($attributes['payable_id'])?->user_id,
+            // payable_id first: user_id is read from the submission once it exists.
             'payable_type' => 'manuscript_submissions',
             'payable_id' => ManuscriptSubmission::factory(),
+            'user_id' => fn (array $attributes) => ManuscriptSubmission::find($attributes['payable_id'])?->user_id,
             'payment_purpose' => PaymentPurpose::Prescreening,
-            'amount' => 150,
-            'tax_amount' => 27,
+            // Tax-inclusive ₹150: taxable value + 18% GST.
+            'amount' => 127.12,
+            'tax_amount' => 22.88,
             'tax_rate' => 18,
             'currency' => 'INR',
             'billing_country_code' => 'IN',

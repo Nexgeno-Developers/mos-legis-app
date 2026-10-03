@@ -18,7 +18,7 @@
         <div class="mt-8 flex flex-wrap items-center justify-between gap-4 border border-gold/60 bg-card p-6">
             <div>
                 <p class="font-display text-xl">Pay the plagiarism pre-screening fee</p>
-                <p class="text-muted-foreground">{{ money($prescreeningFee) }} (+ tax for Indian billing addresses). Screening starts as soon as payment is received.</p>
+                <p class="text-muted-foreground">{{ money($prescreeningFee) }} (inclusive of all taxes). Screening starts as soon as payment is received.</p>
             </div>
             <x-button variant="primary" icon="credit-card" :href="route('account.checkout.submission', [$submission, 'prescreening'])">Pay now</x-button>
         </div>
@@ -28,7 +28,7 @@
         <div class="mt-8 flex flex-wrap items-center justify-between gap-4 border border-success/50 bg-card p-6">
             <div>
                 <p class="font-display text-xl text-success">Accepted for publication</p>
-                <p class="text-muted-foreground">Publication fee: {{ money($publicationFee) }} (+ tax for Indian billing addresses). Your manuscript is published once payment is received.</p>
+                <p class="text-muted-foreground">Publication fee: {{ money($publicationFee) }} (inclusive of all taxes). Your manuscript is published once payment is received.</p>
             </div>
             <x-button variant="primary" icon="credit-card" :href="route('account.checkout.submission', [$submission, 'publication'])">Pay publication fee</x-button>
         </div>

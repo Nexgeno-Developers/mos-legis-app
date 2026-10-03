@@ -86,8 +86,8 @@ class UserRequest extends FormRequest
             'address.address_line1' => 'address line 1',
             'address.country_code' => 'country',
             'address.city' => 'city',
-            'address.tax_id_type' => 'tax ID type',
-            'address.tax_id_number' => 'tax ID number',
+            'address.tax_id_number' => 'GST / VAT / tax ID',
+            'address.state' => 'state',
             'address.phone' => 'billing phone',
         ];
     }
@@ -95,7 +95,7 @@ class UserRequest extends FormRequest
     private function hasAddress(): bool
     {
         return collect($this->input('address', []))
-            ->except(['country_code', 'tax_id_type'])
+            ->except(['country_code'])
             ->filter(fn ($value) => filled($value))
             ->isNotEmpty();
     }

@@ -25,7 +25,7 @@
                                 <input type="file" name="document" accept=".docx" class="field-input" data-rule-maxbytes="{{ App\Support\UploadLimits::bytes(20480) }}" data-msg-maxbytes="This file is larger than {{ App\Support\UploadLimits::label(20480) }}. Please upload a smaller file." x-bind:disabled="mode !== 'upload'">
                             </x-form.field>
                         </div>
-                        <x-button type="submit" variant="primary" icon="scan-search">Continue — {{ money($fee) }} + tax</x-button>
+                        <x-button type="submit" variant="primary" icon="scan-search">Continue — {{ money($fee) }}</x-button>
                     </form>
                 @else
                     <p class="border-l-2 border-gold/60 bg-card px-4 py-3">The plagiarism checker is available to author accounts.</p>

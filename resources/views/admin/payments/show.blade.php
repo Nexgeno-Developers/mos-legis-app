@@ -30,7 +30,7 @@
                 'Organisation' => e($b['organization_name'] ?? null),
                 'Address' => e(collect([$b['address_line1'] ?? null, $b['address_line2'] ?? null, $b['city'] ?? null, $b['state'] ?? null, $b['postal_code'] ?? null])->filter()->implode(', ')),
                 'Country' => e($payment->billing_country_code),
-                'Tax registration' => e(($b['tax_id_type'] ?? 'none') !== 'none' ? strtoupper($b['tax_id_type']).' '.($b['tax_id_number'] ?? '') : null),
+                ($payment->billing_country_code === 'IN' ? 'GSTIN' : 'Tax ID') => e($b['tax_id_number'] ?? null),
                 'Payer email' => e($payment->user->email),
             ]" />
             @if ($payment->payable instanceof App\Models\ManuscriptSubmission)

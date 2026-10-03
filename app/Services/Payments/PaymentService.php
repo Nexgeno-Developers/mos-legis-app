@@ -38,9 +38,14 @@ class PaymentService
                 'payment_status' => PaymentStatus::Pending,
             ],
             [
-                'amount' => $amount,
+                // Inclusive pricing: taxable value + tax = the fee the payer is charged.
+                'amount' => $quote['base'],
                 'tax_amount' => $quote['tax'],
                 'tax_rate' => $quote['rate'],
+                // Within the business state: CGST + SGST; another Indian state: IGST.
+                'gst_type' => $quote['tax'] > 0
+                    ? (strcasecmp(trim((string) $address->state), trim((string) settings('payment.business_state', 'Maharashtra'))) === 0 ? 'intra' : 'inter')
+                    : null,
                 'currency' => settings('payment.currency', 'INR'),
                 'billing_address_id' => $address->id,
                 'billing_country_code' => strtoupper($address->country_code),

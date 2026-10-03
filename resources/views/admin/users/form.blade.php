@@ -14,7 +14,7 @@
     </x-admin.heading>
 
     <form method="POST" action="{{ $editing ? route('admin.users.update', $user) : route('admin.users.store') }}" enctype="multipart/form-data"
-        x-data="{ role: @js($currentRole), rolePermissions: @js($rolePermissions) }" class="mx-auto mt-8 max-w-4xl space-y-8">
+        x-data="{ role: @js($currentRole), rolePermissions: @js($rolePermissions), country: @js(old('address.country_code', $address?->country_code ?? App\Support\PhoneNumbers::defaultCountry())) }" class="mx-auto mt-8 max-w-4xl space-y-8">
         @csrf
         @if ($editing) @method('PUT') @endif
 
@@ -94,15 +94,14 @@
                 <div class="grid gap-5 md:grid-cols-2">
                     <x-form.input name="address[recipient_name]" label="Recipient name *" :value="$address?->recipient_name" />
                     <x-form.input name="address[organization_name]" label="Organisation" :value="$address?->organization_name" />
-                    <x-form.phone name="address[phone]" label="Billing phone" :value="$address?->phone" />
-                    <x-form.select name="address[country_code]" label="Country *" :options="$countries" :value="$address?->country_code ?? App\Support\PhoneNumbers::defaultCountry()" />
-                    <x-form.input name="address[address_line1]" label="Address line 1 *" :value="$address?->address_line1" class="md:col-span-2" />
-                    <x-form.input name="address[address_line2]" label="Address line 2" :value="$address?->address_line2" class="md:col-span-2" />
+                    <x-form.input name="address[address_line1]" label="Address line 1 *" :value="$address?->address_line1" />
+                    <x-form.input name="address[address_line2]" label="Address line 2" :value="$address?->address_line2" />
+                    <x-form.select name="address[country_code]" label="Country *" :options="$countries" :value="$address?->country_code ?? App\Support\PhoneNumbers::defaultCountry()" x-model="country" />
+                    <x-form.billing-state name="address[state]" label="State / province" :value="$address?->state" :required="false" />
                     <x-form.input name="address[city]" label="City *" :value="$address?->city" />
-                    <x-form.input name="address[state]" label="State / province" :value="$address?->state" />
                     <x-form.input name="address[postal_code]" label="Postal code" :value="$address?->postal_code" />
-                    <x-form.select name="address[tax_id_type]" label="Tax ID type" :options="App\Enums\TaxIdType::options()" :value="$address?->tax_id_type ?? 'none'" />
-                    <x-form.input name="address[tax_id_number]" label="Tax ID number (GST / VAT)" :value="$address?->tax_id_number" class="md:col-span-2" />
+                    <x-form.phone name="address[phone]" label="Billing phone" :value="$address?->phone" />
+                    <x-form.input name="address[tax_id_number]" label="GST / VAT / Tax ID (optional)" :value="$address?->tax_id_number" maxlength="40" />
                 </div>
             </x-admin.panel>
         </div>

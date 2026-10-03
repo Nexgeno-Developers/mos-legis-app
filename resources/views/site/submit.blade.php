@@ -44,7 +44,7 @@
 
         <section>
             <x-section-heading eyebrow="Fees" title="Fee Structure" />
-            <p class="measure mt-4 text-muted-foreground">Plagiarism pre-screening: <strong>{{ money($prescreeningFee) }}</strong>, payable on submission. The publication fee below is payable only after acceptance. Tax at {{ rtrim(rtrim(number_format($taxRate, 2), '0'), '.') }}% is added for Indian billing addresses; international payers are zero-rated. All fees in {{ settings('payment.currency') }}.</p>
+            <p class="measure mt-4 text-muted-foreground">Plagiarism pre-screening: <strong>{{ money($prescreeningFee) }}</strong>, payable on submission. The publication fee below is payable only after acceptance. All fees are in {{ settings('payment.currency') }} and inclusive of all taxes.</p>
             <div class="mt-6 overflow-x-auto border border-border bg-card">
                 <table class="w-full min-w-[640px] text-left text-sm">
                     <thead><tr class="border-b border-border"><th class="label-caps px-4 py-3 text-xs text-muted-foreground">Author category</th>

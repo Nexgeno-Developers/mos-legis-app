@@ -22,6 +22,16 @@ class Address extends Model
         return ['tax_id_type' => TaxIdType::class];
     }
 
+    protected static function booted(): void
+    {
+        // Only the number is asked for; its kind follows the country.
+        static::saving(function (Address $address) {
+            $address->tax_id_type = blank($address->tax_id_number)
+                ? TaxIdType::None
+                : (strtoupper((string) $address->country_code) === 'IN' ? TaxIdType::Gst : TaxIdType::Vat);
+        });
+    }
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);

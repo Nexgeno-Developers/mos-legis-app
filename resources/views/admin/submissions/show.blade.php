@@ -89,7 +89,7 @@
                     @endforeach
                 </x-table>
                 @if ($publicationFee !== null)
-                    <p class="mt-3 text-sm text-muted-foreground">Publication fee for this combination: {{ money($publicationFee) }} (+ tax for Indian billing addresses).</p>
+                    <p class="mt-3 text-sm text-muted-foreground">Publication fee for this combination: {{ money($publicationFee) }} (inclusive of all taxes).</p>
                 @endif
             </x-admin.panel>
 

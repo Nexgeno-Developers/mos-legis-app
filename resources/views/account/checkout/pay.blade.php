@@ -1,10 +1,10 @@
 <x-layouts.account title="Payment" :heading="'Pay '.money($payment->total_amount)" :sidebar="false">
     <div class="max-w-2xl border border-border bg-card p-8">
         <dl class="space-y-2">
-            <div class="flex justify-between"><dt>{{ $payment->payment_purpose->label() }} fee</dt><dd>{{ money($payment->amount) }}</dd></div>
-            @if ($payment->hasTax())<div class="flex justify-between text-muted-foreground"><dt>Tax ({{ (float) $payment->tax_rate }}%)</dt><dd>{{ money($payment->tax_amount) }}</dd></div>@endif
-            <div class="flex justify-between border-t border-border pt-2 text-lg font-semibold"><dt>Total</dt><dd>{{ money($payment->total_amount) }}</dd></div>
+            <div class="flex justify-between"><dt>{{ $payment->payment_purpose->label() }} fee</dt><dd>{{ money($payment->total_amount) }}</dd></div>
+            <div class="flex justify-between border-t border-border pt-2 text-lg font-semibold"><dt>Total payable</dt><dd>{{ money($payment->total_amount) }}</dd></div>
         </dl>
+        <p class="mt-1 text-sm text-muted-foreground">Inclusive of all taxes. The tax breakup is shown on your invoice.</p>
         <p class="mt-3 text-sm text-muted-foreground">Billed to {{ $payment->billing_details['name'] ?? '' }}, {{ $payment->billing_details['city'] ?? '' }} ({{ $payment->billing_country_code }}).
             <a href="{{ url()->previous() }}" class="text-primary hover:underline">Change</a></p>
 
