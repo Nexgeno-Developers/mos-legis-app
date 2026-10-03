@@ -185,6 +185,26 @@ Alpine.data('repeater', (rows = [], blank = {}, min = 1) => ({
         this.rows.splice(index, 1);
         while (this.rows.length < min) this.rows.push({ ...blank });
     },
+    // Drag rows by their [data-drag-handle] to reorder them (rows are [data-row] inside x-ref="list").
+    init() {
+        const list = this.$refs.list;
+        if (!list) return;
+        import('sortablejs').then(({ default: Sortable }) => {
+            Sortable.create(list, {
+                handle: '[data-drag-handle]',
+                draggable: '[data-row]',
+                animation: 150,
+                ghostClass: 'menu-ghost',
+                onEnd: ({ item, from, oldIndex, newIndex, oldDraggableIndex, newDraggableIndex }) => {
+                    if (oldDraggableIndex === newDraggableIndex) return;
+                    // Put the element back where Alpine left it, then reorder the data and let Alpine re-render.
+                    from.insertBefore(item, from.children[oldIndex + (oldIndex > newIndex ? 1 : 0)] ?? null);
+                    const [moved] = this.rows.splice(oldDraggableIndex, 1);
+                    this.rows.splice(newDraggableIndex, 0, moved);
+                },
+            });
+        });
+    },
 }));
 
 export function renderIcons() {

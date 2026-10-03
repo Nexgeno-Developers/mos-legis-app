@@ -59,8 +59,18 @@
                                         <p class="label-caps text-xs text-muted-foreground">{{ $field['label'] }}</p>
                                         <x-button size="sm" icon="plus" @click="add()">Add more</x-button>
                                     </div>
+                                    <p x-show="rows.length > 1" class="mt-1 text-xs text-muted-foreground">Drag ⋮⋮ to change the order shown on the website.</p>
+                                    <div x-ref="list" class="mt-3 space-y-3">
                                     <template x-for="(row, index) in rows" :key="index">
-                                        <div @class(['mt-3 grid gap-3 border border-border bg-background p-4', 'md:grid-cols-2' => $inline === 2, 'md:grid-cols-3' => $inline === 3])>
+                                        <div data-row @class(['grid gap-3 border border-border bg-background p-4', 'md:grid-cols-2' => $inline === 2, 'md:grid-cols-3' => $inline === 3])>
+                                            <div class="-mt-1 flex items-center justify-between gap-3 md:col-span-full">
+                                                <button type="button" data-drag-handle class="flex cursor-grab items-center gap-2 text-sm text-muted-foreground hover:text-foreground active:cursor-grabbing" title="Drag to reorder">
+                                                    <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><circle cx="9" cy="6" r="1"/><circle cx="15" cy="6" r="1"/><circle cx="9" cy="12" r="1"/><circle cx="15" cy="12" r="1"/><circle cx="9" cy="18" r="1"/><circle cx="15" cy="18" r="1"/></svg><span x-text="'Item ' + (index + 1)"></span>
+                                                </button>
+                                                <button type="button" @click="remove(index)" class="inline-flex items-center gap-1 text-sm text-destructive hover:underline">
+                                                    <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg> Remove
+                                                </button>
+                                            </div>
                                             @foreach ($field['columns'] as $column => $definition)
                                                 <label class="flex flex-col gap-1 {{ $definition['type'] === 'textarea' ? 'md:col-span-full' : '' }}">
                                                     <span class="label-caps text-xs text-muted-foreground">{{ $definition['label'] }}</span>
@@ -77,13 +87,9 @@
                                                     @endif
                                                 </label>
                                             @endforeach
-                                            <div class="md:col-span-full">
-                                                <button type="button" @click="remove(index)" class="inline-flex items-center gap-1 text-sm text-destructive hover:underline">
-                                                    <x-icon name="x" /> Remove
-                                                </button>
-                                            </div>
                                         </div>
                                     </template>
+                                    </div>
                                     @error("meta.{$key}.*")<p class="mt-2 text-sm text-destructive">{{ $message }}</p>@enderror
                                 </div>
                             @elseif ($field['type'] === 'textarea')
