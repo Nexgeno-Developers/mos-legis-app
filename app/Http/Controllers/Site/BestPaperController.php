@@ -3,11 +3,10 @@
 namespace App\Http\Controllers\Site;
 
 use App\Enums\AwardPeriodType;
-use App\Enums\PageTemplate;
 use App\Http\Controllers\Controller;
 use App\Models\BestPaperAward;
 use App\Models\ContentCategory;
-use App\Support\PublicPages;
+use App\Models\Page;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
@@ -17,7 +16,7 @@ use Illuminate\View\View;
  */
 class BestPaperController extends Controller
 {
-    public function __invoke(Request $request): View
+    public function __invoke(Request $request, Page $page): View
     {
         $awards = BestPaperAward::query()
             ->with(['submission.author:id,name', 'submission.contentCategory:id,name', 'submission.theme'])
@@ -34,7 +33,7 @@ class BestPaperController extends Controller
             ->when($request->integer('category'), fn ($c, $id) => $c->filter(fn ($a) => $a->submission->content_category_id === $id));
 
         return view('site.best-paper', [
-            'page' => PublicPages::byTemplate(PageTemplate::PaperWinner, 'best-paper-winners'),
+            'page' => $page,
             'current' => $current,
             'past' => $past,
             'years' => $awards->pluck('award_year')->unique()->sortDesc()->values(),

@@ -94,7 +94,7 @@ class TaxInclusivePricingTest extends TestCase
     #[Test]
     public function public_pages_say_inclusive_of_taxes_not_plus_tax(): void
     {
-        $this->actingAs($this->author())->get(route('plagiarism-checker'))->assertOk()
+        $this->actingAs($this->author())->get(page_url('plagiarism_checker'))->assertOk()
             ->assertDontSee('+ tax')->assertSee('inclusive of all taxes');
     }
 }

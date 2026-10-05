@@ -53,3 +53,11 @@ if (! function_exists('format_date')) {
         return $carbon->format($withTime ? $format.' H:i' : $format);
     }
 }
+
+if (! function_exists('page_url')) {
+    /** Address of the CMS page with this template, e.g. page_url('submit'); follows the slug set in Admin → Pages. */
+    function page_url(App\Enums\PageTemplate|string $template): string
+    {
+        return App\Support\PublicPages::url($template instanceof App\Enums\PageTemplate ? $template : App\Enums\PageTemplate::from($template));
+    }
+}

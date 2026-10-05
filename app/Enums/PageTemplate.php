@@ -16,4 +16,5 @@ enum PageTemplate: string
     case Career = 'career';
     case Jobs = 'jobs';
     case PlagiarismChecker = 'plagiarism_checker';
+    case Submit = 'submit';
 }

@@ -8,6 +8,7 @@ use App\Models\Enquiry;
 use App\Support\PhoneNumbers;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Mail;
+use Database\Seeders\PageSeeder;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -16,6 +17,12 @@ use Tests\TestCase;
  */
 class PhoneNumberTest extends TestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->seed(PageSeeder::class);
+    }
+
     #[Test]
     public function numbers_are_normalised_to_international_format(): void
     {
@@ -81,7 +88,7 @@ class PhoneNumberTest extends TestCase
     public function phone_fields_render_with_the_country_picker(): void
     {
         $this->get(route('register'))->assertOk()->assertSee('data-phone="phone"', false)->assertSee('data-phone-country="in"', false);
-        $this->get(route('careers'))->assertOk()->assertSee('data-phone="phone"', false);
+        $this->get(page_url('career'))->assertOk()->assertSee('data-phone="phone"', false);
         $this->actingAs($this->author())->get(route('account.profile.edit'))->assertOk()->assertSee('id="billing_phone"', false);
     }
 }

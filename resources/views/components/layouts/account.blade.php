@@ -53,7 +53,7 @@
                     </div>
                 </div>
 
-                <x-button variant="primary" icon="plus" class="w-full sm:w-auto sm:px-6 md:hidden" :href="route('submit').'#submission-form'">New submission</x-button>
+                <x-button variant="primary" icon="plus" class="w-full sm:w-auto sm:px-6 md:hidden" :href="page_url('submit').'#submission-form'">New submission</x-button>
                 </div>
 
                 {{-- Mobile: compact horizontal menu without visible scrollbars --}}

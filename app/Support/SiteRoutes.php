@@ -6,23 +6,15 @@ use Illuminate\Support\Facades\Route;
 
 /**
  * Built-in website pages that a menu can link to ("Website page" link type).
+ * CMS pages (About, Submit, Contact…) are linked with the "Page" link type instead, so links follow their slug and status.
  */
 final class SiteRoutes
 {
     /** @var array<string, string> route name => label */
     public const OPTIONS = [
         'home' => 'Home',
-        'about' => 'About the Journal',
-        'editorial-board' => 'Editorial Board',
-        'patrons' => 'Patrons',
-        'submit' => 'Submit a Manuscript',
         'archive.index' => 'Archive',
-        'best-paper' => 'Best Paper',
-        'plagiarism-checker' => 'Plagiarism Checker',
         'blogs.index' => 'Blogs',
-        'jobs.index' => 'Job Board',
-        'careers' => 'Careers at MOS Legis',
-        'contact' => 'Contact',
         'login' => 'Author sign in',
         'register' => 'Author registration',
     ];

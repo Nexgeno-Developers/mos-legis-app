@@ -89,7 +89,7 @@
         @guest
             <div class="grid grid-cols-2 gap-3 border-t border-border p-4 sm:px-6">
                 <x-button icon="log-in" :href="route('login')">Sign in</x-button>
-                <x-button variant="primary" icon="send" :href="route('submit')">Submit</x-button>
+                <x-button variant="primary" icon="send" :href="page_url('submit')">Submit</x-button>
             </div>
         @endguest
     </nav>

@@ -4,7 +4,7 @@
         <a href="{{ route('login') }}" class="inline-flex h-10 items-center gap-2 px-3 text-sm font-semibold text-foreground hover:text-primary">
             <x-icon name="log-in" class="h-4 w-4" /> Sign in
         </a>
-        <a href="{{ route('submit') }}" class="inline-flex h-10 items-center gap-2 bg-primary px-4 text-sm font-semibold text-primary-foreground shadow-sm transition-colors hover:bg-primary/90">
+        <a href="{{ page_url('submit') }}" class="inline-flex h-10 items-center gap-2 bg-primary px-4 text-sm font-semibold text-primary-foreground shadow-sm transition-colors hover:bg-primary/90">
             <x-icon name="send" class="h-4 w-4" /> Submit a manuscript
         </a>
     </div>
@@ -24,7 +24,7 @@
             : [['Admin console', 'gauge', route('admin.dashboard')]];
     @endphp
     @if ($me->isAuthor())
-        <a href="{{ route('submit') }}#submission-form" class="hidden h-10 items-center gap-2 bg-primary px-4 text-sm font-semibold text-primary-foreground shadow-sm transition-colors hover:bg-primary/90 md:inline-flex">
+        <a href="{{ page_url('submit') }}#submission-form" class="hidden h-10 items-center gap-2 bg-primary px-4 text-sm font-semibold text-primary-foreground shadow-sm transition-colors hover:bg-primary/90 md:inline-flex">
             <x-icon name="plus" class="h-4 w-4" /> New submission
         </a>
     @endif
@@ -53,7 +53,7 @@
                 </a>
             @endforeach
             @if ($me->isAuthor())
-                <a href="{{ route('submit') }}#submission-form" role="menuitem" class="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-primary hover:bg-secondary md:hidden">
+                <a href="{{ page_url('submit') }}#submission-form" role="menuitem" class="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-primary hover:bg-secondary md:hidden">
                     <x-icon name="plus" /> New submission
                 </a>
             @endif

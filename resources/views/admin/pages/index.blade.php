@@ -17,7 +17,7 @@
         @foreach ($pages as $page)
             <tr>
                 <td class="font-medium">{{ $page->title }}</td>
-                <td class="font-mono text-sm">/{{ $page->slug }}</td>
+                <td class="font-mono text-sm">{{ $page->slug === 'home' ? '/' : '/'.$page->slug }}</td>
                 <td><x-badge tone="gold">{{ $templates[$page->template->value] }}</x-badge></td>
                 <td><x-status-badge :status="$page->status" /></td>
                 <td class="whitespace-nowrap text-sm text-muted-foreground">{{ format_date($page->created_at) }}</td>
@@ -25,10 +25,12 @@
                     <div class="flex flex-wrap items-center gap-3">
                         @can('pages.edit')
                             <x-action-link :href="route('admin.pages.edit', $page)" icon="pencil">Edit</x-action-link>
-                            <form method="POST" action="{{ route('admin.pages.toggle-status', $page) }}">
-                                @csrf @method('PATCH')
-                                <x-action-link type="submit" :icon="$page->status->value === 'Published' ? 'eye-off' : 'eye'">{{ $page->status->value === 'Published' ? 'Unpublish' : 'Publish' }}</x-action-link>
-                            </form>
+                            @unless ($page->isHome())
+                                <form method="POST" action="{{ route('admin.pages.toggle-status', $page) }}">
+                                    @csrf @method('PATCH')
+                                    <x-action-link type="submit" :icon="$page->status->value === 'Published' ? 'eye-off' : 'eye'">{{ $page->status->value === 'Published' ? 'Unpublish' : 'Publish' }}</x-action-link>
+                                </form>
+                            @endunless
                         @endcan
                         @can('pages.create')
                             <form method="POST" action="{{ route('admin.pages.duplicate', $page) }}">
@@ -36,9 +38,9 @@
                                 <x-action-link type="submit" icon="copy">Duplicate</x-action-link>
                             </form>
                         @endcan
-                        @can('pages.delete')
+                        @if (! $page->isHome() && auth()->user()->can('pages.delete'))
                             <x-delete-button :action="route('admin.pages.destroy', $page)" />
-                        @endcan
+                        @endif
                     </div>
                 </td>
             </tr>

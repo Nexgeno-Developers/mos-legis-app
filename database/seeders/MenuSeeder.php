@@ -16,6 +16,13 @@ use Illuminate\Database\Seeder;
  */
 class MenuSeeder extends Seeder
 {
+    /** Menu targets below that are CMS pages => their template. */
+    private const PAGE_TEMPLATES = [
+        'about' => 'layout', 'editorial-board' => 'teams', 'patrons' => 'patron', 'submit' => 'submit',
+        'best-paper' => 'paper_winner', 'plagiarism-checker' => 'plagiarism_checker', 'jobs.index' => 'jobs',
+        'careers' => 'career', 'contact' => 'contact',
+    ];
+
     public function run(): void
     {
         $this->seed(MenuLocation::Header, [
@@ -31,7 +38,7 @@ class MenuSeeder extends Seeder
         ]);
 
         $policies = Page::where('template', PageTemplate::Layout)->where('status', PublishStatus::Published)
-            ->whereNotIn('slug', ['home', 'submit', 'about'])->orderBy('title')->get(['id', 'title']);
+            ->whereNotIn('slug', ['home', 'about'])->orderBy('title')->get(['id', 'title']);
 
         $this->seed(MenuLocation::Footer, [
             ['Quick Links', [
@@ -68,6 +75,11 @@ class MenuSeeder extends Seeder
 
     private function link(string $label, string|Page $target): array
     {
+        // CMS pages are linked as pages, so the menu follows their slug and status.
+        if (is_string($target) && isset(self::PAGE_TEMPLATES[$target])) {
+            $target = ($target === 'about' ? Page::where('slug', 'about') : Page::where('template', self::PAGE_TEMPLATES[$target]))->oldest('id')->first() ?? $target;
+        }
+
         return $target instanceof Page
             ? ['label' => $label, 'link_type' => MenuLinkType::Page, 'page_id' => $target->id]
             : ['label' => $label, 'link_type' => MenuLinkType::Route, 'route_name' => $target];

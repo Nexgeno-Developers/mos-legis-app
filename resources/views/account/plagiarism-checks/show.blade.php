@@ -22,7 +22,7 @@
                 </ul>
                 <div class="mt-6 flex flex-wrap gap-3">
                     @if ($check->report_file)<x-button icon="download" :href="route('account.plagiarism-checks.report', $check)">Download report</x-button>@endif
-                    <x-button variant="primary" icon="send" :href="route('submit').'#submission-form'">Submit as a manuscript</x-button>
+                    <x-button variant="primary" icon="send" :href="page_url('submit').'#submission-form'">Submit as a manuscript</x-button>
                 </div>
             @endif
         </x-admin.panel>

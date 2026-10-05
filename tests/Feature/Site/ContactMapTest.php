@@ -35,7 +35,7 @@ class ContactMapTest extends TestCase
         ]);
 
         // No map field: no map, even though there is an office address.
-        $this->get(route('contact'))->assertOk()
+        $this->get(page_url('contact'))->assertOk()
             ->assertDontSee('<iframe', false)
             ->assertDontSee('Get directions')
             ->assertSee('Fort Chambers, Mumbai 400001')
@@ -43,7 +43,7 @@ class ContactMapTest extends TestCase
 
         // Map set: it is shown, with the address card.
         $page->metas()->create(['meta_key' => 'map_embed_url', 'meta_value' => 'https://www.google.com/maps/embed?pb=abc', 'meta_type' => 'string']);
-        $this->get(route('contact'))->assertOk()
+        $this->get(page_url('contact'))->assertOk()
             ->assertSee('https://www.google.com/maps/embed?pb=abc', false)
             ->assertSee('Get directions');
     }
@@ -62,6 +62,6 @@ class ContactMapTest extends TestCase
             ->assertSessionHasNoErrors();
 
         $this->assertSame(self::EMBED, $page->fresh()->load('metas')->meta('map_embed_url'));
-        $this->get(route('contact'))->assertSee(self::EMBED, false);
+        $this->get(page_url('contact'))->assertSee(self::EMBED, false);
     }
 }

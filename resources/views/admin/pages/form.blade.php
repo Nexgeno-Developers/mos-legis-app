@@ -15,7 +15,11 @@
                 <div class="space-y-5">
                     <div class="grid gap-5 md:grid-cols-2">
                         <x-form.input name="title" label="Title" :value="$page->title" required />
-                        <x-form.input name="slug" label="Slug" :value="$page->slug" hint="Leave blank to generate from the title." />
+                        @if ($page->isHome())
+                            <x-form.input name="slug" label="Slug" value="home" disabled hint="The home page always lives at the site address (/)." />
+                        @else
+                            <x-form.input name="slug" label="Slug" :value="$page->slug" hint="The page address: {{ url('/') }}/your-slug. Leave blank to generate from the title." />
+                        @endif
                     </div>
                     <x-form.textarea name="excerpt" label="Excerpt / introduction" :value="$page->excerpt" rows="2" />
                     <x-form.rich-text name="content" label="Content" :value="$page->content" />
@@ -120,11 +124,15 @@
                             </select>
                         </x-form.field>
                     @endif
-                    <x-form.select name="status" label="Status" :options="App\Enums\PublishStatus::options()" :value="$page->status" required />
+                    @if ($page->isHome())
+                        <x-form.select name="status" label="Status" :options="App\Enums\PublishStatus::options()" :value="$page->status" disabled hint="The home page is always published." />
+                    @else
+                        <x-form.select name="status" label="Status" :options="App\Enums\PublishStatus::options()" :value="$page->status" required hint="Draft pages are hidden from the website." />
+                    @endif
                     <x-form.image name="featured_image" label="Featured image" :current="$page->featured_image" />
                     <x-button type="submit" variant="primary" icon="save" class="w-full">{{ $editing ? 'Save page' : 'Create page' }}</x-button>
                     @if ($editing && $page->status->value === 'Published')
-                        <a href="{{ url($page->slug === 'home' ? '/' : $page->slug) }}" target="_blank" class="flex items-center justify-center gap-1 text-sm text-primary hover:underline"><x-icon name="external-link" /> View on site</a>
+                        <a href="{{ $page->url() }}" target="_blank" class="flex items-center justify-center gap-1 text-sm text-primary hover:underline"><x-icon name="external-link" /> View on site</a>
                     @endif
                 </div>
             </x-admin.panel>

@@ -1,8 +1,8 @@
 @php
     $slides = [
-        ['eyebrow' => 'Peer-Reviewed Legal Scholarship', 'headline' => 'Rooted in Tradition. Driven by Justice.', 'sub' => $page?->excerpt ?: 'A peer-reviewed platform for rigorous legal research, commentary, and discourse.', 'primary' => ['Submit a Manuscript', route('submit')], 'secondary' => ['Browse the Archive', route('archive.index')]],
-        ['eyebrow' => 'Best Paper — Monthly Winner', 'headline' => "Recognising the Month's Most Rigorous Scholarship.", 'sub' => 'Each month one paper is elevated for its research depth, originality, and clarity of argument.', 'primary' => ['See the Winner', route('best-paper')], 'secondary' => ['Past Winners', route('best-paper').'#past'], ],
-        ['eyebrow' => 'Plagiarism Screening', 'headline' => 'Every Manuscript Screened Before Peer Review.', 'sub' => 'Check your own draft for similarity before you submit, with a downloadable report.', 'primary' => ['Try the Plagiarism Checker', route('plagiarism-checker')], 'secondary' => ['Submit a Manuscript', route('submit')]],
+        ['eyebrow' => 'Peer-Reviewed Legal Scholarship', 'headline' => 'Rooted in Tradition. Driven by Justice.', 'sub' => $page?->excerpt ?: 'A peer-reviewed platform for rigorous legal research, commentary, and discourse.', 'primary' => ['Submit a Manuscript', page_url('submit')], 'secondary' => ['Browse the Archive', route('archive.index')]],
+        ['eyebrow' => 'Best Paper — Monthly Winner', 'headline' => "Recognising the Month's Most Rigorous Scholarship.", 'sub' => 'Each month one paper is elevated for its research depth, originality, and clarity of argument.', 'primary' => ['See the Winner', page_url('paper_winner')], 'secondary' => ['Past Winners', page_url('paper_winner').'#past'], ],
+        ['eyebrow' => 'Plagiarism Screening', 'headline' => 'Every Manuscript Screened Before Peer Review.', 'sub' => 'Check your own draft for similarity before you submit, with a downloadable report.', 'primary' => ['Try the Plagiarism Checker', page_url('plagiarism_checker')], 'secondary' => ['Submit a Manuscript', page_url('submit')]],
     ];
 @endphp
 <x-layouts.site :title="null" :description="$page?->seo_description">
@@ -98,7 +98,7 @@
             <p class="label-caps text-sm text-primary">Payment Timing</p>
             <h2 class="font-display text-3xl">No fee until you&rsquo;re accepted.</h2>
             <p class="measure text-muted-foreground">Only the plagiarism pre-screening fee is due upfront. The publication fee is payable after an editorial acceptance decision.</p>
-            <a href="{{ route('submit') }}" class="mt-2 inline-flex h-12 items-center gap-2 border border-primary bg-primary px-6 text-sm font-semibold text-primary-foreground hover:bg-primary/90">Start a Submission <x-icon name="arrow-right" /></a>
+            <a href="{{ page_url('submit') }}" class="mt-2 inline-flex h-12 items-center gap-2 border border-primary bg-primary px-6 text-sm font-semibold text-primary-foreground hover:bg-primary/90">Start a Submission <x-icon name="arrow-right" /></a>
         </div>
     </section>
 </x-layouts.site>

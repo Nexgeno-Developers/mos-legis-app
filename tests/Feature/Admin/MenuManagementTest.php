@@ -8,11 +8,21 @@ use App\Enums\RecordStatus;
 use App\Models\Menu;
 use App\Models\MenuItem;
 use App\Models\Page;
+use Database\Seeders\MenuSeeder;
+use Database\Seeders\PageSeeder;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class MenuManagementTest extends TestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+        // Default menus link to the CMS pages, so build them once the pages exist (as on a real site).
+        MenuItem::query()->delete();
+        $this->seed([PageSeeder::class, MenuSeeder::class]);
+    }
+
     private function header(): Menu
     {
         return Menu::forLocation(MenuLocation::Header);

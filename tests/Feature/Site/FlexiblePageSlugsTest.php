@@ -1,0 +1,103 @@
+<?php
+
+namespace Tests\Feature\Site;
+
+use App\Enums\MenuLinkType;
+use App\Enums\MenuLocation;
+use App\Enums\PublishStatus;
+use App\Models\Menu;
+use App\Models\Page;
+use Database\Seeders\CatalogueSeeder;
+use Database\Seeders\PageSeeder;
+use PHPUnit\Framework\Attributes\Test;
+use Tests\TestCase;
+
+/**
+ * Every CMS page lives at /{slug} and follows the slug and status set in Admin → Pages; only Home is fixed.
+ */
+class FlexiblePageSlugsTest extends TestCase
+{
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->seed([CatalogueSeeder::class, PageSeeder::class]);
+    }
+
+    private function save(Page $page, array $changes)
+    {
+        return $this->actingAs($this->superadmin())->put(route('admin.pages.update', $page), array_merge([
+            'title' => $page->title, 'slug' => $page->slug, 'status' => $page->status->value,
+        ], $changes));
+    }
+
+    #[Test]
+    public function a_new_slug_takes_effect_immediately_and_the_old_one_is_gone(): void
+    {
+        $contact = Page::where('template', 'contact')->first();
+        $this->save($contact, ['slug' => 'get-in-touch'])->assertSessionHasNoErrors();
+
+        $this->get('/get-in-touch')->assertOk()->assertSee($contact->title);
+        $this->get('/contact')->assertNotFound();
+        $this->assertSame(url('get-in-touch'), page_url('contact'));
+
+        $about = Page::where('slug', 'about')->first();
+        $this->save($about, ['slug' => 'about-the-journal']);
+        $this->get('/about-the-journal')->assertOk()->assertSee($about->title);
+    }
+
+    #[Test]
+    public function draft_pages_are_hidden_and_come_back_when_published(): void
+    {
+        $submit = Page::where('template', 'submit')->first();
+
+        $this->save($submit, ['status' => PublishStatus::Draft->value]);
+        $this->get('/submit')->assertNotFound();
+
+        $this->save($submit->fresh(), ['status' => PublishStatus::Published->value]);
+        $this->get('/submit')->assertOk();
+    }
+
+    #[Test]
+    public function menu_links_follow_the_page(): void
+    {
+        $page = Page::where('template', 'career')->first();
+        Menu::forLocation(MenuLocation::Header)->items()->create(['label' => 'Careers', 'link_type' => MenuLinkType::Page, 'page_id' => $page->id, 'sort_order' => 1]);
+
+        $this->save($page, ['slug' => 'work-with-us']);
+        $this->get('/')->assertSee(url('work-with-us'), false);
+
+        $this->save($page->fresh(), ['status' => PublishStatus::Draft->value]);
+        $this->get('/')->assertDontSee(url('work-with-us'), false);
+    }
+
+    #[Test]
+    public function home_keeps_its_slug_and_status(): void
+    {
+        $home = Page::where('slug', 'home')->first();
+        $this->save($home, ['slug' => 'start', 'status' => PublishStatus::Draft->value])->assertSessionHasNoErrors();
+
+        $home->refresh();
+        $this->assertSame('home', $home->slug);
+        $this->assertSame(PublishStatus::Published, $home->status);
+        $this->actingAs($this->superadmin())->delete(route('admin.pages.destroy', $home));
+        $this->assertModelExists($home);
+        $this->get('/home')->assertNotFound();
+    }
+
+    #[Test]
+    public function slugs_used_by_fixed_site_addresses_are_refused(): void
+    {
+        $page = Page::where('slug', 'about')->first();
+
+        $this->save($page, ['slug' => 'blogs'])->assertSessionHasErrors('slug');
+        $this->save($page, ['slug' => 'admin'])->assertSessionHasErrors('slug');
+        // A POST-only address (the contact form) does not block the slug.
+        $this->save(Page::where('template', 'contact')->first(), ['slug' => 'contact'])->assertSessionHasNoErrors();
+    }
+
+    #[Test]
+    public function old_policy_addresses_redirect(): void
+    {
+        $this->get('/policies/privacy-policy')->assertRedirect(url('privacy-policy'));
+    }
+}

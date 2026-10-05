@@ -12,7 +12,7 @@
         'author category' => ! $categoryName,
         'institution' => blank($details['institution']),
     ]));
-    $profileUrl = route('account.profile.edit', ['next' => route('submit', absolute: false).'#submission-form']);
+    $profileUrl = route('account.profile.edit', ['next' => parse_url(page_url('submit'), PHP_URL_PATH).'#submission-form']);
 
     $steps = ['Manuscript', 'Declarations', 'Payment & submit'];
     $errorStep = match (true) {

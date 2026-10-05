@@ -8,6 +8,7 @@ use App\Models\ManuscriptFee;
 use App\Models\ManuscriptSubmission;
 use App\Models\User;
 use Database\Seeders\NotificationTemplateSeeder;
+use Database\Seeders\PageSeeder;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use PHPUnit\Framework\Attributes\Test;
@@ -28,7 +29,7 @@ class SubmissionProfileDataTest extends TestCase
         parent::setUp();
         Storage::fake('local');
         Mail::fake();
-        $this->seed(NotificationTemplateSeeder::class);
+        $this->seed([NotificationTemplateSeeder::class, PageSeeder::class]);
         config(['services.plagiarism.fake_similarity' => '4']);
 
         $this->content = ContentCategory::factory()->create(['min_word_limit' => 100, 'max_word_limit' => 5000]);
@@ -78,10 +79,10 @@ class SubmissionProfileDataTest extends TestCase
     {
         $author = $this->authorWithProfile();
 
-        $this->actingAs($author)->get(route('submit'))->assertOk()
+        $this->actingAs($author)->get(page_url('submit'))->assertOk()
             ->assertSee('Submitting as')->assertSee('NLSIU Bengaluru')
             ->assertSeeInOrder(['Step 1', 'Manuscript', 'Step 2', 'Declarations', 'Step 3', 'Payment &amp; submit'], false)
-            ->assertDontSee('Author details');
+            ->assertDontSee('Step 4'); // no separate "Author details" step (the CMS copy may mention author details)
     }
 
     #[Test]
@@ -89,7 +90,7 @@ class SubmissionProfileDataTest extends TestCase
     {
         $author = $this->authorWithProfile(['institution' => null]);
 
-        $this->actingAs($author)->get(route('submit'))->assertOk()
+        $this->actingAs($author)->get(page_url('submit'))->assertOk()
             ->assertSee('Complete your author profile first')->assertSee('add your institution')->assertDontSee('Submitting as');
 
         $this->actingAs($author)->post(route('account.submissions.store'), $this->manuscript())

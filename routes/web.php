@@ -16,14 +16,9 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 */
 
+// CMS pages (About, Submit, Contact, policies…) are served at /{slug} by the fallback route at the end of this file.
 Route::get('/', Site\HomeController::class)->name('home');
-Route::get('about', [Site\PageController::class, 'about'])->name('about');
-Route::get('editorial-board', [Site\PageController::class, 'editorialBoard'])->name('editorial-board');
-Route::get('patrons', [Site\PageController::class, 'patrons'])->name('patrons');
-Route::get('policies/{slug}', [Site\PageController::class, 'show'])->name('pages.show');
-Route::get('submit', Site\SubmitPageController::class)->name('submit');
-Route::get('best-paper', Site\BestPaperController::class)->name('best-paper');
-Route::get('job-postings', Site\JobController::class)->name('jobs.index');
+Route::get('policies/{slug}', [Site\PageController::class, 'legacyPolicy']);
 Route::get('verify/{slug}', Site\CertificateVerificationController::class)->name('certificates.verify');
 
 Route::get('archive', [Site\ArchiveController::class, 'index'])->name('archive.index');
@@ -35,12 +30,9 @@ Route::get('blogs', [Site\BlogController::class, 'index'])->name('blogs.index');
 Route::get('blogs/{slug}', [Site\BlogController::class, 'show'])->name('blogs.show');
 Route::post('blogs/{slug}/comments', [Site\BlogController::class, 'comment'])->middleware(['auth', 'throttle:10,1'])->name('blogs.comments.store');
 
-Route::get('contact', [Site\EnquiryController::class, 'contact'])->name('contact');
 Route::post('contact', [Site\EnquiryController::class, 'storeContact'])->middleware('throttle:5,1')->name('contact.store');
-Route::get('careers', [Site\EnquiryController::class, 'careers'])->name('careers');
 Route::post('careers', [Site\EnquiryController::class, 'storeCareer'])->middleware('throttle:5,1')->name('careers.store');
 
-Route::get('plagiarism-checker', [Site\PlagiarismCheckerController::class, 'show'])->name('plagiarism-checker');
 Route::post('plagiarism-checker', [Site\PlagiarismCheckerController::class, 'store'])->middleware(['author', 'throttle:10,1'])->name('plagiarism-checker.store');
 
 /*
@@ -116,3 +108,11 @@ Route::middleware('author')->prefix('account')->name('account.')->group(function
 
 Route::post('payments/razorpay/callback', [Account\CheckoutController::class, 'callback'])->middleware('author')->name('payments.razorpay.callback');
 Route::post('payments/razorpay/webhook', RazorpayWebhookController::class)->name('payments.razorpay.webhook');
+
+/*
+|--------------------------------------------------------------------------
+| CMS pages at /{slug} (Admin → Pages); always matched last, so fixed routes win
+|--------------------------------------------------------------------------
+*/
+
+Route::fallback([Site\PageController::class, 'show'])->name('pages.show');

@@ -176,7 +176,7 @@
   },
   {
     "title": "Best Paper Winners",
-    "slug": "best-paper-winners",
+    "slug": "best-paper",
     "status": "Published",
     "template": "paper_winner",
     "excerpt": null,
@@ -262,7 +262,7 @@
     "title": "Submit",
     "slug": "submit",
     "status": "Published",
-    "template": "layout",
+    "template": "submit",
     "excerpt": "Submissions are open year-round across all content categories. Every manuscript is pre-screened for similarity and then sent for double-blind peer review.",
     "content": "<p>No publication fee until your manuscript is accepted. Only the plagiarism pre-screening fee is payable upfront.</p>",
     "seo_title": "Submit a Manuscript | MOS Legis",

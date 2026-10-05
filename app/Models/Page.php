@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\PageTemplate;
 use App\Enums\PublishStatus;
+use App\Support\PublicPages;
 use App\Support\SiteMenu;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Scope;
@@ -27,8 +28,8 @@ class Page extends Model
     protected static function booted(): void
     {
         // Menus show page titles/links and hide unpublished pages.
-        static::saved(fn () => SiteMenu::flush());
-        static::deleted(fn () => SiteMenu::flush());
+        static::saved(fn () => [SiteMenu::flush(), PublicPages::flush()]);
+        static::deleted(fn () => [SiteMenu::flush(), PublicPages::flush()]);
     }
 
     protected function casts(): array
@@ -37,6 +38,17 @@ class Page extends Model
             'status' => PublishStatus::class,
             'template' => PageTemplate::class,
         ];
+    }
+
+    /** Home is always /; every other page lives at /{slug}. */
+    public function url(): string
+    {
+        return $this->slug === 'home' ? route('home') : url($this->slug);
+    }
+
+    public function isHome(): bool
+    {
+        return $this->exists && $this->getOriginal('slug') === 'home';
     }
 
     public function metas(): HasMany

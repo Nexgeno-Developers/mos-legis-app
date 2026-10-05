@@ -2,10 +2,8 @@
 
 namespace App\Http\Controllers\Site;
 
-use App\Enums\PageTemplate;
 use App\Enums\PlagiarismCheckStatus;
 use App\Enums\PlagiarismCheckType;
-use App\Enums\PublishStatus;
 use App\Http\Controllers\Controller;
 use App\Jobs\RunPlagiarismCheck;
 use App\Models\Page;
@@ -23,12 +21,9 @@ use Throwable;
  */
 class PlagiarismCheckerController extends Controller
 {
-    public function show(FeeCalculator $fees): View
+    /** Text and SEO from Admin → Pages ("Plagiarism checker" template); the form stays dynamic. */
+    public function show(FeeCalculator $fees, Page $page): View
     {
-        // Text and SEO from Admin → Pages ("Plagiarism checker" template); the form stays dynamic.
-        $page = Page::with('metas')->where('template', PageTemplate::PlagiarismChecker)->oldest('id')->first();
-        abort_if($page && $page->status !== PublishStatus::Published, 404);
-
         return view('site.plagiarism-checker', [
             'page' => $page,
             'fee' => $fees->standaloneCheckFee(),

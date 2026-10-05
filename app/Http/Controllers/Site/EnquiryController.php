@@ -3,12 +3,11 @@
 namespace App\Http\Controllers\Site;
 
 use App\Enums\EnquiryForm;
-use App\Enums\PageTemplate;
 use App\Http\Controllers\Controller;
 use App\Models\Enquiry;
+use App\Models\Page;
 use App\Notifications\WorkflowNotifier;
 use App\Support\PhoneNumbers;
-use App\Support\PublicPages;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -22,9 +21,9 @@ class EnquiryController extends Controller
 
     public function __construct(private readonly WorkflowNotifier $notifier) {}
 
-    public function contact(): View
+    public function contact(Page $page): View
     {
-        return view('site.contact', ['page' => PublicPages::byTemplate(PageTemplate::Contact, 'contact'), 'purposes' => self::PURPOSES]);
+        return view('site.contact', ['page' => $page, 'purposes' => self::PURPOSES]);
     }
 
     public function storeContact(Request $request): RedirectResponse
@@ -54,11 +53,9 @@ class EnquiryController extends Controller
         return back()->with('success', 'Enquiry received — the editorial desk will reply by email.');
     }
 
-    public function careers(): View
+    public function careers(Page $page): View
     {
-        return view('site.careers', [
-            'page' => PublicPages::byTemplate(PageTemplate::Career, 'careers'),
-        ]);
+        return view('site.careers', ['page' => $page]);
     }
 
     public function storeCareer(Request $request): RedirectResponse

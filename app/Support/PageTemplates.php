@@ -72,7 +72,7 @@ final class PageTemplates
                 'guest_heading' => ['label' => 'Signed-out heading (instead of the form)', 'type' => 'text'],
                 'guest_text' => ['label' => 'Signed-out text', 'type' => 'textarea'],
             ],
-            PageTemplate::Layout => [],
+            PageTemplate::Layout, PageTemplate::Submit => [],
         };
     }
 
@@ -153,6 +153,7 @@ final class PageTemplates
             PageTemplate::Career->value => 'Careers',
             PageTemplate::Jobs->value => 'Job postings',
             PageTemplate::PlagiarismChecker->value => 'Plagiarism checker',
+            PageTemplate::Submit->value => 'Submit manuscript',
         ];
     }
 }

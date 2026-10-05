@@ -37,7 +37,7 @@
             <div class="border border-dashed border-border bg-card p-10 text-center">
                 <p class="font-display text-2xl">No manuscripts yet</p>
                 <p class="mt-2 text-muted-foreground">Start a submission — only the plagiarism pre-screening fee is payable upfront.</p>
-                <x-button class="mt-5" variant="primary" icon="plus" :href="route('submit').'#submission-form'">Submit a manuscript</x-button>
+                <x-button class="mt-5" variant="primary" icon="plus" :href="page_url('submit').'#submission-form'">Submit a manuscript</x-button>
             </div>
         @endforelse
     </div>

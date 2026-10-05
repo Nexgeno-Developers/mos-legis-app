@@ -1,5 +1,5 @@
 <x-layouts.account title="Plagiarism Checks" intro="Standalone checks you have run from the Plagiarism Checker.">
-    <div class="flex justify-end"><x-button variant="primary" icon="scan-search" :href="route('plagiarism-checker')">New check</x-button></div>
+    <div class="flex justify-end"><x-button variant="primary" icon="scan-search" :href="page_url('plagiarism_checker')">New check</x-button></div>
     <x-table class="mt-6" :columns="['ID', 'Title', 'Similarity', 'Status', 'Payment', 'Created', '']" :rows="$checks" empty="No standalone checks yet.">
         @foreach ($checks as $check)
             <tr>

@@ -95,7 +95,7 @@ final class SiteMenu
                 ? [route($item['route_name']), request()->routeIs($item['route_name'], str_replace('.index', '', $item['route_name']).'.*')]
                 : [null, false],
             MenuLinkType::Page->value => $item['page_slug']
-                ? [route('pages.show', $item['page_slug']), request()->routeIs('pages.show') && request()->route('slug') === $item['page_slug']]
+                ? [$item['page_slug'] === 'home' ? route('home') : url($item['page_slug']), request()->path() === ($item['page_slug'] === 'home' ? '/' : $item['page_slug'])]
                 : [null, false],
             MenuLinkType::Url->value => [$item['url'], rtrim((string) $item['url'], '/') === rtrim(url()->current(), '/')],
             default => [null, false],

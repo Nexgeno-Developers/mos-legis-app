@@ -51,7 +51,7 @@
                     <li class="px-5 py-6 text-muted-foreground">No submissions yet.</li>
                 @endforelse
             </ul>
-            <x-button class="mt-4" variant="primary" icon="plus" :href="route('submit').'#submission-form'">New submission</x-button>
+            <x-button class="mt-4" variant="primary" icon="plus" :href="page_url('submit').'#submission-form'">New submission</x-button>
         </section>
     </div>
 </x-layouts.account>

@@ -17,7 +17,7 @@
         @else
             <div class="max-w-2xl border border-destructive/40 bg-card p-8">
                 <p class="font-display text-2xl text-destructive">No certificate matches this link</p>
-                <p class="mt-2 text-muted-foreground">Check the verification URL printed on the certificate, or <a href="{{ route('contact') }}" class="text-primary hover:underline">contact the editorial desk</a>.</p>
+                <p class="mt-2 text-muted-foreground">Check the verification URL printed on the certificate, or <a href="{{ page_url('contact') }}" class="text-primary hover:underline">contact the editorial desk</a>.</p>
             </div>
         @endif
     </div>

@@ -86,6 +86,10 @@ class PageController extends Controller implements HasMiddleware
 
     public function toggleStatus(Page $page): RedirectResponse
     {
+        if ($page->isHome()) {
+            return back()->with('error', 'The home page is always published.');
+        }
+
         $page->update([
             'status' => $page->status === PublishStatus::Published ? PublishStatus::Draft : PublishStatus::Published,
             'updated_by' => auth()->id(),
@@ -119,6 +123,10 @@ class PageController extends Controller implements HasMiddleware
 
     public function destroy(Page $page): RedirectResponse
     {
+        if ($page->isHome()) {
+            return back()->with('error', 'The home page cannot be deleted.');
+        }
+
         activity()->log('Pages', 'Deleted page', $page, ['title' => $page->title, 'slug' => $page->slug]);
 
         Storage::disk('public')->delete(array_filter([$page->featured_image, $page->og_image]));

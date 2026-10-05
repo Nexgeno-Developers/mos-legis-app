@@ -8,6 +8,7 @@ use App\Support\GoogleMap;
 use App\Support\PageTemplates;
 use Closure;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 
@@ -26,7 +27,8 @@ class PageRequest extends FormRequest
 
         $rules = [
             'title' => ['required', 'string', 'max:190'],
-            'slug' => ['required', 'string', 'max:220', 'alpha_dash', Rule::unique('pages', 'slug')->ignore($page)],
+            // Pages live at /{slug}: a slug used by a fixed site address (blogs, login, admin…) would never be reached.
+            'slug' => ['required', 'string', 'max:220', 'alpha_dash', Rule::unique('pages', 'slug')->ignore($page), Rule::notIn(self::reservedSlugs())],
             'template' => [$page ? 'prohibited' : 'required', Rule::enum(PageTemplate::class)],
             'status' => ['required', Rule::enum(PublishStatus::class)],
             'excerpt' => ['nullable', 'string', 'max:500'],
@@ -69,8 +71,30 @@ class PageRequest extends FormRequest
         return $rules;
     }
 
+    public function messages(): array
+    {
+        return ['slug.not_in' => 'This address is used by another part of the website. Choose a different slug.'];
+    }
+
+    /** First path segment of every fixed GET route (CMS pages are matched after them). */
+    public static function reservedSlugs(): array
+    {
+        return collect(Route::getRoutes()->getRoutes())
+            ->reject(fn ($route) => $route->isFallback || ! in_array('GET', $route->methods(), true))
+            ->map(fn ($route) => explode('/', $route->uri())[0])
+            ->reject(fn (string $segment) => $segment === '' || str_starts_with($segment, '{'))
+            ->unique()->values()->all();
+    }
+
     protected function prepareForValidation(): void
     {
+        // Home is the site's default page: always at / and always published.
+        if ($this->route('page')?->isHome()) {
+            $this->merge(['slug' => 'home', 'status' => PublishStatus::Published->value]);
+
+            return;
+        }
+
         $this->merge([
             'slug' => Str::slug((string) ($this->input('slug') ?: $this->input('title'))),
         ]);

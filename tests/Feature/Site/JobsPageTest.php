@@ -31,7 +31,7 @@ class JobsPageTest extends TestCase
         $this->jobsPage();
         JobPosting::factory()->create(['job_title' => 'Litigation Associate']);
 
-        $this->get(route('jobs.index'))->assertOk()
+        $this->get(page_url('jobs'))->assertOk()
             ->assertSee('<title>Legal Jobs in India | MOS Legis</title>', false)
             ->assertSee('<meta name="description" content="Browse legal vacancies.">', false)
             ->assertSeeInOrder(['Home', 'Legal Careers Board', 'Openings from firms and chambers.'])
@@ -39,7 +39,7 @@ class JobsPageTest extends TestCase
             ->assertSee('Listings are verified weekly.');
 
         // Filters still work.
-        $this->get(route('jobs.index', ['search' => 'nothing-matches']))->assertOk()->assertDontSee('Litigation Associate');
+        $this->get(page_url('jobs').'?search=nothing-matches')->assertOk()->assertDontSee('Litigation Associate');
     }
 
     #[Test]
@@ -47,15 +47,15 @@ class JobsPageTest extends TestCase
     {
         $this->jobsPage(['status' => 'Draft']);
 
-        $this->get(route('jobs.index'))->assertNotFound();
+        $this->get(page_url('jobs'))->assertNotFound();
     }
 
     #[Test]
-    public function the_board_still_works_with_default_text_before_the_page_exists(): void
+    public function a_deleted_jobs_page_is_gone(): void
     {
         Page::where('template', 'jobs')->delete();
 
-        $this->get(route('jobs.index'))->assertOk()->assertSee('Job Postings');
+        $this->get('/job-postings')->assertNotFound();
     }
 
     #[Test]
@@ -69,6 +69,6 @@ class JobsPageTest extends TestCase
             'title' => 'Vacancies', 'slug' => 'job-postings', 'status' => 'Published', 'excerpt' => 'New intro.',
         ])->assertSessionHasNoErrors();
 
-        $this->get(route('jobs.index'))->assertSee('Vacancies')->assertSee('New intro.');
+        $this->get(page_url('jobs'))->assertSee('Vacancies')->assertSee('New intro.');
     }
 }

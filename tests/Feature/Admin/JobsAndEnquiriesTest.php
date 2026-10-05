@@ -74,7 +74,7 @@ class JobsAndEnquiriesTest extends TestCase
         $this->assertNull($job->responsibilities);
         $this->assertNull($job->source_name);
 
-        $this->get(route('jobs.index'))->assertSee('Legal Intern');
+        $this->get(page_url('jobs'))->assertSee('Legal Intern');
     }
 
     #[Test]

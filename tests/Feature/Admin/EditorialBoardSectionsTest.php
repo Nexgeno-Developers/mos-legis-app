@@ -29,7 +29,7 @@ class EditorialBoardSectionsTest extends TestCase
             ['name' => 'The Founder', 'designation' => 'Founder', 'group' => 'Founder 1', 'overview' => ''],
         ]);
 
-        $this->get(route('editorial-board'))->assertOk()->assertSeeInOrder([
+        $this->get(page_url('teams'))->assertOk()->assertSeeInOrder([
             'Founders', 'Who Started the Review', 'The Founder',
             'Editorial Board', 'Board of Editors', 'Dr. Editor',
             'Advisory Board', 'Counsel to the Board', 'Prof. Advisor',
@@ -68,7 +68,7 @@ class EditorialBoardSectionsTest extends TestCase
             ],
         ])->assertSessionHasNoErrors();
 
-        $this->get(route('editorial-board'))->assertOk()
+        $this->get(page_url('teams'))->assertOk()
             ->assertSeeInOrder(['Editors', 'The Editorial Team', 'Dr. Editor', 'Prof. Advisor'])
             ->assertDontSee('Board of Editors')->assertDontSee('Counsel to the Board')->assertDontSee('>Advisory Board<', false);
 

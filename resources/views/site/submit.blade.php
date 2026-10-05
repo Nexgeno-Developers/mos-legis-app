@@ -27,7 +27,7 @@
                 <div class="prose-legis">
                     @if ($guidelines)
                         {!! Str::limit(strip_tags($guidelines->content, '<p><ul><li><h2><strong><em>'), 1200) !!}
-                        <p><a href="{{ route('pages.show', $guidelines->slug) }}">Read the full Author Guidelines</a></p>
+                        <p><a href="{{ $guidelines->url() }}">Read the full Author Guidelines</a></p>
                     @endif
                 </div>
                 <div>

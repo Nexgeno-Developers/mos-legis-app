@@ -125,7 +125,7 @@
                     <x-button :href="$returnUrl" variant="ghost" icon="arrow-left">{{ $continueLabel }}</x-button>
                 </div>
                 <p class="mt-6 border-t border-border pt-4 text-xs text-muted-foreground">
-                    Need help? <a href="{{ route('contact') }}" class="text-primary hover:underline">Contact us</a> and mention reference
+                    Need help? <a href="{{ page_url('contact') }}" class="text-primary hover:underline">Contact us</a> and mention reference
                     <span class="font-mono">{{ $payment->gateway_order_id ?? 'PAY-'.$payment->id }}</span>.
                 </p>
             </div>

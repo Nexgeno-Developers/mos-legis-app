@@ -30,14 +30,19 @@ class PublicSiteTest extends TestCase
     #[Test]
     public function public_pages_render(): void
     {
-        foreach (['home', 'about', 'editorial-board', 'patrons', 'submit', 'best-paper', 'jobs.index', 'archive.index', 'blogs.index', 'contact', 'careers', 'plagiarism-checker', 'login', 'register'] as $route) {
+        foreach (['home', 'archive.index', 'blogs.index', 'login', 'register'] as $route) {
             $this->get(route($route))->assertOk();
         }
 
-        $this->get(route('pages.show', 'privacy-policy'))->assertOk()->assertSee('Privacy Policy');
-        $this->get(route('pages.show', 'contact'))->assertNotFound(); // contact is not a default-layout page
-        $this->get(route('editorial-board'))->assertSee('Vishnu Yadav');
-        $this->get(route('contact'))->assertSee('chiefeditor@moslegis.com');
+        // CMS pages at their seeded slugs.
+        foreach (['about', 'editorial-board', 'patrons', 'submit', 'best-paper', 'job-postings', 'contact', 'careers', 'plagiarism-checker', 'privacy-policy'] as $slug) {
+            $this->get('/'.$slug)->assertOk();
+        }
+
+        $this->get(url('privacy-policy'))->assertOk()->assertSee('Privacy Policy');
+        $this->get('/no-such-page')->assertNotFound();
+        $this->get(page_url('teams'))->assertSee('Vishnu Yadav');
+        $this->get(page_url('contact'))->assertSee('chiefeditor@moslegis.com');
     }
 
     #[Test]
@@ -84,7 +89,7 @@ class PublicSiteTest extends TestCase
         JobPosting::factory()->expired()->create(['job_title' => 'Expired Clerk']);
         JobPosting::factory()->create(['job_title' => 'Hidden Role', 'status' => 'Inactive']);
 
-        $this->get(route('jobs.index'))->assertOk()->assertSee('Live Associate')->assertDontSee('Expired Clerk')->assertDontSee('Hidden Role');
+        $this->get(page_url('jobs'))->assertOk()->assertSee('Live Associate')->assertDontSee('Expired Clerk')->assertDontSee('Hidden Role');
     }
 
     #[Test]
@@ -101,7 +106,7 @@ class PublicSiteTest extends TestCase
         $contact = Enquiry::where('form_name', 'contact')->firstOrFail();
         $this->assertSame('+919876543210', $contact->phone);
         $this->assertArrayNotHasKey('submission_id', $contact->form_data);
-        $this->get(route('contact'))->assertSee('data-phone="phone"', false)->assertDontSee('Submission ID');
+        $this->get(page_url('contact'))->assertSee('data-phone="phone"', false)->assertDontSee('Submission ID');
 
         $this->post(route('careers.store'), [
             'name' => 'Applicant', 'email' => 'a@example.com', 'phone' => '9876543210', 'position' => 'Editorial Assistant',
@@ -133,6 +138,6 @@ class PublicSiteTest extends TestCase
     #[Test]
     public function guests_see_sign_in_prompt_on_submit_page(): void
     {
-        $this->get(route('submit'))->assertOk()->assertSee('Sign in to submit')->assertSee('Research Articles');
+        $this->get(page_url('submit'))->assertOk()->assertSee('Sign in to submit')->assertSee('Research Articles');
     }
 }

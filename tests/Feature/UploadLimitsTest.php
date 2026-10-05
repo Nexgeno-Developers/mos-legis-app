@@ -5,11 +5,18 @@ namespace Tests\Feature;
 use App\Models\User;
 use App\Support\UploadLimits;
 use Illuminate\Http\UploadedFile;
+use Database\Seeders\PageSeeder;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class UploadLimitsTest extends TestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->seed(PageSeeder::class);
+    }
+
     #[Test]
     public function the_effective_limit_never_exceeds_php_settings(): void
     {
@@ -32,7 +39,7 @@ class UploadLimitsTest extends TestCase
     #[Test]
     public function manuscript_inputs_carry_the_real_limit(): void
     {
-        $this->actingAs(User::factory()->author()->create())->get(route('submit'))
+        $this->actingAs(User::factory()->author()->create())->get(page_url('submit'))
             ->assertSee('data-rule-maxbytes="'.UploadLimits::bytes(20480).'"', false);
     }
 }

@@ -3,8 +3,6 @@
 namespace App\Http\Controllers\Site;
 
 use App\Enums\EmploymentType;
-use App\Enums\PageTemplate;
-use App\Enums\PublishStatus;
 use App\Enums\WorkMode;
 use App\Http\Controllers\Controller;
 use App\Models\JobPosting;
@@ -17,12 +15,9 @@ use Illuminate\View\View;
  */
 class JobController extends Controller
 {
-    public function __invoke(Request $request): View
+    /** Title, intro, content and SEO come from Admin → Pages ("Job postings" template). */
+    public function __invoke(Request $request, Page $page): View
     {
-        // Title, intro, content and SEO come from Admin → Pages ("Job postings" template).
-        $page = Page::with('metas')->where('template', PageTemplate::Jobs)->oldest('id')->first();
-        abort_if($page && $page->status !== PublishStatus::Published, 404);
-
         $jobs = JobPosting::live()
             ->when($request->string('search')->trim()->value(), fn ($q, $search) => $q->where(fn ($q) => $q
                 ->where('job_title', 'like', "%{$search}%")

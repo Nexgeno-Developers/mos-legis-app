@@ -23,7 +23,7 @@
                         <p class="label-caps text-sm text-primary">The Award</p>
                         <h3 class="mt-2 font-display text-2xl">{{ $heading }}</h3>
                         <p class="mt-3 text-muted-foreground">{{ $page->meta($key) }}</p>
-                        @if ($key === 'be_considered_desc')<x-button class="mt-5" variant="primary" icon="send" :href="route('submit')">Submit a Manuscript</x-button>@endif
+                        @if ($key === 'be_considered_desc')<x-button class="mt-5" variant="primary" icon="send" :href="page_url('submit')">Submit a Manuscript</x-button>@endif
                     </div>
                 @endif
             @endforeach
@@ -32,7 +32,7 @@
         <section id="past">
             <div class="flex flex-wrap items-end justify-between gap-4">
                 <x-section-heading eyebrow="Archive" title="Past Winners" class="flex-1" />
-                <form method="GET" action="{{ route('best-paper') }}#past" class="flex flex-wrap items-end gap-3">
+                <form method="GET" action="{{ page_url('paper_winner') }}#past" class="flex flex-wrap items-end gap-3">
                     <x-filter.select name="year" label="Year" :options="$years->mapWithKeys(fn ($y) => [$y => $y])" all="All years" />
                     <x-filter.select name="category" label="Category" :options="$categories" all="All categories" />
                     <x-button type="submit" icon="filter">Filter</x-button>

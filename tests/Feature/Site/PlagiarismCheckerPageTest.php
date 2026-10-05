@@ -36,7 +36,7 @@ class PlagiarismCheckerPageTest extends TestCase
         ])->assertSessionHasNoErrors();
 
         auth()->logout();
-        $this->get(route('plagiarism-checker'))->assertOk()
+        $this->get(page_url('plagiarism_checker'))->assertOk()
             ->assertSee('<title>Online Similarity Check | MOS Legis</title>', false)
             ->assertSeeInOrder(['Similarity Check', 'Know your score first.', 'Please sign in', 'Process', 'Three simple steps'])
             ->assertSee('Pay '.money(app(\App\Services\Manuscripts\FeeCalculator::class)->standaloneCheckFee()).'.')
@@ -47,7 +47,7 @@ class PlagiarismCheckerPageTest extends TestCase
     #[Test]
     public function the_form_stays_for_authors(): void
     {
-        $this->actingAs($this->author())->get(route('plagiarism-checker'))->assertOk()
+        $this->actingAs($this->author())->get(page_url('plagiarism_checker'))->assertOk()
             ->assertSee('Paste content')->assertSee('What happens after you pay');
     }
 
@@ -56,14 +56,14 @@ class PlagiarismCheckerPageTest extends TestCase
     {
         $this->page()->update(['status' => 'Draft']);
 
-        $this->get(route('plagiarism-checker'))->assertNotFound();
+        $this->get(page_url('plagiarism_checker'))->assertNotFound();
     }
 
     #[Test]
-    public function the_checker_still_works_with_default_text_before_the_page_exists(): void
+    public function a_deleted_page_is_gone(): void
     {
         $this->page()->delete();
 
-        $this->get(route('plagiarism-checker'))->assertOk()->assertSee('Check Your Content for Similarity')->assertSee('What happens after you pay');
+        $this->get('/plagiarism-checker')->assertNotFound();
     }
 }

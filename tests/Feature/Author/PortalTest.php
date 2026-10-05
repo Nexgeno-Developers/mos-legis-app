@@ -18,6 +18,7 @@ use App\Models\PlagiarismCheck;
 use App\Models\User;
 use App\Services\Manuscripts\ManuscriptWorkflow;
 use Database\Seeders\NotificationTemplateSeeder;
+use Database\Seeders\PageSeeder;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use PHPUnit\Framework\Attributes\Test;
@@ -38,7 +39,7 @@ class PortalTest extends TestCase
         Storage::fake('local');
         Storage::fake('public');
         Mail::fake();
-        $this->seed(NotificationTemplateSeeder::class);
+        $this->seed([NotificationTemplateSeeder::class, PageSeeder::class]);
         config(['services.plagiarism.fake_similarity' => '4']);
 
         $this->content = ContentCategory::factory()->create(['min_word_limit' => 100, 'max_word_limit' => 5000]);
@@ -85,7 +86,7 @@ class PortalTest extends TestCase
         foreach (['account.dashboard', 'account.submissions.index', 'account.payments.index', 'account.blogs.index', 'account.blogs.create', 'account.jobs.index', 'account.jobs.create', 'account.plagiarism-checks.index', 'account.profile.edit'] as $route) {
             $this->actingAs($this->author)->get(route($route))->assertOk();
         }
-        $this->actingAs($this->author)->get(route('submit'))->assertOk()->assertSee('Manuscript Submission Form');
+        $this->actingAs($this->author)->get(page_url('submit'))->assertOk()->assertSee('Manuscript Submission Form');
     }
 
     #[Test]
