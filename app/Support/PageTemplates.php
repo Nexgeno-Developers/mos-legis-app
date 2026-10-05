@@ -151,7 +151,7 @@ final class PageTemplates
     }
 
     /**
-     * Plagiarism Checker wording used until the CMS page exists (and seeded into it).
+     * Starting wording of the Plagiarism Checker page (seeded; see defaults()).
      *
      * @return array<string, mixed>
      */
@@ -224,7 +224,8 @@ final class PageTemplates
     }
 
     /**
-     * Wording a template uses for fields that have never been saved (shown on the site and prefilled in the editor).
+     * Starting wording for a page of this template: seeded with the page and prefilled when an admin creates one.
+     * The website never falls back to it — it shows only what is saved.
      *
      * @return array<string, mixed>
      */
@@ -238,7 +239,7 @@ final class PageTemplates
     }
 
     /**
-     * Submit page wording used until the page is saved with its own (and when a field has never been saved).
+     * Starting wording of the Submit page (seeded; see defaults()).
      *
      * @return array<string, mixed>
      */

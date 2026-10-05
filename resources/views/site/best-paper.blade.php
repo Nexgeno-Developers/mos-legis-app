@@ -1,5 +1,5 @@
-<x-layouts.site :title="$page?->seo_title ?: 'Best Paper Winners'" :description="$page?->seo_description">
-    <x-page-header eyebrow="Recognition" :title="$page?->title ?: 'Best Paper Winners'" :intro="$page?->excerpt ?: 'Each month the Editorial Board selects one published manuscript for recognition.'" />
+<x-layouts.site :title="$page->seo_title ?: $page->title" :description="$page->seo_description ?: $page->excerpt">
+    <x-page-header :title="$page->title" :intro="$page->excerpt" />
     <div class="mx-auto max-w-[1200px] space-y-12 px-4 py-8 sm:px-6 md:py-10">
         <section>
             <x-section-heading eyebrow="Current Winner" :title="$current ? 'Best Paper — '.$current->periodLabel() : 'This month\'s winner will be announced soon'" />

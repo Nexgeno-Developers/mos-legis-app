@@ -20,6 +20,7 @@ class PageSeeder extends Seeder
         $pages[] = $this->aboutPage();
         $pages[] = $this->jobsPage();
         $pages[] = $this->plagiarismCheckerPage();
+        $pages = array_map(fn ($page) => $page['template'] === 'submit' && empty($page['metas']) ? ['metas' => self::submitMetas()] + $page : $page, $pages);
 
         foreach ($pages as $data) {
             $page = Page::firstOrCreate(['slug' => $data['slug']], [
@@ -44,6 +45,16 @@ class PageSeeder extends Seeder
                 ]);
             }
         }
+    }
+
+    /** Submit page wording around the dynamic form, categories and fee table (editable in Admin → Pages). */
+    public static function submitMetas(): array
+    {
+        $fields = PageTemplates::fields(PageTemplate::Submit);
+
+        return collect(PageTemplates::submitDefaults())
+            ->map(fn ($value, $key) => ['type' => PageTemplates::metaType($fields[$key])->value, 'value' => $value])
+            ->all();
     }
 
     /** Plagiarism Checker: CMS text around the dynamic check form. */

@@ -20,7 +20,7 @@ class SubmitPageContentTest extends TestCase
     }
 
     #[Test]
-    public function default_wording_shows_until_the_page_is_saved_and_the_editor_is_prefilled(): void
+    public function the_seeded_wording_is_stored_on_the_page_and_shown_in_the_editor(): void
     {
         $page = Page::where('template', 'submit')->firstOrFail();
 
@@ -54,6 +54,18 @@ class SubmitPageContentTest extends TestCase
             ->assertDontSee('Everything you need before you submit')
             ->assertDontSee('Ready to submit your manuscript?')
             ->assertDontSee('Submission Checklist'); // checklist heading saved empty
+    }
+
+    #[Test]
+    public function pages_show_no_built_in_text_when_a_field_is_empty(): void
+    {
+        foreach (['submit', 'paper_winner', 'contact', 'plagiarism_checker', 'jobs', 'career'] as $template) {
+            $page = Page::where('template', $template)->firstOrFail();
+            $page->update(['excerpt' => null]);
+            $this->get(page_url($template))->assertOk()->assertDontSee('measure mt-1.5 text-base leading-relaxed', false); // no intro line
+        }
+
+        $this->get(page_url('paper_winner'))->assertDontSee('Each month the Editorial Board selects one published manuscript');
     }
 
     #[Test]

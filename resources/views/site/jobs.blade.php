@@ -1,6 +1,6 @@
 {{-- Title, intro, content and SEO from Admin → Pages ("Job postings" template); filters and listings are dynamic. --}}
-<x-layouts.site :title="$page?->seo_title ?: ($page?->title ?: 'Job Postings')" :description="$page?->seo_description ?: ($page?->excerpt ?: 'Legal job listings from firms, chambers and institutions.')" :og-image="$page?->og_image">
-    <x-page-header :title="$page?->title ?: 'Job Postings'" :intro="$page ? $page->excerpt : 'Vacancies submitted by firms, chambers and institutions. MOS Legis publishes listings as a service to readers and takes no part in recruitment.'" />
+<x-layouts.site :title="$page->seo_title ?: $page->title" :description="$page->seo_description ?: $page->excerpt" :og-image="$page->og_image">
+    <x-page-header :title="$page->title" :intro="$page->excerpt" />
     <div class="mx-auto max-w-[1200px] px-4 pt-2 pb-10 sm:px-6" x-data="{ job: null }">
         <x-filter-bar>
             <x-filter.search placeholder="Title, organisation or skill…" />

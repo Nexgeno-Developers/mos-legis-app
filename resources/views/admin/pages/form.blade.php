@@ -1,8 +1,8 @@
 @php
     $editing = $page->exists;
-    // A field that was never saved shows the template's default wording (what the website shows for it).
+    // New pages start with the template's suggested wording; saved pages show exactly what is stored.
     $templateDefaults = App\Support\PageTemplates::defaults($page->template);
-    $metaValue = fn (string $key) => $editing ? $page->meta($key, $templateDefaults[$key] ?? null) : ($templateDefaults[$key] ?? null);
+    $metaValue = fn (string $key) => $editing ? $page->meta($key) : ($templateDefaults[$key] ?? null);
 @endphp
 <x-layouts.admin :title="$editing ? 'Edit page' : 'Add page'">
     <x-admin.heading :title="$editing ? 'Edit page · '.$page->title : 'Add page'" description="Standard page data plus the fields of the selected template.">

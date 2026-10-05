@@ -1,13 +1,12 @@
 {{-- Page text and SEO from Admin → Pages ("Plagiarism checker" template); the check form is dynamic. --}}
 @php
-    $defaults = App\Support\PageTemplates::plagiarismDefaults();
-    $meta = fn (string $key) => $page ? $page->meta($key) : $defaults[$key];
+    $meta = fn (string $key) => $page->meta($key);
     // {fee} and {threshold} in the steps come from Settings.
     $fill = fn (?string $text) => strtr((string) $text, ['{fee}' => money($fee), '{threshold}' => rtrim(rtrim(number_format($threshold, 2), '0'), '.')]);
-    $steps = collect($page ? $page->meta('steps', []) : $defaults['steps'])->pluck('text')->filter()->map($fill)->values();
+    $steps = collect($page->meta('steps') ?: [])->pluck('text')->filter()->map($fill)->values();
 @endphp
-<x-layouts.site :title="$page?->seo_title ?: ($page?->title ?: 'Plagiarism Checker')" :description="$page?->seo_description ?: ($page?->excerpt ?: 'Check your manuscript for similarity before you submit.')" :og-image="$page?->og_image">
-    <x-page-header :title="$page?->title ?: 'Check Your Content for Similarity'" :intro="$page ? $page->excerpt : 'Paste your text or upload a .docx. After payment we run it through our plagiarism service and give you a similarity score and a downloadable report.'" />
+<x-layouts.site :title="$page->seo_title ?: $page->title" :description="$page->seo_description ?: $page->excerpt" :og-image="$page->og_image">
+    <x-page-header :title="$page->title" :intro="$page->excerpt" />
     <div class="mx-auto grid max-w-[1200px] gap-12 px-4 py-8 sm:px-6 md:py-10 lg:grid-cols-[1.4fr_1fr]">
         <section>
             @auth

@@ -1,6 +1,6 @@
 @php
     $slides = [
-        ['eyebrow' => 'Peer-Reviewed Legal Scholarship', 'headline' => 'Rooted in Tradition. Driven by Justice.', 'sub' => $page?->excerpt ?: 'A peer-reviewed platform for rigorous legal research, commentary, and discourse.', 'primary' => ['Submit a Manuscript', page_url('submit')], 'secondary' => ['Browse the Archive', route('archive.index')]],
+        ['eyebrow' => 'Peer-Reviewed Legal Scholarship', 'headline' => 'Rooted in Tradition. Driven by Justice.', 'sub' => $page?->excerpt, 'primary' => ['Submit a Manuscript', page_url('submit')], 'secondary' => ['Browse the Archive', route('archive.index')]],
         ['eyebrow' => 'Best Paper — Monthly Winner', 'headline' => "Recognising the Month's Most Rigorous Scholarship.", 'sub' => 'Each month one paper is elevated for its research depth, originality, and clarity of argument.', 'primary' => ['See the Winner', page_url('paper_winner')], 'secondary' => ['Past Winners', page_url('paper_winner').'#past'], ],
         ['eyebrow' => 'Plagiarism Screening', 'headline' => 'Every Manuscript Screened Before Peer Review.', 'sub' => 'Check your own draft for similarity before you submit, with a downloadable report.', 'primary' => ['Try the Plagiarism Checker', page_url('plagiarism_checker')], 'secondary' => ['Submit a Manuscript', page_url('submit')]],
     ];
@@ -21,7 +21,7 @@
                         <p class="label-caps text-sm text-primary">{{ $slide['eyebrow'] }}</p>
                         <h1 class="mt-4 font-display text-4xl leading-[1.1] md:text-5xl">{{ $slide['headline'] }}</h1>
                         <div class="gold-rule my-6 max-w-md"></div>
-                        <p class="measure text-lg text-muted-foreground">{{ $slide['sub'] }}</p>
+                        @if ($slide['sub'])<p class="measure text-lg text-muted-foreground">{{ $slide['sub'] }}</p>@endif
                         <div class="mt-8 flex flex-wrap gap-3">
                             <a href="{{ $slide['primary'][1] }}" class="inline-flex h-12 items-center gap-2 border border-primary bg-primary px-6 text-sm font-semibold text-primary-foreground hover:bg-primary/90">{{ $slide['primary'][0] }} <x-icon name="arrow-right" /></a>
                             <a href="{{ $slide['secondary'][1] }}" class="inline-flex h-12 items-center gap-2 border border-gold px-6 text-sm font-semibold hover:bg-gold/10">{{ $slide['secondary'][0] }}</a>

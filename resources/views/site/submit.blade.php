@@ -1,14 +1,13 @@
 @php
-    // All wording comes from Admin → Pages → Submit; a field never saved uses the default wording,
-    // a field saved empty hides its element. {fee}, {threshold} and {currency} are filled in from Settings.
-    $defaults = App\Support\PageTemplates::submitDefaults();
+    // All wording comes from Admin → Pages → Submit; an empty field hides its element.
+    // {fee}, {threshold} and {currency} are filled in from Settings.
     $threshold = settings('manuscript.plagiarism_max_similarity_percent');
     $fill = fn (?string $text) => strtr((string) $text, [
         '{fee}' => money($prescreeningFee),
         '{threshold}' => rtrim(rtrim(number_format((float) $threshold, 2), '0'), '.'),
         '{currency}' => settings('payment.currency'),
     ]);
-    $m = fn (string $key) => $page ? $page->meta($key, $defaults[$key]) : $defaults[$key];
+    $m = fn (string $key) => $page->meta($key);
     $text = fn (string $key) => $fill($m($key));
     $rows = fn (string $key) => collect($m($key) ?: [])->filter(fn ($row) => implode('', (array) $row) !== '')->values();
 
@@ -24,12 +23,11 @@
         'categories' => $m('categories_label') ?: $m('categories_heading'),
         'preparation' => $m('preparation_label') ?: $m('preparation_heading'),
         'fees' => $m('fees_label') ?: $m('fees_heading'),
-        'more' => $page?->content ? ($m('more_heading') ?: $m('more_label')) : null,
+        'more' => $page->content ? ($m('more_heading') ?: $m('more_label')) : null,
     ]);
 @endphp
-<x-layouts.site :title="$page?->seo_title ?: 'Submit a Manuscript'" :description="$page?->seo_description">
-    <x-page-header eyebrow="Submission Portal" :title="$page?->title && $page->title !== 'Submit' ? $page->title : 'Submit a Manuscript'"
-        :intro="$page?->excerpt ?: 'Submissions are open year-round across all content categories. Every manuscript is pre-screened for similarity and then sent for double-blind peer review.'" />
+<x-layouts.site :title="$page->seo_title ?: $page->title" :description="$page->seo_description ?: $page->excerpt">
+    <x-page-header :title="$page->title" :intro="$page->excerpt" />
 
     <div class="mx-auto max-w-[1200px] px-4 py-8 sm:px-6 md:py-10">
         {{-- 1. The form comes first --}}
@@ -176,7 +174,7 @@
                 </div>
             </section>
 
-            @if ($page?->content)
+            @if ($page->content)
                 <section id="more" class="scroll-mt-28">
                     <x-section-heading :eyebrow="$text('more_label')" :title="$text('more_heading')" />
                     <div class="prose-legis measure mt-6">{!! $page->content !!}</div>

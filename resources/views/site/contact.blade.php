@@ -12,8 +12,8 @@
         ['clock', 'Desk hours', $page?->meta('desk_hours'), null],
     ], fn ($c) => filled($c[2]));
 @endphp
-<x-layouts.site :title="$page?->seo_title ?: 'Contact'" :description="$page?->seo_description">
-    <x-page-header :title="$page?->title ?: 'Write to the Editorial Desk'" :intro="$page?->excerpt ?: 'Questions on submissions, review timelines, patronage or permissions reach a member of the editorial team directly.'" />
+<x-layouts.site :title="$page->seo_title ?: $page->title" :description="$page->seo_description ?: $page->excerpt">
+    <x-page-header :title="$page->title" :intro="$page->excerpt" />
 
     <div class="mx-auto max-w-[1200px] space-y-12 px-4 py-8 sm:px-6 md:space-y-16 md:py-10">
 
