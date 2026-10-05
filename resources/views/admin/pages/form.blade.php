@@ -16,6 +16,28 @@
         @if ($editing) @method('PUT') @endif
 
         <div class="space-y-8">
+            {{-- What this page shows that is managed elsewhere (or fixed), so nothing on the page is a surprise. --}}
+            @php $dynamicNotes = App\Support\PageTemplates::dynamicNotes($page); @endphp
+            @if ($dynamicNotes)
+            <div class="border border-info/40 bg-card p-5" x-data="{ open: true }">
+                <button type="button" class="flex w-full items-center justify-between gap-3 text-left" @click="open = !open" :aria-expanded="open">
+                    <span class="flex items-center gap-2 font-medium"><x-icon name="info" class="h-4 w-4 text-info" /> Shown on this page automatically — not edited here</span>
+                    <span class="transition-transform" :class="open && 'rotate-180'"><x-icon name="chevron-down" class="h-4 w-4" /></span>
+                </button>
+                <ul x-show="open" x-collapse class="mt-3 divide-y divide-border text-sm">
+                    @foreach ($dynamicNotes as [$what, $route, $label])
+                        <li class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 py-2">
+                            <span>{{ $what }}</span>
+                            @if ($route && Route::has($route))
+                                <a href="{{ route($route) }}" target="_blank" class="inline-flex shrink-0 items-center gap-1 text-primary hover:underline" title="Opens the admin module where this is managed">Manage in {{ $label }} <x-icon name="external-link" class="h-3.5 w-3.5" /></a>
+                            @else
+                                <span class="shrink-0 text-xs text-muted-foreground">Fixed / automatic</span>
+                            @endif
+                        </li>
+                    @endforeach
+                </ul>
+            </div>
+            @endif
             <x-admin.panel title="Page">
                 <div class="space-y-5">
                     <div class="grid gap-5 md:grid-cols-2">
@@ -23,7 +45,16 @@
                         @if ($page->isHome())
                             <x-form.input name="slug" label="Slug" value="home" disabled hint="The home page always lives at the site address (/)." />
                         @else
-                            <x-form.input name="slug" label="Slug" :value="$page->slug" hint="The page address: {{ url('/') }}/your-slug. Leave blank to generate from the title." />
+                            {{-- The address updates as you type; blank = generated from the title (same rule as on save). --}}
+                            <div x-data="{ slug: @js(old('slug', $page->slug) ?? ''), title: @js(old('title', $page->title) ?? '') }"
+                                x-init="$el.closest('form').querySelector('[name=title]')?.addEventListener('input', e => title = e.target.value)">
+                                <x-form.input name="slug" label="Slug" :value="$page->slug" x-model="slug" />
+                                <p class="mt-1 text-sm text-muted-foreground">
+                                    Page address:
+                                    <span class="break-all font-mono text-foreground">{{ url('/') }}/<span x-text="(slug || title).toLowerCase().trim().replace(/[^a-z0-9\s-]/g, '').replace(/[\s-]+/g, '-').replace(/^-|-$/g, '') || '…'">{{ $page->slug }}</span></span>
+                                    <span x-show="!slug" x-cloak>(from the title)</span>
+                                </p>
+                            </div>
                         @endif
                     </div>
                     <x-form.textarea name="excerpt" label="Excerpt / introduction" :value="$page->excerpt" rows="2" />

@@ -4,6 +4,7 @@ namespace App\Support;
 
 use App\Enums\MetaType;
 use App\Enums\PageTemplate;
+use App\Models\Page;
 
 /**
  * Template-specific fields stored in page_metas (SOW A.11). Repeatable
@@ -169,6 +170,57 @@ final class PageTemplates
             'guest_heading' => 'Sign in to run a check',
             'guest_text' => 'Results and reports are saved to your author account.',
         ];
+    }
+
+    /**
+     * What the page body shows that is NOT edited here: content pulled from other modules, and fixed parts
+     * (header and footer are left out).
+     * Shown in the page editor so admins know where each thing is managed.
+     *
+     * @return list<array{0: string, 1: ?string, 2: ?string}> [what is shown, admin route name, link label]
+     */
+    public static function dynamicNotes(Page $page): array
+    {
+        return match (true) {
+            $page->slug === 'home' => [
+                ['Hero slides (headings and buttons) — the first slide uses this page’s excerpt; the rest is fixed in the design.', null, null],
+                ['Content categories strip', 'admin.content-categories.index', 'Content categories'],
+                ['Latest publications (the 6 most recently published manuscripts)', 'admin.submissions.index', 'Submissions'],
+                ['Best Paper of the month (latest monthly award)', 'admin.submissions.index', 'Submissions → manuscript → Best Paper award'],
+                ['Latest 3 blog posts', 'admin.blogs.index', 'Blogs'],
+            ],
+            default => match ($page->template) {
+                PageTemplate::Submit => [
+                    ['Manuscript submission form (3 steps, payment)', null, null],
+                    ['Category cards, word limits and guidelines', 'admin.content-categories.index', 'Content categories'],
+                    ['“This month’s theme” on each category', 'admin.themes.index', 'Themes'],
+                    ['Fee table (author category × content category)', 'admin.fees.index', 'Fee matrix'],
+                    ['Author categories in the fee table and form', 'admin.author-categories.index', 'Author categories'],
+                    ['{fee}, {threshold} and {currency} — pre-screening fee, similarity limit and currency', 'admin.settings.edit', 'Settings → Manuscript / Payment'],
+                    ['Guidelines summary — taken from the page whose slug is set in “Guidelines page slug”', 'admin.pages.index', 'Pages'],
+                ],
+                PageTemplate::PlagiarismChecker => [
+                    ['The check form (paste text or upload .docx) and payment', null, null],
+                    ['{fee} and {threshold} — checking fee and similarity limit', 'admin.settings.edit', 'Settings → Manuscript'],
+                ],
+                PageTemplate::PaperWinner => [
+                    ['Current monthly winner and past winners', 'admin.submissions.index', 'Submissions → manuscript → Best Paper award'],
+                    ['Year and category filters', 'admin.content-categories.index', 'Content categories'],
+                ],
+                PageTemplate::Jobs => [
+                    ['Job listings, search and filters (only live, approved jobs)', 'admin.job-postings.index', 'Job postings'],
+                ],
+                PageTemplate::Contact => [
+                    ['Contact form (name, email, phone, purpose, message) — the purposes list is fixed; messages arrive in Enquiries', 'admin.enquiries.index', 'Enquiries'],
+                ],
+                PageTemplate::Career => [
+                    ['Application form with résumé upload — applications arrive in Enquiries', 'admin.enquiries.index', 'Enquiries'],
+                ],
+                default => [],
+            },
+        };
+
+        return $notes;
     }
 
     /**

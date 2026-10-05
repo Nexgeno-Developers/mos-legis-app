@@ -55,4 +55,16 @@ class SubmitPageContentTest extends TestCase
             ->assertDontSee('Ready to submit your manuscript?')
             ->assertDontSee('Submission Checklist'); // checklist heading saved empty
     }
+
+    #[Test]
+    public function the_editor_lists_what_comes_from_other_modules(): void
+    {
+        $page = Page::where('template', 'submit')->firstOrFail();
+
+        $this->actingAs($this->superadmin())->get(route('admin.pages.edit', $page))->assertOk()
+            ->assertSee('Shown on this page automatically')
+            ->assertSee('Fee table (author category × content category)')
+            ->assertSee(route('admin.fees.index'), false)
+            ->assertDontSee('Header and footer menus');
+    }
 }

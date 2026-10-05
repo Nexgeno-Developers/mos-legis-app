@@ -100,4 +100,18 @@ class FlexiblePageSlugsTest extends TestCase
     {
         $this->get('/policies/privacy-policy')->assertRedirect(url('privacy-policy'));
     }
+
+    #[Test]
+    public function the_editor_shows_the_current_page_address(): void
+    {
+        $jobs = Page::where('template', 'jobs')->first();
+        $this->save($jobs, ['slug' => 'job-postings1']);
+
+        $this->actingAs($this->superadmin())->get(route('admin.pages.edit', $jobs))->assertOk()
+            ->assertSee('Page address:')->assertSee(url('/').'/', false)->assertSee('job-postings1</span>', false)
+            ->assertSee('href="'.url('job-postings1').'"', false); // View on site
+
+        $this->actingAs($this->superadmin())->get(route('admin.pages.edit', Page::where('slug', 'home')->first()))
+            ->assertSee('The home page always lives at the site address')->assertDontSee('Page address:');
+    }
 }
