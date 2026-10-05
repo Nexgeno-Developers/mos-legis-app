@@ -43,7 +43,8 @@
 
     <main>{{ $slot }}</main>
 
-    <footer class="mt-24 border-t border-border bg-secondary">
+    {{-- No gap on the home page: its closing band sits directly above the footer. --}}
+    <footer @class(['border-t border-border bg-secondary', 'mt-24' => ! request()->routeIs('home')])>
         <div class="mx-auto max-w-[1200px] px-6 py-14">
             @php
                 // Footer columns: each group is a column; loose top-level links share one untitled column.

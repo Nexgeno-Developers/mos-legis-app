@@ -22,6 +22,9 @@ final class PageTemplates
     /**
      * @return array<string, array{label: string, type: string, columns?: array<string, array{label: string, type: string}>}>
      */
+    /** Templates of the one-off system pages (created by migrations, never from Admin → Pages). */
+    public const SYSTEM = [PageTemplate::Home, PageTemplate::Archive];
+
     public static function fields(PageTemplate $template): array
     {
         return match ($template) {
@@ -124,6 +127,44 @@ final class PageTemplates
                 'cta_text' => ['label' => 'Closing bar text', 'type' => 'text'],
                 'cta_button' => ['label' => 'Closing bar button', 'type' => 'text'],
             ],
+            // Home page: all wording; the counts, categories, articles and blog posts are dynamic.
+            // {fee} and {threshold} are filled in from Settings.
+            PageTemplate::Home => [
+                'hero_label' => ['label' => 'Hero — label above the heading', 'type' => 'text'],
+                'hero_heading' => ['label' => 'Hero — heading (each line on its own row)', 'type' => 'textarea'],
+                'hero_primary' => ['label' => 'Hero — main button (Submit page)', 'type' => 'text'],
+                'hero_secondary' => ['label' => 'Hero — second button (Archive)', 'type' => 'text'],
+                'stat_articles' => ['label' => 'At a glance — “published articles” label', 'type' => 'text'],
+                'stat_authors' => ['label' => 'At a glance — “published authors” label', 'type' => 'text'],
+                'stat_categories' => ['label' => 'At a glance — “content categories” label', 'type' => 'text'],
+                'stat_awards' => ['label' => 'At a glance — “Best Paper awards” label', 'type' => 'text'],
+                'features_label' => ['label' => 'Why publish — label', 'type' => 'text'],
+                'features_heading' => ['label' => 'Why publish — heading', 'type' => 'text'],
+                'features' => ['label' => 'Why publish — points', 'type' => 'repeater', 'hint' => 'Use {fee} and {threshold}. Icons follow the order of the points.', 'columns' => [
+                    'title' => ['label' => 'Title', 'type' => 'text'],
+                    'text' => ['label' => 'Text', 'type' => 'textarea'],
+                ]],
+                'steps_label' => ['label' => 'How it works — label', 'type' => 'text'],
+                'steps_heading' => ['label' => 'How it works — heading', 'type' => 'text'],
+                'steps_link' => ['label' => 'How it works — link to the submission guide', 'type' => 'text'],
+                'steps' => ['label' => 'How it works — steps', 'type' => 'repeater', 'hint' => 'Use {fee} and {threshold}.', 'columns' => [
+                    'title' => ['label' => 'Step', 'type' => 'text'],
+                    'text' => ['label' => 'Description', 'type' => 'textarea'],
+                ]],
+                'categories_label' => ['label' => 'Categories — label', 'type' => 'text'],
+                'categories_heading' => ['label' => 'Categories — heading', 'type' => 'text'],
+                'latest_label' => ['label' => 'Latest publications — label', 'type' => 'text'],
+                'latest_heading' => ['label' => 'Latest publications — heading', 'type' => 'text'],
+                'latest_link' => ['label' => 'Latest publications — link to the archive', 'type' => 'text'],
+                'blog_label' => ['label' => 'Blog — label', 'type' => 'text'],
+                'blog_heading' => ['label' => 'Blog — heading', 'type' => 'text'],
+                'blog_link' => ['label' => 'Blog — link to all posts', 'type' => 'text'],
+                'cta_label' => ['label' => 'Closing band — label', 'type' => 'text'],
+                'cta_heading' => ['label' => 'Closing band — heading', 'type' => 'text'],
+                'cta_text' => ['label' => 'Closing band — text', 'type' => 'textarea'],
+                'cta_primary' => ['label' => 'Closing band — main button (Submit page)', 'type' => 'text'],
+                'cta_secondary' => ['label' => 'Closing band — second button (Plagiarism Checker)', 'type' => 'text'],
+            ],
             // Journal Archive: title, intro, content and SEO only — search, filters and articles are dynamic.
             PageTemplate::Archive => [],
             PageTemplate::Layout => [],
@@ -197,10 +238,11 @@ final class PageTemplates
     {
         return match (true) {
             $page->slug === 'home' => [
-                ['Hero slides (headings and buttons) — the first slide uses this page’s excerpt; the rest is fixed in the design.', null, null],
-                ['Content categories strip', 'admin.content-categories.index', 'Content categories'],
-                ['Latest publications (the 6 most recently published manuscripts)', 'admin.submissions.index', 'Submissions'],
-                ['Best Paper of the quarter (latest quarterly award)', 'admin.best-paper-awards.index', 'Best Paper Awards'],
+                ['The line under the hero heading is this page’s excerpt', null, null],
+                ['Journal at a glance — the numbers are counted automatically', null, null],
+                ['{fee} and {threshold} in the text — pre-screening fee and similarity limit', 'admin.settings.edit', 'Settings'],
+                ['Browse by category (with article counts)', 'admin.content-categories.index', 'Content categories'],
+                ['Latest publications (the 3 most recently published manuscripts)', 'admin.submissions.index', 'Submissions'],
                 ['Latest 3 blog posts', 'admin.blogs.index', 'Blogs'],
             ],
             default => match ($page->template) {
@@ -261,6 +303,43 @@ final class PageTemplates
                 'faq_label' => 'Before you write', 'faq_heading' => 'Common questions',
                 'faq_text' => 'Quick answers about submissions, review timelines and fees.',
                 'help_heading' => 'Still have a question?', 'help_text' => 'Our editorial desk is happy to help.',
+            ],
+            PageTemplate::Home => [
+                'hero_label' => 'Peer-Reviewed Legal Scholarship',
+                'hero_heading' => "Rooted in Tradition.\nDriven by Justice.",
+                'hero_primary' => 'Submit a Manuscript',
+                'hero_secondary' => 'Browse the Archive',
+                'stat_articles' => 'Published articles', 'stat_authors' => 'Published authors',
+                'stat_categories' => 'Content categories', 'stat_awards' => 'Best Paper awards',
+                'features_label' => 'Why publish with us',
+                'features_heading' => 'A rigorous, transparent path to publication',
+                'features' => [
+                    ['title' => 'Double-blind peer review', 'text' => 'Every manuscript is reviewed by a subject expert. Authors and reviewers never see each other’s names.'],
+                    ['title' => 'Plagiarism screening', 'text' => 'Each submission is checked for similarity first; manuscripts above {threshold}% are not sent for review.'],
+                    ['title' => 'Pay only after acceptance', 'text' => 'Only the {fee} pre-screening fee is due on submission. The publication fee follows acceptance.'],
+                    ['title' => 'Quarterly Best Paper', 'text' => 'Each quarter the editorial board recognises one published paper for depth, originality and clarity.'],
+                    ['title' => 'Certificate of publication', 'text' => 'Every published author receives a verifiable certificate of publication.'],
+                    ['title' => 'Open archive', 'text' => 'Published articles are free to read and download from the Journal Archive.'],
+                ],
+                'steps_label' => 'How it works',
+                'steps_heading' => 'From submission to publication',
+                'steps_link' => 'Full submission guide',
+                'steps' => [
+                    ['title' => 'Submit', 'text' => 'Upload your .docx manuscript and pay the pre-screening fee.'],
+                    ['title' => 'Screening', 'text' => 'Similarity check — up to {threshold}% is accepted for review.'],
+                    ['title' => 'Peer review', 'text' => 'A subject reviewer is assigned automatically.'],
+                    ['title' => 'Decision', 'text' => 'Revise and resubmit if asked, or receive approval.'],
+                    ['title' => 'Publication', 'text' => 'Pay the publication fee and receive your certificate.'],
+                ],
+                'categories_label' => 'Explore', 'categories_heading' => 'Browse by category',
+                'latest_label' => 'Latest Publications', 'latest_heading' => 'Recently published scholarship',
+                'latest_link' => 'View full archive',
+                'blog_label' => 'From the Blog', 'blog_heading' => 'Legal commentary', 'blog_link' => 'All posts',
+                'cta_label' => 'Ready when you are',
+                'cta_heading' => 'Submit your manuscript today',
+                'cta_text' => 'Only the {fee} pre-screening fee is due upfront — the publication fee is payable after acceptance. Want to check your draft first? Run it through our plagiarism checker.',
+                'cta_primary' => 'Start a Submission',
+                'cta_secondary' => 'Plagiarism Checker',
             ],
             PageTemplate::Career => ['form_label' => 'Apply', 'form_heading' => 'Application Form'],
             PageTemplate::Patron => ['list_label' => 'With Gratitude', 'list_heading' => 'Acknowledgements'],
@@ -361,6 +440,7 @@ final class PageTemplates
             PageTemplate::PlagiarismChecker->value => 'Plagiarism checker',
             PageTemplate::Submit->value => 'Submit manuscript',
             PageTemplate::Archive->value => 'Journal archive',
+            PageTemplate::Home->value => 'Home',
         ];
     }
 }

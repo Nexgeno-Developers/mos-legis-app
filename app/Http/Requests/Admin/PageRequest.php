@@ -29,7 +29,7 @@ class PageRequest extends FormRequest
             'title' => ['required', 'string', 'max:190'],
             // Pages live at /{slug}: a slug used by a fixed site address (blogs, login, admin…) would never be reached.
             'slug' => ['required', 'string', 'max:220', 'alpha_dash', Rule::unique('pages', 'slug')->ignore($page), Rule::notIn($page?->fixedSlug() ? [] : self::reservedSlugs())],
-            'template' => [$page ? 'prohibited' : 'required', Rule::enum(PageTemplate::class)],
+            'template' => [$page ? 'prohibited' : 'required', Rule::enum(PageTemplate::class)->except(PageTemplates::SYSTEM)],
             'status' => ['required', Rule::enum(PublishStatus::class)],
             'excerpt' => ['nullable', 'string', 'max:500'],
             'content' => ['nullable', 'string', 'max:500000'],

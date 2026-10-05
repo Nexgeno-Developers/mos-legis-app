@@ -33,6 +33,7 @@ class PageController extends Controller
             PageTemplate::Teams => [$this, 'editorialBoard'],
             PageTemplate::Patron => [$this, 'patrons'],
             PageTemplate::Archive => [ArchiveController::class, 'index'],
+            PageTemplate::Home => [HomeController::class, '__invoke'],
             PageTemplate::Layout => null,
         };
 

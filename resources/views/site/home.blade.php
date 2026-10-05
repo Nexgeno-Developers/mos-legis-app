@@ -1,104 +1,182 @@
 @php
-    $slides = [
-        ['eyebrow' => 'Peer-Reviewed Legal Scholarship', 'headline' => 'Rooted in Tradition. Driven by Justice.', 'sub' => $page?->excerpt, 'primary' => ['Submit a Manuscript', page_url('submit')], 'secondary' => ['Browse the Archive', route('archive.index')]],
-        ['eyebrow' => 'Best Paper — Quarterly Winner', 'headline' => "Recognising the Quarter's Most Rigorous Scholarship.", 'sub' => 'Each quarter one paper is elevated for its research depth, originality, and clarity of argument.', 'primary' => ['See the Winner', page_url('paper_winner')], 'secondary' => ['Past Winners', page_url('paper_winner').'#past'], ],
-        ['eyebrow' => 'Plagiarism Screening', 'headline' => 'Every Manuscript Screened Before Peer Review.', 'sub' => 'Check your own draft for similarity before you submit, with a downloadable report.', 'primary' => ['Try the Plagiarism Checker', page_url('plagiarism_checker')], 'secondary' => ['Submit a Manuscript', page_url('submit')]],
-    ];
+    // All wording comes from Admin → Pages → Home ("Home" template); an empty field hides its element.
+    // {fee} and {threshold} are filled in from Settings.
+    $appName = settings('general.application_name');
+    $fill = fn (?string $text) => strtr((string) $text, [
+        '{fee}' => money(settings()->float('manuscript.plagiarism_prescreening_fee')),
+        '{threshold}' => rtrim(rtrim(number_format(settings()->float('manuscript.plagiarism_max_similarity_percent'), 2), '0'), '.'),
+    ]);
+    $m = fn (string $key) => $page ? $fill($page->meta($key)) : '';
+    $rows = fn (string $key) => collect($page?->meta($key) ?: [])->filter(fn ($row) => implode('', (array) $row) !== '')->values();
+    $features = $rows('features');
+    $steps = $rows('steps');
+    $featureIcons = ['shield-check', 'scan-search', 'badge-indian-rupee', 'award', 'badge-check', 'book-open'];
 @endphp
 <x-layouts.site :title="null" :description="$page?->seo_description">
-    <section class="border-b border-border bg-secondary" x-data="{ i: 0, n: {{ count($slides) }} }" x-init="setInterval(() => i = (i + 1) % n, 8000)">
-        <div class="mx-auto grid max-w-[1200px] items-center gap-12 px-6 py-20 md:grid-cols-[1fr_1.4fr] md:py-28">
-            <div class="hidden justify-start md:flex">
-                <img src="{{ asset('images/logo-mark.png') }}" alt="{{ settings('general.application_name') }} emblem" class="w-full max-w-[24rem] object-contain">
-            </div>
+    {{-- 1. Hero: who we are + the two main actions --}}
+    <section class="relative overflow-hidden border-b border-border bg-secondary">
+        <div class="mx-auto grid max-w-[1200px] items-center gap-10 px-4 py-14 sm:px-6 md:py-20 lg:grid-cols-[1.3fr_1fr]">
             <div>
-                {{-- All slides share one grid cell, so they cross-fade in place without the page jumping. --}}
-                <div class="grid">
-                @foreach ($slides as $index => $slide)
-                    <div class="col-start-1 row-start-1" x-show="i === {{ $index }}" @if ($index) x-cloak @endif
-                        x-transition:enter="transition-opacity duration-500" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
-                        x-transition:leave="transition-opacity duration-300" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">
-                        <p class="label-caps text-sm text-primary">{{ $slide['eyebrow'] }}</p>
-                        <h1 class="mt-4 font-display text-4xl leading-[1.1] md:text-5xl">{{ $slide['headline'] }}</h1>
-                        <div class="gold-rule my-6 max-w-md"></div>
-                        @if ($slide['sub'])<p class="measure text-lg text-muted-foreground">{{ $slide['sub'] }}</p>@endif
-                        <div class="mt-8 flex flex-wrap gap-3">
-                            <a href="{{ $slide['primary'][1] }}" class="inline-flex h-12 items-center gap-2 border border-primary bg-primary px-6 text-sm font-semibold text-primary-foreground hover:bg-primary/90">{{ $slide['primary'][0] }} <x-icon name="arrow-right" /></a>
-                            <a href="{{ $slide['secondary'][1] }}" class="inline-flex h-12 items-center gap-2 border border-gold px-6 text-sm font-semibold hover:bg-gold/10">{{ $slide['secondary'][0] }}</a>
-                        </div>
-                    </div>
-                @endforeach
+                @if ($m('hero_label'))<p class="label-caps text-sm text-primary">{{ $m('hero_label') }}</p>@endif
+                @if ($m('hero_heading'))<h1 class="mt-4 font-display text-4xl leading-[1.1] sm:text-5xl lg:text-[3.4rem]">{!! nl2br(e($m('hero_heading'))) !!}</h1>@endif
+                <div class="gold-rule my-6 max-w-md"></div>
+                @if ($page?->excerpt)<p class="measure text-lg leading-relaxed text-muted-foreground">{{ $page->excerpt }}</p>@endif
+
+                <div class="mt-8 flex flex-wrap gap-3">
+                    @if ($m('hero_primary'))<a href="{{ page_url('submit') }}" class="inline-flex h-12 items-center gap-2 border border-primary bg-primary px-6 text-sm font-semibold text-primary-foreground hover:bg-primary/90">{{ $m('hero_primary') }} <x-icon name="arrow-right" /></a>@endif
+                    @if ($m('hero_secondary'))<a href="{{ route('archive.index') }}" class="inline-flex h-12 items-center gap-2 border border-gold bg-card px-6 text-sm font-semibold hover:bg-gold/10"><x-icon name="book-open" /> {{ $m('hero_secondary') }}</a>@endif
                 </div>
-                <div class="mt-10 flex items-center gap-3">
-                    <button type="button" @click="i = (i - 1 + n) % n" aria-label="Previous slide" class="inline-flex h-9 w-9 items-center justify-center border border-border text-muted-foreground hover:border-gold"><x-icon name="chevron-left" /></button>
-                    <button type="button" @click="i = (i + 1) % n" aria-label="Next slide" class="inline-flex h-9 w-9 items-center justify-center border border-border text-muted-foreground hover:border-gold"><x-icon name="chevron-right" /></button>
-                    <span class="font-mono text-xs text-muted-foreground" x-text="String(i + 1).padStart(2, '0') + ' / ' + String(n).padStart(2, '0')"></span>
-                </div>
+
+            </div>
+
+            <div class="hidden justify-center lg:flex">
+                <img src="{{ asset('images/logo-mark.png') }}" alt="{{ $appName }} emblem" class="w-full max-w-[22rem] object-contain drop-shadow-sm">
             </div>
         </div>
     </section>
 
-    <section class="border-b border-border">
-        <div class="mx-auto flex max-w-[1200px] flex-wrap gap-2 px-6 py-6">
-            @foreach ($categories as $category)
-                <a href="{{ route('archive.index', ['category' => $category->id]) }}" class="rounded-full border border-border bg-muted px-3 py-1 text-xs text-muted-foreground hover:border-gold hover:text-foreground">{{ $category->name }}</a>
+    {{-- 2. Journal at a glance --}}
+    <section class="border-b border-border bg-card">
+        <dl class="mx-auto grid max-w-[1200px] grid-cols-2 divide-border px-4 sm:px-6 md:grid-cols-4 md:divide-x">
+            @foreach ([['articles', $m('stat_articles'), 'file-text'], ['authors', $m('stat_authors'), 'users'], ['categories', $m('stat_categories'), 'book-open'], ['awards', $m('stat_awards'), 'award']] as [$key, $label, $icon])
+                <div class="flex items-center gap-3 px-2 py-6 md:justify-center md:px-6">
+                    <span class="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-secondary text-primary"><x-icon :name="$icon" class="h-5 w-5" /></span>
+                    <div>
+                        <dd class="font-display text-2xl leading-none">{{ number_format($stats[$key]) }}</dd>
+                        <dt class="mt-1 text-xs text-muted-foreground">{{ $label }}</dt>
+                    </div>
+                </div>
+            @endforeach
+        </dl>
+    </section>
+
+    {{-- 3. Why publish with us --}}
+    @if ($features->isNotEmpty())
+    <section class="bg-background">
+        <div class="mx-auto max-w-[1200px] px-4 py-16 sm:px-6 md:py-20">
+        <div class="max-w-2xl">
+            <x-section-heading :eyebrow="$m('features_label')" :title="$m('features_heading')" />
+        </div>
+        <div class="mt-10 grid gap-px border border-border bg-border sm:grid-cols-2 lg:grid-cols-3">
+            @foreach ($features as $feature)
+                <div class="bg-card p-6">
+                    <span class="grid h-11 w-11 place-items-center border border-gold/60 text-primary"><x-icon :name="$featureIcons[$loop->index % count($featureIcons)]" class="h-5 w-5" /></span>
+                    @if (filled($feature['title'] ?? null))<h3 class="mt-4 font-display text-xl">{{ $fill($feature['title']) }}</h3>@endif
+                    @if (filled($feature['text'] ?? null))<p class="mt-2 text-sm leading-relaxed text-muted-foreground">{{ $fill($feature['text']) }}</p>@endif
+                </div>
             @endforeach
         </div>
-    </section>
-
-    <section class="mx-auto max-w-[1200px] px-6 py-20">
-        <div class="flex items-end justify-between gap-6">
-            <x-section-heading eyebrow="Latest Publications" title="Recently Published Scholarship" class="flex-1" />
-            <a href="{{ route('archive.index') }}" class="hidden shrink-0 items-center gap-1 text-sm text-primary hover:underline sm:inline-flex">View full archive <x-icon name="arrow-right" /></a>
         </div>
-        @if ($publications->isEmpty())
-            <p class="mt-10 text-muted-foreground">The first articles will appear here once published.</p>
-        @else
-            <div class="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                @foreach ($publications as $submission)@include('site._article-card')@endforeach
-            </div>
-        @endif
     </section>
+    @endif
 
-    @if ($winner)
-        <section class="border-y border-border bg-card">
-            <div class="mx-auto grid max-w-[1200px] gap-10 px-6 py-16 md:grid-cols-[auto_1fr] md:items-center">
-                <x-icon name="award" class="h-20 w-20 text-gold" />
-                <div>
-                    <p class="label-caps text-sm text-primary">Best Paper · {{ $winner->periodLabel() }}</p>
-                    <h2 class="mt-2 font-display text-3xl"><a href="{{ route('archive.show', $winner->submission) }}" class="hover:text-primary">{{ $winner->submission->title }}</a></h2>
-                    <p class="mt-2 text-muted-foreground">{{ $winner->submission->author->name }} · {{ $winner->submission->contentCategory->name }}</p>
-                    <p class="measure mt-4 italic">“{{ $winner->editorial_citation }}”</p>
-                </div>
+    {{-- 4. How it works --}}
+    @if ($steps->isNotEmpty())
+    <section class="border-y border-border bg-secondary">
+        <div class="mx-auto max-w-[1200px] px-4 py-16 sm:px-6 md:py-20">
+            <div class="flex flex-wrap items-end justify-between gap-4">
+                <x-section-heading :eyebrow="$m('steps_label')" :title="$m('steps_heading')" class="flex-1" />
+                @if ($m('steps_link'))<a href="{{ page_url('submit') }}#process" class="inline-flex items-center gap-1 text-sm text-primary hover:underline">{{ $m('steps_link') }} <x-icon name="arrow-right" /></a>@endif
             </div>
-        </section>
+            <ol class="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+                @foreach ($steps as $step)
+                    <li class="relative border border-border bg-card p-5">
+                        <span class="grid h-9 w-9 place-items-center rounded-full bg-primary font-mono text-sm text-primary-foreground">{{ $loop->iteration }}</span>
+                        @if (filled($step['title'] ?? null))<p class="mt-3 font-display text-lg">{{ $fill($step['title']) }}</p>@endif
+                        @if (filled($step['text'] ?? null))<p class="mt-1 text-sm text-muted-foreground">{{ $fill($step['text']) }}</p>@endif
+                    </li>
+                @endforeach
+            </ol>
+        </div>
+    </section>
     @endif
 
-    @if ($page?->content)
-        <section class="mx-auto max-w-[1200px] px-6 py-16"><div class="prose-legis">{!! $page->content !!}</div></section>
-    @endif
-
-    @if ($blogs->isNotEmpty())
-        <section class="mx-auto max-w-[1200px] px-6 pb-20">
-            <x-section-heading eyebrow="From the Blog" title="Legal Commentary" />
-            <div class="mt-10 grid gap-8 md:grid-cols-3">
-                @foreach ($blogs as $blog)
-                    <article>
-                        <p class="label-caps text-xs text-muted-foreground">{{ $blog->category->category_name }} · {{ format_date($blog->publish_date) }}</p>
-                        <h3 class="mt-2 font-display text-xl"><a href="{{ route('blogs.show', $blog->slug) }}" class="hover:text-primary">{{ $blog->blog_title }}</a></h3>
-                        <p class="mt-2 text-sm text-muted-foreground">{{ $blog->excerpt }}</p>
-                    </article>
+    {{-- 5. Browse by category --}}
+    @if ($categories->isNotEmpty())
+        <section class="border-b border-border bg-card">
+            <div class="mx-auto max-w-[1200px] px-4 py-16 sm:px-6 md:py-20">
+            <x-section-heading :eyebrow="$m('categories_label')" :title="$m('categories_heading')" />
+            <div class="mt-10 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                @foreach ($categories as $category)
+                    <a href="{{ route('archive.index', ['category' => $category->id]) }}" class="group flex flex-col justify-between border border-border bg-background p-5 transition hover:-translate-y-0.5 hover:border-gold hover:shadow-md">
+                        <span class="font-display text-lg leading-snug group-hover:text-primary">{{ $category->name }}</span>
+                        <span class="mt-4 flex items-center justify-between text-xs text-muted-foreground">
+                            <span>{{ $category->wordLimitLabel() }}</span>
+                            <span class="rounded-full bg-secondary px-2 py-0.5">{{ $category->submissions_count }} {{ Str::plural('article', $category->submissions_count) }}</span>
+                        </span>
+                    </a>
                 @endforeach
             </div>
+            </div>
         </section>
     @endif
 
-    <section class="border-y border-border bg-secondary">
-        <div class="mx-auto flex max-w-[1200px] flex-col items-center gap-4 px-6 py-16 text-center">
-            <p class="label-caps text-sm text-primary">Payment Timing</p>
-            <h2 class="font-display text-3xl">No fee until you&rsquo;re accepted.</h2>
-            <p class="measure text-muted-foreground">Only the plagiarism pre-screening fee is due upfront. The publication fee is payable after an editorial acceptance decision.</p>
-            <a href="{{ page_url('submit') }}" class="mt-2 inline-flex h-12 items-center gap-2 border border-primary bg-primary px-6 text-sm font-semibold text-primary-foreground hover:bg-primary/90">Start a Submission <x-icon name="arrow-right" /></a>
+    {{-- 6. Latest publications --}}
+    <section class="bg-background">
+        <div class="mx-auto max-w-[1200px] px-4 py-16 sm:px-6 md:py-20">
+            <div class="flex flex-wrap items-end justify-between gap-4">
+                <x-section-heading :eyebrow="$m('latest_label')" :title="$m('latest_heading')" class="flex-1" />
+                @if ($m('latest_link'))<a href="{{ route('archive.index') }}" class="inline-flex items-center gap-1 text-sm text-primary hover:underline">{{ $m('latest_link') }} <x-icon name="arrow-right" /></a>@endif
+            </div>
+            @if ($publications->isEmpty())
+                <p class="mt-10 border border-dashed border-border bg-card p-8 text-center text-muted-foreground">The first articles will appear here once published.</p>
+            @else
+                <div class="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+                    @foreach ($publications as $submission)@include('site._article-card')@endforeach
+                </div>
+            @endif
         </div>
     </section>
+
+    {{-- 8. From the blog --}}
+    @if ($blogs->isNotEmpty())
+        <section class="border-y border-border bg-secondary">
+            <div class="mx-auto max-w-[1200px] px-4 py-16 sm:px-6 md:py-20">
+            <div class="flex flex-wrap items-end justify-between gap-4">
+                <x-section-heading :eyebrow="$m('blog_label')" :title="$m('blog_heading')" class="flex-1" />
+                @if ($m('blog_link'))<a href="{{ route('blogs.index') }}" class="inline-flex items-center gap-1 text-sm text-primary hover:underline">{{ $m('blog_link') }} <x-icon name="arrow-right" /></a>@endif
+            </div>
+            <div class="mt-10 grid gap-6 md:grid-cols-3">
+                @foreach ($blogs as $blog)
+                    <a href="{{ route('blogs.show', $blog->slug) }}" class="group flex flex-col overflow-hidden border border-border bg-card transition hover:-translate-y-0.5 hover:border-gold hover:shadow-md">
+                        <span class="block aspect-[16/9] overflow-hidden bg-secondary">
+                            @if ($blog->featured_image)
+                                <img src="{{ Storage::disk('public')->url($blog->featured_image) }}" alt="" loading="lazy" class="h-full w-full object-cover transition duration-500 group-hover:scale-105">
+                            @else
+                                <span class="flex h-full items-center justify-center bg-gradient-to-br from-secondary to-gold/20"><x-icon name="book-open" class="h-8 w-8 text-gold/70" /></span>
+                            @endif
+                        </span>
+                        <span class="flex flex-1 flex-col p-5">
+                            <span class="label-caps text-[0.65rem] text-primary">{{ $blog->category->category_name }} · {{ format_date($blog->publish_date) }}</span>
+                            <span class="mt-2 line-clamp-2 font-display text-lg leading-snug group-hover:text-primary">{{ $blog->blog_title }}</span>
+                            <span class="mt-2 line-clamp-3 text-sm text-muted-foreground">{{ $blog->excerpt }}</span>
+                        </span>
+                    </a>
+                @endforeach
+            </div>
+            </div>
+        </section>
+    @endif
+
+    {{-- Optional content from Admin → Pages → Home --}}
+    @if ($page?->content)
+        <section class="border-b border-border bg-card"><div class="mx-auto max-w-[1200px] px-4 py-14 sm:px-6"><div class="prose-legis">{!! $page->content !!}</div></div></section>
+    @endif
+
+    {{-- 9. Call to action --}}
+    @if ($m('cta_heading') || $m('cta_text') || $m('cta_primary') || $m('cta_secondary'))
+    <section class="bg-foreground text-background">
+        <div class="mx-auto grid max-w-[1200px] items-center gap-8 px-4 py-14 sm:px-6 md:grid-cols-[1fr_auto]">
+            <div>
+                @if ($m('cta_label'))<p class="label-caps text-sm text-gold">{{ $m('cta_label') }}</p>@endif
+                @if ($m('cta_heading'))<h2 class="mt-2 font-display text-3xl">{{ $m('cta_heading') }}</h2>@endif
+                @if ($m('cta_text'))<p class="measure mt-2 opacity-80">{{ $m('cta_text') }}</p>@endif
+            </div>
+            <div class="flex flex-wrap gap-3">
+                @if ($m('cta_primary'))<a href="{{ page_url('submit') }}" class="inline-flex h-12 items-center gap-2 border border-primary bg-primary px-6 text-sm font-semibold text-primary-foreground hover:bg-primary/90">{{ $m('cta_primary') }} <x-icon name="arrow-right" /></a>@endif
+                @if ($m('cta_secondary'))<a href="{{ page_url('plagiarism_checker') }}" class="inline-flex h-12 items-center gap-2 border border-background/40 px-6 text-sm font-semibold hover:bg-background/10"><x-icon name="scan-search" /> {{ $m('cta_secondary') }}</a>@endif
+            </div>
+        </div>
+    </section>
+    @endif
 </x-layouts.site>

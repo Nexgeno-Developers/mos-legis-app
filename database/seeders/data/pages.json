@@ -238,7 +238,7 @@
     "title": "Home",
     "slug": "home",
     "status": "Published",
-    "template": "layout",
+    "template": "home",
     "excerpt": "A peer-reviewed platform for rigorous legal research, commentary, and discourse.",
     "content": "<h2>What we publish</h2><p>Best paper winners, recently published scholarship, and open calls for submission.</p>\n<h2>No fee until accepted</h2><p>Only the plagiarism pre-screening fee is payable upfront — every other charge is raised after an editorial decision.</p>",
     "seo_title": "MOS Legis | Peer-Reviewed Legal Scholarship",

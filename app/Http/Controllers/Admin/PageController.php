@@ -49,11 +49,15 @@ class PageController extends Controller implements HasMiddleware
     public function create(Request $request): View
     {
         $template = $request->enum('template', PageTemplate::class) ?? PageTemplate::Layout;
+        if (in_array($template, PageTemplates::SYSTEM, true)) {
+            $template = PageTemplate::Layout;
+        }
 
         return view('admin.pages.form', [
             'page' => new Page(['template' => $template, 'status' => PublishStatus::Draft]),
             'fields' => PageTemplates::fields($template),
-            'templates' => PageTemplates::labels(),
+            // Home and the Journal Archive exist once; they can't be created again.
+            'templates' => array_diff_key(PageTemplates::labels(), array_flip(array_map(fn ($t) => $t->value, PageTemplates::SYSTEM))),
         ]);
     }
 

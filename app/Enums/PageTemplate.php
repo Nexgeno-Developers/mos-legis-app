@@ -18,4 +18,5 @@ enum PageTemplate: string
     case PlagiarismChecker = 'plagiarism_checker';
     case Submit = 'submit';
     case Archive = 'archive';
+    case Home = 'home';
 }
