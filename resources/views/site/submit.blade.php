@@ -33,9 +33,9 @@
         {{-- 1. The form comes first --}}
         <section id="submission-form" class="scroll-mt-28">
             @if ($facts->isNotEmpty())
-                <ul @class(['mb-6 grid gap-px border border-border bg-border text-sm', 'sm:grid-cols-2' => $facts->count() === 2, 'sm:grid-cols-3' => $facts->count() >= 3])>
+                <ul @class(['mb-6 grid gap-3 text-sm', 'sm:grid-cols-2' => $facts->count() === 2, 'sm:grid-cols-3' => $facts->count() >= 3])>
                     @foreach ($facts as $fact)
-                        <li class="flex items-start gap-3 bg-card px-4 py-3">
+                        <li class="flex items-start gap-3 border border-border bg-card px-4 py-3">
                             <x-icon :name="$factIcons[$loop->index % 3]" class="mt-0.5 h-5 w-5 shrink-0 text-primary" />
                             <span>
                                 @if (filled($fact['title'] ?? null))<strong>{{ $fill($fact['title']) }}</strong>@endif
@@ -85,9 +85,9 @@
             @if ($steps->isNotEmpty())
                 <section id="process" class="scroll-mt-28">
                     <x-section-heading :eyebrow="$text('steps_label')" :title="$text('steps_heading')" />
-                    <ol @class(['mt-8 grid gap-px border border-border bg-border sm:grid-cols-2', 'lg:grid-cols-3' => $steps->count() === 3, 'lg:grid-cols-4' => $steps->count() === 4, 'lg:grid-cols-5' => $steps->count() >= 5])>
+                    <ol @class(['mt-8 grid gap-4 sm:grid-cols-2', 'lg:grid-cols-3' => $steps->count() === 3, 'lg:grid-cols-4' => $steps->count() === 4, 'lg:grid-cols-5' => $steps->count() >= 5])>
                         @foreach ($steps as $step)
-                            <li class="bg-card p-5">
+                            <li class="border border-border bg-card p-5">
                                 <span class="grid h-8 w-8 place-items-center rounded-full bg-primary font-mono text-xs text-primary-foreground">{{ $loop->iteration }}</span>
                                 @if (filled($step['title'] ?? null))<p class="mt-3 font-display text-lg">{{ $fill($step['title']) }}</p>@endif
                                 @if (filled($step['text'] ?? null))<p class="mt-1 text-sm text-muted-foreground">{{ $fill($step['text']) }}</p>@endif

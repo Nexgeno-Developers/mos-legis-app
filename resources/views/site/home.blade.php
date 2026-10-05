@@ -57,9 +57,9 @@
         <div class="max-w-2xl">
             <x-section-heading :eyebrow="$m('features_label')" :title="$m('features_heading')" />
         </div>
-        <div class="mt-10 grid gap-px border border-border bg-border sm:grid-cols-2 lg:grid-cols-3">
+        <div class="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             @foreach ($features as $feature)
-                <div class="bg-card p-6">
+                <div class="border border-border bg-card p-6 transition hover:border-gold">
                     <span class="grid h-11 w-11 place-items-center border border-gold/60 text-primary"><x-icon :name="$featureIcons[$loop->index % count($featureIcons)]" class="h-5 w-5" /></span>
                     @if (filled($feature['title'] ?? null))<h3 class="mt-4 font-display text-xl">{{ $fill($feature['title']) }}</h3>@endif
                     @if (filled($feature['text'] ?? null))<p class="mt-2 text-sm leading-relaxed text-muted-foreground">{{ $fill($feature['text']) }}</p>@endif
