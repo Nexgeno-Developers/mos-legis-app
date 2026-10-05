@@ -38,7 +38,7 @@
                                 <x-action-link type="submit" icon="copy">Duplicate</x-action-link>
                             </form>
                         @endcan
-                        @if (! $page->isHome() && auth()->user()->can('pages.delete'))
+                        @if (! $page->isProtected() && auth()->user()->can('pages.delete'))
                             <x-delete-button :action="route('admin.pages.destroy', $page)" />
                         @endif
                     </x-row-actions>

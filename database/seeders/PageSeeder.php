@@ -19,6 +19,7 @@ class PageSeeder extends Seeder
         $pages = json_decode(file_get_contents(database_path('seeders/data/pages.json')), true, flags: JSON_THROW_ON_ERROR);
         $pages[] = $this->aboutPage();
         $pages[] = $this->jobsPage();
+        $pages[] = self::archivePage();
         $pages[] = $this->plagiarismCheckerPage();
 
         foreach ($pages as $data) {
@@ -77,6 +78,22 @@ class PageSeeder extends Seeder
     }
 
     /** Job Postings: CMS title/intro/SEO above the dynamic filters and listings. */
+    /** Journal Archive: CMS title, intro and SEO around the dynamic search and article list. */
+    public static function archivePage(): array
+    {
+        return [
+            'title' => 'Journal Archive',
+            'slug' => 'archive',
+            'status' => 'Published',
+            'template' => 'archive',
+            'excerpt' => 'Every published manuscript, filterable by content category and searchable by title, author and keyword.',
+            'content' => null,
+            'seo_title' => 'Journal Archive',
+            'seo_description' => 'Every published MOS Legis manuscript, searchable by category, title, author and keyword.',
+            'metas' => [],
+        ];
+    }
+
     private function jobsPage(): array
     {
         return [

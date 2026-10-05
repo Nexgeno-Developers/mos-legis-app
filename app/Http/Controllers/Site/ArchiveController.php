@@ -3,9 +3,12 @@
 namespace App\Http\Controllers\Site;
 
 use App\Enums\ManuscriptStage;
+use App\Enums\PageTemplate;
+use App\Enums\PublishStatus;
 use App\Http\Controllers\Controller;
 use App\Models\ContentCategory;
 use App\Models\ManuscriptSubmission;
+use App\Models\Page;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -25,7 +28,12 @@ class ArchiveController extends Controller
 
     public function index(Request $request): View
     {
+        // Title, intro, content and SEO come from Admin → Pages ("Journal archive" template).
+        $page = Page::with('metas')->where('template', PageTemplate::Archive)->oldest('id')->first();
+        abort_unless($page && $page->status === PublishStatus::Published, 404);
+
         return view('site.archive.index', [
+            'page' => $page,
             'submissions' => $this->filtered($request)
                 ->with(['author:id,name', 'contentCategory:id,name', 'theme', 'awards:id,manuscript_submission_id'])
                 ->tap(fn ($q) => match ($request->string('sort')->value()) {

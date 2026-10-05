@@ -32,6 +32,7 @@ class PageController extends Controller
             PageTemplate::Career => [EnquiryController::class, 'careers'],
             PageTemplate::Teams => [$this, 'editorialBoard'],
             PageTemplate::Patron => [$this, 'patrons'],
+            PageTemplate::Archive => [ArchiveController::class, 'index'],
             PageTemplate::Layout => null,
         };
 

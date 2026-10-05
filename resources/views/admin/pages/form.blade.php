@@ -44,6 +44,8 @@
                         <x-form.input name="title" label="Title" :value="$page->title" required />
                         @if ($page->isHome())
                             <x-form.input name="slug" label="Slug" value="home" disabled hint="The home page always lives at the site address (/)." />
+                        @elseif ($page->fixedSlug())
+                            <x-form.input name="slug" label="Slug" :value="$page->fixedSlug()" disabled hint="This address is fixed ({{ url($page->fixedSlug()) }}): each manuscript's page lives under it." />
                         @else
                             {{-- The address updates as you type; blank = generated from the title (same rule as on save). --}}
                             <div x-data="{ slug: @js(old('slug', $page->slug) ?? ''), title: @js(old('title', $page->title) ?? '') }"

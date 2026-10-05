@@ -123,8 +123,8 @@ class PageController extends Controller implements HasMiddleware
 
     public function destroy(Page $page): RedirectResponse
     {
-        if ($page->isHome()) {
-            return back()->with('error', 'The home page cannot be deleted.');
+        if ($page->isProtected()) {
+            return back()->with('error', "The {$page->title} page cannot be deleted.");
         }
 
         activity()->log('Pages', 'Deleted page', $page, ['title' => $page->title, 'slug' => $page->slug]);

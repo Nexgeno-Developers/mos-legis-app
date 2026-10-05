@@ -46,6 +46,25 @@ class Page extends Model
         return $this->slug === 'home' ? route('home') : url($this->slug);
     }
 
+    /**
+     * Pages whose address can't change: Home (/) and the Journal Archive (/archive — each manuscript's
+     * page lives under /archive/…). Null for every other page.
+     */
+    public function fixedSlug(): ?string
+    {
+        return match (true) {
+            $this->isHome() => 'home',
+            $this->template === \App\Enums\PageTemplate::Archive => 'archive',
+            default => null,
+        };
+    }
+
+    /** Core pages that can't be deleted. */
+    public function isProtected(): bool
+    {
+        return $this->fixedSlug() !== null;
+    }
+
     public function isHome(): bool
     {
         return $this->exists && $this->getOriginal('slug') === 'home';

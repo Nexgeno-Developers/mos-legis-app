@@ -124,6 +124,8 @@ final class PageTemplates
                 'cta_text' => ['label' => 'Closing bar text', 'type' => 'text'],
                 'cta_button' => ['label' => 'Closing bar button', 'type' => 'text'],
             ],
+            // Journal Archive: title, intro, content and SEO only — search, filters and articles are dynamic.
+            PageTemplate::Archive => [],
             PageTemplate::Layout => [],
         };
     }
@@ -221,6 +223,11 @@ final class PageTemplates
                 ],
                 PageTemplate::Jobs => [
                     ['Job listings, search and filters (only live, approved jobs)', 'admin.job-postings.index', 'Job postings'],
+                ],
+                PageTemplate::Archive => [
+                    ['Published manuscripts, search, sort and the “Download all (ZIP)” button', 'admin.submissions.index', 'Submissions'],
+                    ['Category filter with article counts', 'admin.content-categories.index', 'Content categories'],
+                    ['Best Paper badges on winning articles', 'admin.best-paper-awards.index', 'Best Paper Awards'],
                 ],
                 PageTemplate::Contact => [
                     ['Contact form (name, email, phone, purpose, message) — the purposes list is fixed; messages arrive in Enquiries', 'admin.enquiries.index', 'Enquiries'],
@@ -353,6 +360,7 @@ final class PageTemplates
             PageTemplate::Jobs->value => 'Job postings',
             PageTemplate::PlagiarismChecker->value => 'Plagiarism checker',
             PageTemplate::Submit->value => 'Submit manuscript',
+            PageTemplate::Archive->value => 'Journal archive',
         ];
     }
 }

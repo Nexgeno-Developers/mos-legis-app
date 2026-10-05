@@ -12,8 +12,8 @@
     $from = $submissions->firstItem();
     $to = $submissions->lastItem();
 @endphp
-<x-layouts.site title="Journal Archive" description="Every published MOS Legis manuscript, searchable by category, title, author and keyword.">
-    <x-page-header eyebrow="Archive" title="Journal Archive" intro="Every published manuscript, filterable by content category and searchable by title, author and keyword." />
+<x-layouts.site :title="$page->seo_title ?: $page->title" :description="$page->seo_description ?: $page->excerpt" :og-image="$page->og_image">
+    <x-page-header :title="$page->title" :intro="$page->excerpt" />
 
     <div class="mx-auto grid max-w-[1200px] gap-8 px-4 py-8 sm:px-6 md:py-10 lg:grid-cols-[18rem_minmax(0,1fr)]" x-data="{ filters: false }">
         {{-- Sidebar filters (collapsible on phones) --}}
@@ -154,6 +154,8 @@
                 @endforelse
             </div>
             <div class="mt-8">{{ $submissions->links() }}</div>
+
+            @if ($page->content)<div class="prose-legis mt-10">{!! $page->content !!}</div>@endif
         </section>
     </div>
 </x-layouts.site>
