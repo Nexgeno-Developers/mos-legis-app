@@ -17,6 +17,7 @@ final class AdminNavigation
         ],
         'Manuscripts' => [
             ['Submissions', 'admin.submissions.index', 'inbox', 'submissions.view'],
+            ['Best Paper Awards', 'admin.best-paper-awards.index', 'award', 'submissions.best-paper'],
             ['Author Categories', 'admin.author-categories.index', 'square-user', 'author-categories.view'],
             ['Content Categories', 'admin.content-categories.index', 'book-open', 'content-categories.view'],
             ['Content Category Themes', 'admin.themes.index', 'calendar-range', 'themes.view'],

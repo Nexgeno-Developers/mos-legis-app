@@ -11,7 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 /**
- * SOW C.04 — current monthly winner, prize/criteria copy from the CMS Winner layout,
+ * SOW C.04 — current quarterly winner, prize/criteria copy from the CMS Winner layout,
  * past winners filtered by year and category, "Be considered next month" CTA.
  */
 class BestPaperController extends Controller
@@ -20,13 +20,13 @@ class BestPaperController extends Controller
     {
         $awards = BestPaperAward::query()
             ->with(['submission.author:id,name', 'submission.contentCategory:id,name', 'submission.theme'])
+            ->where('period_type', AwardPeriodType::Quarterly)
             ->get()
-            ->sortByDesc(fn (BestPaperAward $a) => $a->award_year * 100 + ($a->period_type === AwardPeriodType::Monthly
-                ? array_search($a->award_month, BestPaperAward::MONTHS, true) + 1
-                : (int) substr((string) $a->award_quarter, 1) * 3))
+            ->sortByDesc(fn (BestPaperAward $a) => $a->periodOrder())
             ->values();
 
-        $current = $awards->firstWhere('period_type', AwardPeriodType::Monthly);
+        // The latest quarter's winner; earlier winners are listed below.
+        $current = $awards->first();
 
         $past = $awards->reject(fn ($a) => $current && $a->is($current))
             ->when($request->integer('year'), fn ($c, $year) => $c->where('award_year', $year))

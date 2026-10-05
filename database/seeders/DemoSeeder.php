@@ -97,12 +97,12 @@ class DemoSeeder extends Seeder
 
         BestPaperAward::create([
             'manuscript_submission_id' => $published->first()->id,
-            'period_type' => AwardPeriodType::Monthly,
-            'award_month' => now()->subMonth()->format('F'),
-            'award_year' => now()->subMonth()->year,
+            'period_type' => AwardPeriodType::Quarterly,
+            'award_quarter' => BestPaperAward::lastQuarter()[0],
+            'award_year' => BestPaperAward::lastQuarter()[1],
             'prize_amount' => 2000,
             'editorial_citation' => 'Selected by the editorial board for its careful doctrinal analysis and original contribution.',
-            'selected_at' => now()->startOfMonth()->toDateString(),
+            'selected_at' => now()->firstOfQuarter()->toDateString(),
             'selected_by' => $admin->id,
         ]);
 

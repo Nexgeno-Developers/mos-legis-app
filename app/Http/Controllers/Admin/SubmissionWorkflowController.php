@@ -2,16 +2,14 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Enums\AwardPeriodType;
+use App\Actions\Awards\SaveBestPaperAward;
 use App\Enums\ManuscriptStage;
 use App\Enums\RevisionDecision;
 use App\Http\Controllers\Controller;
 use App\Models\BestPaperAward;
 use App\Models\ManuscriptSubmission;
 use App\Models\User;
-use App\Notifications\WorkflowNotifier;
 use App\Services\Manuscripts\ManuscriptWorkflow;
-use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
@@ -83,55 +81,34 @@ class SubmissionWorkflowController extends Controller
         return back()->with('success', 'Plagiarism re-check queued.');
     }
 
-    public function awardBestPaper(Request $request, ManuscriptSubmission $submission, WorkflowNotifier $notifier): RedirectResponse
+    /** Kept for the manuscript page; Admin → Best Paper Awards is the main place to manage winners. */
+    public function awardBestPaper(Request $request, ManuscriptSubmission $submission, SaveBestPaperAward $save): RedirectResponse
     {
         Gate::authorize('awardBestPaper', $submission);
 
-        if ($submission->stage !== ManuscriptStage::Published) {
-            throw ValidationException::withMessages(['period_type' => 'Only published manuscripts can win Best Paper.']);
-        }
-
         $data = $request->validate([
-            'period_type' => ['required', Rule::enum(AwardPeriodType::class)],
-            'award_month' => ['nullable', 'required_if:period_type,monthly', Rule::in(BestPaperAward::MONTHS)],
-            'award_quarter' => ['nullable', 'required_if:period_type,quarterly', Rule::in(BestPaperAward::QUARTERS)],
+            'award_quarter' => ['required', Rule::in(BestPaperAward::QUARTERS)],
             'award_year' => ['required', 'integer', 'between:2000,2100'],
-            'prize_amount' => ['required', 'numeric', 'min:0', 'max:10000000'],
+            'prize_amount' => ['nullable', 'numeric', 'min:0', 'max:10000000'],
             'editorial_citation' => ['required', 'string', 'max:2000'],
         ]);
 
-        $monthly = $data['period_type'] === AwardPeriodType::Monthly->value;
-
         try {
-            $award = $submission->awards()->create([
-                'period_type' => $data['period_type'],
-                'award_month' => $monthly ? $data['award_month'] : null,
-                'award_quarter' => $monthly ? null : $data['award_quarter'],
-                'award_year' => $data['award_year'],
-                'prize_amount' => $data['prize_amount'],
-                'editorial_citation' => $data['editorial_citation'],
-                'selected_at' => today(),
-                'selected_by' => $request->user()->id,
-            ]);
-        } catch (UniqueConstraintViolationException) {
-            throw ValidationException::withMessages(['period_type' => 'A Best Paper winner has already been selected for that period.']);
+            $award = $save->handle($data + ['manuscript_submission_id' => $submission->id], $request->user());
+        } catch (ValidationException $e) {
+            // The manuscript page shows award errors next to the quarter field.
+            throw ValidationException::withMessages(['award_quarter' => collect($e->errors())->flatten()->first()]);
         }
-
-        activity()->log('Submissions', 'Marked as Best Paper Winner', $submission, ['period' => $award->periodLabel()]);
-        $notifier->toUser('best_paper_selected', $submission->author, [
-            'reference' => $submission->reference(), 'title' => $submission->title, 'period' => $award->periodLabel(),
-        ]);
 
         return back()->with('success', "Marked as Best Paper — {$award->periodLabel()}.");
     }
 
-    public function removeAward(ManuscriptSubmission $submission, BestPaperAward $award): RedirectResponse
+    public function removeAward(ManuscriptSubmission $submission, BestPaperAward $award, SaveBestPaperAward $save): RedirectResponse
     {
         Gate::authorize('awardBestPaper', $submission);
         abort_unless($award->manuscript_submission_id === $submission->id, 404);
 
-        activity()->log('Submissions', 'Best Paper award removed', $submission, ['period' => $award->periodLabel()]);
-        $award->delete();
+        $save->delete($award);
 
         return back()->with('success', 'Award removed.');
     }

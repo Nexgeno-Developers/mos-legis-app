@@ -25,9 +25,9 @@ class HomeController extends Controller
                 ->with(['author:id,name', 'contentCategory:id,name', 'theme'])
                 ->latest('published_at')->limit(6)->get(),
             'winner' => BestPaperAward::with('submission.author:id,name', 'submission.contentCategory:id,name')
-                ->where('period_type', AwardPeriodType::Monthly)
+                ->where('period_type', AwardPeriodType::Quarterly)
                 ->get()
-                ->sortByDesc(fn (BestPaperAward $a) => $a->award_year * 100 + array_search($a->award_month, BestPaperAward::MONTHS, true))
+                ->sortByDesc(fn (BestPaperAward $a) => $a->periodOrder())
                 ->first(),
             'blogs' => Blog::live()->with('category:id,category_name')->latest('publish_date')->limit(3)->get(),
         ]);

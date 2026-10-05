@@ -8,6 +8,6 @@ enum AwardPeriodType: string
 {
     use HasOptions;
 
-    case Monthly = 'monthly';
+    // Best Paper is awarded per quarter only (monthly awards were removed at the client's request).
     case Quarterly = 'quarterly';
 }

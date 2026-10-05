@@ -164,31 +164,21 @@
                 </x-admin.panel>
             @endcan
 
+            {{-- Best Paper: winners are managed in Admin → Best Paper Awards; this shows the manuscript's awards. --}}
             @can('awardBestPaper', $submission)
-                @if ($stage === App\Enums\ManuscriptStage::Published)
-                    <x-admin.panel title="Mark as Best Paper Winner" description="One winner per monthly or quarterly period.">
-                        @foreach ($submission->awards as $award)
-                            <div class="mb-4 flex items-center justify-between border border-gold/50 px-3 py-2 text-sm">
-                                <span>{{ $award->periodLabel() }} · {{ money($award->prize_amount) }}</span>
-                                <x-delete-button :action="route('admin.submissions.awards.destroy', [$submission, $award])" label="Remove" icon="x" confirm="Remove this award?" />
+                @if ($stage === App\Enums\ManuscriptStage::Published || $submission->awards->isNotEmpty())
+                    <x-admin.panel title="Best Paper" description="Winners are chosen in Best Paper Awards.">
+                        @forelse ($submission->awards as $award)
+                            <div class="mb-3 flex items-center justify-between gap-3 border border-gold/50 px-3 py-2 text-sm">
+                                <span class="flex items-center gap-2"><x-icon name="award" class="h-4 w-4 text-gold" /> {{ $award->periodLabel() }}@if ($award->hasPrize()) · {{ money($award->prize_amount) }}@endif</span>
+                                <a href="{{ route('admin.best-paper-awards.edit', $award) }}" class="text-primary hover:underline">Edit</a>
                             </div>
-                        @endforeach
-                        <form method="POST" action="{{ route('admin.submissions.awards.store', $submission) }}" class="space-y-3" x-data="{ type: @js(old('period_type', 'monthly')) }">
-                            @csrf
-                            <x-form.field label="Award period type" name="period_type" required>
-                                <select name="period_type" x-model="type" class="field-input">
-                                    @foreach (App\Enums\AwardPeriodType::options() as $value => $label)<option value="{{ $value }}">{{ $label }}</option>@endforeach
-                                </select>
-                            </x-form.field>
-                            <div class="grid grid-cols-2 gap-3">
-                                <div x-show="type === 'monthly'"><x-form.select name="award_month" label="Month" :options="array_combine(App\Models\BestPaperAward::MONTHS, App\Models\BestPaperAward::MONTHS)" :value="now()->subMonth()->format('F')" /></div>
-                                <div x-show="type === 'quarterly'" x-cloak><x-form.select name="award_quarter" label="Quarter" :options="array_combine(App\Models\BestPaperAward::QUARTERS, App\Models\BestPaperAward::QUARTERS)" /></div>
-                                <x-form.input name="award_year" type="number" label="Year" :value="now()->year" />
-                            </div>
-                            <x-form.input name="prize_amount" type="number" step="0.01" label="Prize amount (₹)" value="2000" />
-                            <x-form.textarea name="editorial_citation" label="Editorial citation" rows="3" required />
-                            <x-button type="submit" variant="gold" icon="award" class="w-full">Mark as winner</x-button>
-                        </form>
+                        @empty
+                            <p class="mb-4 text-sm text-muted-foreground">This manuscript has not won Best Paper.</p>
+                        @endforelse
+                        @if ($stage === App\Enums\ManuscriptStage::Published)
+                            <x-button :href="route('admin.best-paper-awards.create', ['submission' => $submission->id])" variant="gold" icon="award" class="w-full">Mark as Best Paper winner</x-button>
+                        @endif
                     </x-admin.panel>
                 @endif
             @endcan

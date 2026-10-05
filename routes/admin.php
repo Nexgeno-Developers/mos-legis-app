@@ -43,6 +43,7 @@ Route::middleware('admin')->group(function () {
         Route::delete('awards/{award}', 'removeAward')->name('awards.destroy');
     });
     Route::resource('submissions', Admin\SubmissionController::class);
+    Route::resource('best-paper-awards', Admin\BestPaperAwardController::class)->except('show');
     Route::get('payments/{payment}/invoice', [Admin\PaymentController::class, 'invoice'])->name('payments.invoice');
     Route::resource('payments', Admin\PaymentController::class)->only(['index', 'show']);
     Route::controller(Admin\PlagiarismCheckController::class)->prefix('plagiarism-checks/{plagiarism_check}')->name('plagiarism-checks.')->group(function () {

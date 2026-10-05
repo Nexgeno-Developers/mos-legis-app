@@ -127,14 +127,14 @@ class SubmissionManagementTest extends TestCase
         $published = ManuscriptSubmission::factory()->stage(ManuscriptStage::Published)->create();
         $another = ManuscriptSubmission::factory()->stage(ManuscriptStage::Published)->create();
         $pending = ManuscriptSubmission::factory()->create();
-        $award = ['period_type' => 'monthly', 'award_month' => 'August', 'award_year' => 2026, 'prize_amount' => 2000, 'editorial_citation' => 'Outstanding.'];
+        $award = ['award_quarter' => 'Q3', 'award_year' => 2026, 'prize_amount' => 2000, 'editorial_citation' => 'Outstanding.'];
 
         $this->actingAs($admin)->post(route('admin.submissions.awards.store', $published), $award)->assertSessionHas('success');
-        $this->actingAs($admin)->post(route('admin.submissions.awards.store', $another), $award)->assertSessionHasErrors('period_type');
-        $this->actingAs($admin)->post(route('admin.submissions.awards.store', $pending), $award)->assertSessionHasErrors('period_type');
+        $this->actingAs($admin)->post(route('admin.submissions.awards.store', $another), $award)->assertSessionHasErrors('award_quarter');
+        $this->actingAs($admin)->post(route('admin.submissions.awards.store', $pending), $award)->assertSessionHasErrors('award_quarter');
 
-        // Quarterly awards are a separate award type.
-        $this->actingAs($admin)->post(route('admin.submissions.awards.store', $another), ['period_type' => 'quarterly', 'award_quarter' => 'Q3'] + $award)
+        // Another quarter is a separate period.
+        $this->actingAs($admin)->post(route('admin.submissions.awards.store', $another), ['award_quarter' => 'Q4'] + $award)
             ->assertSessionHas('success');
 
         $this->assertSame(2, BestPaperAward::count());

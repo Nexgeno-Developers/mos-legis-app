@@ -1,7 +1,7 @@
 @php
     $slides = [
         ['eyebrow' => 'Peer-Reviewed Legal Scholarship', 'headline' => 'Rooted in Tradition. Driven by Justice.', 'sub' => $page?->excerpt, 'primary' => ['Submit a Manuscript', page_url('submit')], 'secondary' => ['Browse the Archive', route('archive.index')]],
-        ['eyebrow' => 'Best Paper — Monthly Winner', 'headline' => "Recognising the Month's Most Rigorous Scholarship.", 'sub' => 'Each month one paper is elevated for its research depth, originality, and clarity of argument.', 'primary' => ['See the Winner', page_url('paper_winner')], 'secondary' => ['Past Winners', page_url('paper_winner').'#past'], ],
+        ['eyebrow' => 'Best Paper — Quarterly Winner', 'headline' => "Recognising the Quarter's Most Rigorous Scholarship.", 'sub' => 'Each quarter one paper is elevated for its research depth, originality, and clarity of argument.', 'primary' => ['See the Winner', page_url('paper_winner')], 'secondary' => ['Past Winners', page_url('paper_winner').'#past'], ],
         ['eyebrow' => 'Plagiarism Screening', 'headline' => 'Every Manuscript Screened Before Peer Review.', 'sub' => 'Check your own draft for similarity before you submit, with a downloadable report.', 'primary' => ['Try the Plagiarism Checker', page_url('plagiarism_checker')], 'secondary' => ['Submit a Manuscript', page_url('submit')]],
     ];
 @endphp

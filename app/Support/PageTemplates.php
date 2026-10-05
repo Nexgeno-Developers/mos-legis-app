@@ -50,7 +50,7 @@ final class PageTemplates
                 'prize_title' => ['label' => 'Box 2 heading', 'type' => 'text'],
                 'prize_desc' => ['label' => 'Box 2 text (the prize)', 'type' => 'textarea'],
                 'be_considered_title' => ['label' => 'Box 3 heading', 'type' => 'text'],
-                'be_considered_desc' => ['label' => 'Box 3 text (be considered next month)', 'type' => 'textarea'],
+                'be_considered_desc' => ['label' => 'Box 3 text (be considered next quarter)', 'type' => 'textarea'],
                 'past_label' => ['label' => 'Past winners label', 'type' => 'text'],
                 'past_heading' => ['label' => 'Past winners heading', 'type' => 'text'],
             ],
@@ -208,7 +208,7 @@ final class PageTemplates
                 ['Hero slides (headings and buttons) — the first slide uses this page’s excerpt; the rest is fixed in the design.', null, null],
                 ['Content categories strip', 'admin.content-categories.index', 'Content categories'],
                 ['Latest publications (the 6 most recently published manuscripts)', 'admin.submissions.index', 'Submissions'],
-                ['Best Paper of the month (latest monthly award)', 'admin.submissions.index', 'Submissions → manuscript → Best Paper award'],
+                ['Best Paper of the quarter (latest quarterly award)', 'admin.best-paper-awards.index', 'Best Paper Awards'],
                 ['Latest 3 blog posts', 'admin.blogs.index', 'Blogs'],
             ],
             default => match ($page->template) {
@@ -226,7 +226,7 @@ final class PageTemplates
                     ['{fee} and {threshold} — checking fee and similarity limit', 'admin.settings.edit', 'Settings → Manuscript'],
                 ],
                 PageTemplate::PaperWinner => [
-                    ['Current monthly winner and past winners', 'admin.submissions.index', 'Submissions → manuscript → Best Paper award'],
+                    ['Current quarterly winner and past winners', 'admin.best-paper-awards.index', 'Best Paper Awards'],
                     ['Year and category filters', 'admin.content-categories.index', 'Content categories'],
                 ],
                 PageTemplate::Jobs => [
@@ -259,7 +259,7 @@ final class PageTemplates
             PageTemplate::PaperWinner => [
                 'current_label' => 'Current Winner', 'cards_label' => 'The Award',
                 'winner_choose_title' => 'How Winners Are Chosen', 'prize_title' => 'The Prize',
-                'be_considered_title' => 'Be Considered Next Month',
+                'be_considered_title' => 'Be Considered Next Quarter',
                 'past_label' => 'Archive', 'past_heading' => 'Past Winners',
             ],
             PageTemplate::Contact => [

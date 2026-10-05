@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * Clarification #3 — one winner per monthly or quarterly period (enforced by the period_key unique index).
+ * One Best Paper winner per quarter (enforced by the period_key unique index).
  */
 #[Fillable([
     'manuscript_submission_id', 'period_type', 'award_month', 'award_quarter', 'award_year',
@@ -16,11 +16,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 ])]
 class BestPaperAward extends Model
 {
-    public const MONTHS = [
-        'January', 'February', 'March', 'April', 'May', 'June',
-        'July', 'August', 'September', 'October', 'November', 'December',
-    ];
-
     public const QUARTERS = ['Q1', 'Q2', 'Q3', 'Q4'];
 
     protected function casts(): array
@@ -43,8 +38,28 @@ class BestPaperAward extends Model
         return $this->belongsTo(User::class, 'selected_by');
     }
 
+    /** The cash prize is optional. */
+    public function hasPrize(): bool
+    {
+        return $this->prize_amount !== null && (float) $this->prize_amount > 0;
+    }
+
+    /** Last completed quarter as ['Q1'..'Q4', year]. */
+    public static function lastQuarter(): array
+    {
+        $date = now()->subQuarterNoOverflow();
+
+        return ['Q'.$date->quarter, $date->year];
+    }
+
+    /** Sort key: later quarters first when sorted descending. */
+    public function periodOrder(): int
+    {
+        return $this->award_year * 10 + (int) substr((string) $this->award_quarter, 1);
+    }
+
     public function periodLabel(): string
     {
-        return ($this->award_month ?? $this->award_quarter).' '.$this->award_year;
+        return $this->award_quarter.' '.$this->award_year;
     }
 }

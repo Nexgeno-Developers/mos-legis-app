@@ -2,7 +2,7 @@
     <x-page-header :title="$page->title" :intro="$page->excerpt" />
     <div class="mx-auto max-w-[1200px] space-y-12 px-4 py-8 sm:px-6 md:py-10">
         <section>
-            <x-section-heading :eyebrow="$page->meta('current_label')" :title="$current ? 'Best Paper — '.$current->periodLabel() : 'This month\'s winner will be announced soon'" />
+            <x-section-heading :eyebrow="$page->meta('current_label')" :title="$current ? 'Best Paper — '.$current->periodLabel() : 'This quarter\'s winner will be announced soon'" />
             @if ($current)
                 <div class="mt-8 grid gap-8 border border-gold/60 bg-card p-8 md:grid-cols-[auto_1fr]">
                     <x-icon name="award" class="h-16 w-16 text-gold" />
@@ -10,7 +10,7 @@
                         <h3 class="font-display text-3xl"><a href="{{ route('archive.show', $current->submission) }}" class="hover:text-primary">{{ $current->submission->title }}</a></h3>
                         <p class="mt-2 text-muted-foreground">{{ collect([$current->submission->author->name])->merge($current->submission->co_authors ?? [])->implode(', ') }} · {{ $current->submission->contentCategory->name }}</p>
                         <blockquote class="measure mt-5 border-l-2 border-gold pl-4 text-lg italic">{{ $current->editorial_citation }}</blockquote>
-                        <p class="mt-4 text-sm text-muted-foreground">Cash prize: {{ money($current->prize_amount) }}</p>
+                        @if ($current->hasPrize())<p class="mt-4 text-sm text-muted-foreground">Cash prize: {{ money($current->prize_amount) }}</p>@endif
                     </div>
                 </div>
             @endif
