@@ -46,6 +46,20 @@ class PublicSiteTest extends TestCase
     }
 
     #[Test]
+    public function one_archive_search_box_matches_title_author_and_keyword(): void
+    {
+        $paper = ManuscriptSubmission::factory()->stage(ManuscriptStage::Published)->create([
+            'title' => 'Constitutional Silences', 'keywords' => ['federalism'], 'co_authors' => ['Meera Joshi'],
+        ]);
+        $other = ManuscriptSubmission::factory()->stage(ManuscriptStage::Published)->create(['title' => 'Unrelated Tax Note', 'keywords' => ['tax']]);
+
+        foreach (['Silences', 'federalism', 'Meera', $paper->author->name] as $term) {
+            $this->get(route('archive.index', ['q' => $term]))->assertOk()->assertSee('Constitutional Silences')->assertDontSee('Unrelated Tax Note');
+        }
+        $this->get(route('archive.index', ['q' => 'federalism']))->assertSee('Search: federalism'); // removable filter tag
+    }
+
+    #[Test]
     public function archive_lists_only_published_and_filters(): void
     {
         Storage::fake('local');

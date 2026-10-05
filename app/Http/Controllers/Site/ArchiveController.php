@@ -27,8 +27,12 @@ class ArchiveController extends Controller
     {
         return view('site.archive.index', [
             'submissions' => $this->filtered($request)
-                ->with(['author:id,name', 'contentCategory:id,name', 'theme'])
-                ->latest('published_at')
+                ->with(['author:id,name', 'contentCategory:id,name', 'theme', 'awards:id,manuscript_submission_id'])
+                ->tap(fn ($q) => match ($request->string('sort')->value()) {
+                    'oldest' => $q->oldest('published_at'),
+                    'title' => $q->orderBy('title'),
+                    default => $q->latest('published_at'),
+                })
                 ->paginate(12)
                 ->withQueryString(),
             'categories' => ContentCategory::withCount(['submissions' => fn ($q) => $q->where('stage', ManuscriptStage::Published)])
@@ -84,6 +88,12 @@ class ArchiveController extends Controller
             ->published()
             ->when($request->integer('category'), fn ($q, $id) => $q->where('content_category_id', $id))
             ->when($request->integer('year'), fn ($q, $year) => $q->whereYear('published_at', $year))
+            // One search box: title, author / co-authors or keyword.
+            ->when($request->string('q')->trim()->value(), fn ($q, $term) => $q->where(fn ($q) => $q
+                ->where('title', 'like', "%{$term}%")
+                ->orWhereHas('author', fn ($q) => $q->where('name', 'like', "%{$term}%"))
+                ->orWhere('co_authors', 'like', "%{$term}%")
+                ->orWhere('keywords', 'like', '%'.addcslashes($term, '%_').'%')))
             ->when($request->string('title')->trim()->value(), fn ($q, $title) => $q->where('title', 'like', "%{$title}%"))
             ->when($request->string('author')->trim()->value(), fn ($q, $author) => $q->where(fn ($q) => $q
                 ->whereHas('author', fn ($q) => $q->where('name', 'like', "%{$author}%"))
