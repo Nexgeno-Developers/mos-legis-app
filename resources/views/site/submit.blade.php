@@ -1,9 +1,31 @@
 @php
+    // All wording comes from Admin → Pages → Submit; a field never saved uses the default wording,
+    // a field saved empty hides its element. {fee}, {threshold} and {currency} are filled in from Settings.
+    $defaults = App\Support\PageTemplates::submitDefaults();
     $threshold = settings('manuscript.plagiarism_max_similarity_percent');
-    $guide = ['process' => 'How it works', 'categories' => 'Categories & word limits', 'preparation' => 'Preparing your manuscript', 'fees' => 'Fees'];
-    if ($page?->content) {
-        $guide['more'] = 'More information';
-    }
+    $fill = fn (?string $text) => strtr((string) $text, [
+        '{fee}' => money($prescreeningFee),
+        '{threshold}' => rtrim(rtrim(number_format((float) $threshold, 2), '0'), '.'),
+        '{currency}' => settings('payment.currency'),
+    ]);
+    $m = fn (string $key) => $page ? $page->meta($key, $defaults[$key]) : $defaults[$key];
+    $text = fn (string $key) => $fill($m($key));
+    $rows = fn (string $key) => collect($m($key) ?: [])->filter(fn ($row) => implode('', (array) $row) !== '')->values();
+
+    $facts = $rows('facts');
+    $steps = $rows('steps');
+    $checklist = $rows('checklist')->pluck('text')->filter();
+    $guidelines = filled($m('guidelines_slug')) ? App\Support\PublicPages::bySlug($m('guidelines_slug')) : null;
+    $factIcons = ['badge-indian-rupee', 'file-text', 'shield-check'];
+
+    // Quick links to the guide sections that have a heading.
+    $guide = array_filter([
+        'process' => $steps->isNotEmpty() ? ($m('steps_label') ?: $m('steps_heading')) : null,
+        'categories' => $m('categories_label') ?: $m('categories_heading'),
+        'preparation' => $m('preparation_label') ?: $m('preparation_heading'),
+        'fees' => $m('fees_label') ?: $m('fees_heading'),
+        'more' => $page?->content ? ($m('more_heading') ?: $m('more_label')) : null,
+    ]);
 @endphp
 <x-layouts.site :title="$page?->seo_title ?: 'Submit a Manuscript'" :description="$page?->seo_description">
     <x-page-header eyebrow="Submission Portal" :title="$page?->title && $page->title !== 'Submit' ? $page->title : 'Submit a Manuscript'"
@@ -12,33 +34,33 @@
     <div class="mx-auto max-w-[1200px] px-4 py-8 sm:px-6 md:py-10">
         {{-- 1. The form comes first --}}
         <section id="submission-form" class="scroll-mt-28">
-            {{-- Key facts at a glance --}}
-            <ul class="mb-6 grid gap-px border border-border bg-border text-sm sm:grid-cols-3">
-                <li class="flex items-start gap-3 bg-card px-4 py-3">
-                    <x-icon name="badge-indian-rupee" class="mt-0.5 h-5 w-5 text-primary" />
-                    <span><strong>{{ money($prescreeningFee) }}</strong> pre-screening fee<br><span class="text-muted-foreground">inclusive of all taxes · <a href="#fees" class="text-primary hover:underline">all fees</a></span></span>
-                </li>
-                <li class="flex items-start gap-3 bg-card px-4 py-3">
-                    <x-icon name="file-text" class="mt-0.5 h-5 w-5 text-primary" />
-                    <span><strong>.docx</strong> within the category word limit<br><span class="text-muted-foreground"><a href="#categories" class="text-primary hover:underline">see word limits</a></span></span>
-                </li>
-                <li class="flex items-start gap-3 bg-card px-4 py-3">
-                    <x-icon name="shield-check" class="mt-0.5 h-5 w-5 text-primary" />
-                    <span><strong>Double-blind</strong> peer review<br><span class="text-muted-foreground">after similarity screening (max {{ $threshold }}%)</span></span>
-                </li>
-            </ul>
+            @if ($facts->isNotEmpty())
+                <ul @class(['mb-6 grid gap-px border border-border bg-border text-sm', 'sm:grid-cols-2' => $facts->count() === 2, 'sm:grid-cols-3' => $facts->count() >= 3])>
+                    @foreach ($facts as $fact)
+                        <li class="flex items-start gap-3 bg-card px-4 py-3">
+                            <x-icon :name="$factIcons[$loop->index % 3]" class="mt-0.5 h-5 w-5 shrink-0 text-primary" />
+                            <span>
+                                @if (filled($fact['title'] ?? null))<strong>{{ $fill($fact['title']) }}</strong>@endif
+                                @if (filled($fact['text'] ?? null))<span class="block text-muted-foreground">{{ $fill($fact['text']) }}</span>@endif
+                            </span>
+                        </li>
+                    @endforeach
+                </ul>
+            @endif
 
             @if ($isAuthor)
-                <div class="mb-6"><x-section-heading eyebrow="Submit in three steps" title="Manuscript Submission Form" /></div>
+                @if ($m('form_label') || $m('form_heading'))
+                    <div class="mb-6"><x-section-heading :eyebrow="$text('form_label')" :title="$text('form_heading')" /></div>
+                @endif
                 @include('submissions._step-form', ['authorCategories' => $authorCategories->pluck('name', 'id')])
             @elseif (auth()->check())
                 <p class="border-l-2 border-gold/60 bg-card px-4 py-3">Manuscripts are submitted from an author account. Staff accounts cannot submit.</p>
             @else
                 <div class="flex flex-wrap items-center justify-between gap-6 border border-border bg-card p-6 md:p-8">
                     <div class="max-w-xl">
-                        <p class="label-caps text-xs text-primary">Manuscript Submission Form</p>
-                        <p class="mt-1 font-display text-2xl">Sign in to submit</p>
-                        <p class="mt-1 text-muted-foreground">Create a free author account to submit your manuscript, pay the pre-screening fee and track every stage of review.</p>
+                        @if ($m('form_heading'))<p class="label-caps text-xs text-primary">{{ $text('form_heading') }}</p>@endif
+                        @if ($m('guest_heading'))<p class="mt-1 font-display text-2xl">{{ $text('guest_heading') }}</p>@endif
+                        @if ($m('guest_text'))<p class="mt-1 text-muted-foreground">{{ $text('guest_text') }}</p>@endif
                     </div>
                     <div class="flex flex-wrap gap-3">
                         <x-button variant="primary" icon="log-in" :href="route('login')">Sign in</x-button>
@@ -50,37 +72,35 @@
 
         {{-- 2. Submission guide --}}
         <div class="mt-16 border-t border-border pt-10">
-            <p class="label-caps text-xs text-primary">Submission guide</p>
-            <h2 class="mt-1 font-display text-3xl">Everything you need before you submit</h2>
-            <nav aria-label="Submission guide" class="mt-5 flex flex-wrap gap-2">
-                @foreach ($guide as $anchor => $label)
-                    <a href="#{{ $anchor }}" class="border border-border bg-card px-3 py-1.5 text-sm hover:border-gold hover:text-primary">{{ $label }}</a>
-                @endforeach
-            </nav>
+            @if ($m('guide_label'))<p class="label-caps text-xs text-primary">{{ $text('guide_label') }}</p>@endif
+            @if ($m('guide_heading'))<h2 class="mt-1 font-display text-3xl">{{ $text('guide_heading') }}</h2>@endif
+            @if ($guide)
+                <nav aria-label="Submission guide" class="mt-5 flex flex-wrap gap-2">
+                    @foreach ($guide as $anchor => $label)
+                        <a href="#{{ $anchor }}" class="border border-border bg-card px-3 py-1.5 text-sm hover:border-gold hover:text-primary">{{ $fill($label) }}</a>
+                    @endforeach
+                </nav>
+            @endif
         </div>
 
         <div class="mt-10 space-y-16">
-            <section id="process" class="scroll-mt-28">
-                <x-section-heading eyebrow="How it works" title="From Submission to Publication" />
-                <ol class="mt-8 grid gap-px border border-border bg-border sm:grid-cols-2 lg:grid-cols-5">
-                    @foreach ([
-                        'Submit & pay' => 'Fill in the form and pay the pre-screening fee of '.money($prescreeningFee).'.',
-                        'Plagiarism screening' => 'Manuscripts above '.$threshold.'% similarity are declined.',
-                        'Peer review' => 'A subject reviewer is assigned automatically.',
-                        'Revision or approval' => 'Revise and resubmit if the reviewer asks for changes.',
-                        'Publication' => 'Pay the publication fee and receive your certificate.',
-                    ] as $title => $text)
-                        <li class="bg-card p-5">
-                            <span class="grid h-8 w-8 place-items-center rounded-full bg-primary font-mono text-xs text-primary-foreground">{{ $loop->iteration }}</span>
-                            <p class="mt-3 font-display text-lg">{{ $title }}</p>
-                            <p class="mt-1 text-sm text-muted-foreground">{{ $text }}</p>
-                        </li>
-                    @endforeach
-                </ol>
-            </section>
+            @if ($steps->isNotEmpty())
+                <section id="process" class="scroll-mt-28">
+                    <x-section-heading :eyebrow="$text('steps_label')" :title="$text('steps_heading')" />
+                    <ol @class(['mt-8 grid gap-px border border-border bg-border sm:grid-cols-2', 'lg:grid-cols-3' => $steps->count() === 3, 'lg:grid-cols-4' => $steps->count() === 4, 'lg:grid-cols-5' => $steps->count() >= 5])>
+                        @foreach ($steps as $step)
+                            <li class="bg-card p-5">
+                                <span class="grid h-8 w-8 place-items-center rounded-full bg-primary font-mono text-xs text-primary-foreground">{{ $loop->iteration }}</span>
+                                @if (filled($step['title'] ?? null))<p class="mt-3 font-display text-lg">{{ $fill($step['title']) }}</p>@endif
+                                @if (filled($step['text'] ?? null))<p class="mt-1 text-sm text-muted-foreground">{{ $fill($step['text']) }}</p>@endif
+                            </li>
+                        @endforeach
+                    </ol>
+                </section>
+            @endif
 
             <section id="categories" class="scroll-mt-28">
-                <x-section-heading eyebrow="Choose a category" title="Categories & Word Limits" />
+                <x-section-heading :eyebrow="$text('categories_label')" :title="$text('categories_heading')" />
                 <div class="mt-8 grid gap-4 md:grid-cols-2">
                     @foreach ($contentCategories as $category)
                         <div class="flex flex-col border border-border bg-card p-6">
@@ -98,44 +118,45 @@
             </section>
 
             <section id="preparation" class="scroll-mt-28">
-                <x-section-heading eyebrow="Prepare" title="Preparing Your Manuscript" />
-                <div class="mt-8 grid gap-8 lg:grid-cols-[minmax(0,1fr)_22rem]">
+                <x-section-heading :eyebrow="$text('preparation_label')" :title="$text('preparation_heading')" />
+                <div @class(['mt-8 grid gap-8', 'lg:grid-cols-[minmax(0,1fr)_22rem]' => $checklist->isNotEmpty()])>
                     <div class="prose-legis">
                         @if ($guidelines)
                             {!! Str::limit(strip_tags($guidelines->content, '<p><ul><li><h2><strong><em>'), 1200) !!}
-                            <p><a href="{{ $guidelines->url() }}">Read the full Author Guidelines</a></p>
-                        @else
-                            <p>Follow the formatting and citation rules of your category, and keep the manuscript anonymous for double-blind review.</p>
+                            <p><a href="{{ $guidelines->url() }}">Read the full {{ $guidelines->title }}</a></p>
+                        @elseif ($m('preparation_text'))
+                            <p class="whitespace-pre-line">{{ $text('preparation_text') }}</p>
                         @endif
                     </div>
-                    <div class="h-fit border border-border bg-card p-6">
-                        <p class="label-caps text-xs text-primary">Before you upload</p>
-                        <h3 class="mt-1 font-display text-xl">Submission Checklist</h3>
-                        <ul class="mt-4 space-y-2.5 text-sm">
-                            @foreach (['Manuscript in .docx format within the category word limit', 'Abstract of not more than 250 words', 'Three to six keywords', 'Co-authors listed and consenting', 'Originality, plagiarism and AI-use declarations ready', 'Billing address for the pre-screening invoice'] as $item)
-                                <li class="flex gap-2"><x-icon name="check" class="mt-0.5 shrink-0 text-success" /> {{ $item }}</li>
-                            @endforeach
-                        </ul>
-                        <a href="#submission-form" class="label-caps mt-5 inline-flex items-center gap-1 text-xs text-primary hover:underline">Go to the form <x-icon name="arrow-right" class="h-3.5 w-3.5" /></a>
-                    </div>
+                    @if ($checklist->isNotEmpty())
+                        <div class="h-fit border border-border bg-card p-6">
+                            @if ($m('checklist_heading'))<h3 class="font-display text-xl">{{ $text('checklist_heading') }}</h3>@endif
+                            <ul class="mt-4 space-y-2.5 text-sm">
+                                @foreach ($checklist as $item)
+                                    <li class="flex gap-2"><x-icon name="check" class="mt-0.5 shrink-0 text-success" /> {{ $fill($item) }}</li>
+                                @endforeach
+                            </ul>
+                            <a href="#submission-form" class="label-caps mt-5 inline-flex items-center gap-1 text-xs text-primary hover:underline">Go to the form <x-icon name="arrow-right" class="h-3.5 w-3.5" /></a>
+                        </div>
+                    @endif
                 </div>
             </section>
 
             <section id="fees" class="scroll-mt-28">
-                <x-section-heading eyebrow="Fees" title="Fee Structure" />
+                <x-section-heading :eyebrow="$text('fees_label')" :title="$text('fees_heading')" />
                 <div class="mt-6 grid gap-4 sm:grid-cols-2">
                     <div class="border border-border bg-card p-5">
                         <p class="label-caps text-xs text-muted-foreground">On submission</p>
                         <p class="mt-1 font-display text-2xl">{{ money($prescreeningFee) }}</p>
-                        <p class="text-sm text-muted-foreground">Plagiarism pre-screening fee</p>
+                        @if ($m('fees_submission'))<p class="text-sm text-muted-foreground">{{ $text('fees_submission') }}</p>@endif
                     </div>
                     <div class="border border-border bg-card p-5">
                         <p class="label-caps text-xs text-muted-foreground">After acceptance</p>
                         <p class="mt-1 font-display text-2xl">Publication fee</p>
-                        <p class="text-sm text-muted-foreground">Depends on your author category and content category (table below)</p>
+                        @if ($m('fees_publication'))<p class="text-sm text-muted-foreground">{{ $text('fees_publication') }}</p>@endif
                     </div>
                 </div>
-                <p class="mt-4 text-sm text-muted-foreground">All fees are in {{ settings('payment.currency') }} and inclusive of all taxes.</p>
+                @if ($m('fees_note'))<p class="mt-4 text-sm text-muted-foreground">{{ $text('fees_note') }}</p>@endif
                 <div class="mt-4 overflow-x-auto border border-border bg-card">
                     <table class="w-full min-w-[640px] text-left text-sm">
                         <thead><tr class="border-b border-border bg-secondary/60"><th class="label-caps px-4 py-3 text-xs text-muted-foreground">Author category</th>
@@ -157,15 +178,17 @@
 
             @if ($page?->content)
                 <section id="more" class="scroll-mt-28">
-                    <x-section-heading eyebrow="Good to know" title="More Information" />
+                    <x-section-heading :eyebrow="$text('more_label')" :title="$text('more_heading')" />
                     <div class="prose-legis measure mt-6">{!! $page->content !!}</div>
                 </section>
             @endif
 
-            <div class="flex flex-wrap items-center justify-between gap-4 border border-gold/50 bg-card px-6 py-5">
-                <p class="font-display text-xl">Ready to submit your manuscript?</p>
-                <x-button variant="primary" icon="arrow-right" href="#submission-form">Back to the form</x-button>
-            </div>
+            @if ($m('cta_text') || $m('cta_button'))
+                <div class="flex flex-wrap items-center justify-between gap-4 border border-gold/50 bg-card px-6 py-5">
+                    @if ($m('cta_text'))<p class="font-display text-xl">{{ $text('cta_text') }}</p>@endif
+                    @if ($m('cta_button'))<x-button variant="primary" icon="arrow-right" href="#submission-form">{{ $text('cta_button') }}</x-button>@endif
+                </div>
+            @endif
         </div>
     </div>
 </x-layouts.site>

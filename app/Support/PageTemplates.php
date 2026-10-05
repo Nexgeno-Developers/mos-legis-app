@@ -72,7 +72,46 @@ final class PageTemplates
                 'guest_heading' => ['label' => 'Signed-out heading (instead of the form)', 'type' => 'text'],
                 'guest_text' => ['label' => 'Signed-out text', 'type' => 'textarea'],
             ],
-            PageTemplate::Layout, PageTemplate::Submit => [],
+            // Submit: all wording around the dynamic parts (form, categories, fee table).
+            // Placeholders {fee}, {threshold} and {currency} are filled in from Settings.
+            PageTemplate::Submit => [
+                'facts' => ['label' => 'Key facts (boxes above the form)', 'type' => 'repeater', 'hint' => 'Up to three work best. Use {fee}, {threshold} and {currency}.', 'columns' => [
+                    'title' => ['label' => 'Bold text', 'type' => 'text'],
+                    'text' => ['label' => 'Small text', 'type' => 'text'],
+                ]],
+                'form_label' => ['label' => 'Form label', 'type' => 'text'],
+                'form_heading' => ['label' => 'Form heading', 'type' => 'text'],
+                'guest_heading' => ['label' => 'Signed-out heading (instead of the form)', 'type' => 'text'],
+                'guest_text' => ['label' => 'Signed-out text', 'type' => 'textarea'],
+                'guide_label' => ['label' => 'Guide label', 'type' => 'text'],
+                'guide_heading' => ['label' => 'Guide heading', 'type' => 'text'],
+                'steps_label' => ['label' => '“How it works” label', 'type' => 'text'],
+                'steps_heading' => ['label' => '“How it works” heading', 'type' => 'text'],
+                'steps' => ['label' => 'Steps', 'type' => 'repeater', 'hint' => 'Use {fee}, {threshold} and {currency}.', 'columns' => [
+                    'title' => ['label' => 'Step', 'type' => 'text'],
+                    'text' => ['label' => 'Description', 'type' => 'textarea'],
+                ]],
+                'categories_label' => ['label' => 'Categories label', 'type' => 'text'],
+                'categories_heading' => ['label' => 'Categories heading', 'type' => 'text'],
+                'preparation_label' => ['label' => 'Preparation label', 'type' => 'text'],
+                'preparation_heading' => ['label' => 'Preparation heading', 'type' => 'text'],
+                'guidelines_slug' => ['label' => 'Guidelines page slug (its summary is shown)', 'type' => 'text', 'hint' => 'Leave blank to show the text below instead.'],
+                'preparation_text' => ['label' => 'Preparation text (when no guidelines page is set)', 'type' => 'textarea'],
+                'checklist_heading' => ['label' => 'Checklist heading', 'type' => 'text'],
+                'checklist' => ['label' => 'Checklist', 'type' => 'repeater', 'columns' => [
+                    'text' => ['label' => 'Item', 'type' => 'text'],
+                ]],
+                'fees_label' => ['label' => 'Fees label', 'type' => 'text'],
+                'fees_heading' => ['label' => 'Fees heading', 'type' => 'text'],
+                'fees_submission' => ['label' => '“On submission” box text', 'type' => 'text'],
+                'fees_publication' => ['label' => '“After acceptance” box text', 'type' => 'text'],
+                'fees_note' => ['label' => 'Note above the fee table', 'type' => 'textarea'],
+                'more_label' => ['label' => '“More information” label (for the page content)', 'type' => 'text'],
+                'more_heading' => ['label' => '“More information” heading', 'type' => 'text'],
+                'cta_text' => ['label' => 'Closing bar text', 'type' => 'text'],
+                'cta_button' => ['label' => 'Closing bar button', 'type' => 'text'],
+            ],
+            PageTemplate::Layout => [],
         };
     }
 
@@ -129,6 +168,71 @@ final class PageTemplates
             'steps_note' => 'Standalone checks never create or change a manuscript submission.',
             'guest_heading' => 'Sign in to run a check',
             'guest_text' => 'Results and reports are saved to your author account.',
+        ];
+    }
+
+    /**
+     * Wording a template uses for fields that have never been saved (shown on the site and prefilled in the editor).
+     *
+     * @return array<string, mixed>
+     */
+    public static function defaults(PageTemplate $template): array
+    {
+        return match ($template) {
+            PageTemplate::Submit => self::submitDefaults(),
+            PageTemplate::PlagiarismChecker => self::plagiarismDefaults(),
+            default => [],
+        };
+    }
+
+    /**
+     * Submit page wording used until the page is saved with its own (and when a field has never been saved).
+     *
+     * @return array<string, mixed>
+     */
+    public static function submitDefaults(): array
+    {
+        return [
+            'facts' => [
+                ['title' => '{fee} pre-screening fee', 'text' => 'Inclusive of all taxes'],
+                ['title' => '.docx within the word limit', 'text' => 'See the word limit of your category below'],
+                ['title' => 'Double-blind peer review', 'text' => 'After similarity screening (max {threshold}%)'],
+            ],
+            'form_label' => 'Submit in three steps',
+            'form_heading' => 'Manuscript Submission Form',
+            'guest_heading' => 'Sign in to submit',
+            'guest_text' => 'Create a free author account to submit your manuscript, pay the pre-screening fee and track every stage of review.',
+            'guide_label' => 'Submission guide',
+            'guide_heading' => 'Everything you need before you submit',
+            'steps_label' => 'How it works',
+            'steps_heading' => 'From Submission to Publication',
+            'steps' => [
+                ['title' => 'Submit & pay', 'text' => 'Fill in the form and pay the pre-screening fee of {fee}.'],
+                ['title' => 'Plagiarism screening', 'text' => 'Manuscripts above {threshold}% similarity are declined.'],
+                ['title' => 'Peer review', 'text' => 'A subject reviewer is assigned automatically.'],
+                ['title' => 'Revision or approval', 'text' => 'Revise and resubmit if the reviewer asks for changes.'],
+                ['title' => 'Publication', 'text' => 'Pay the publication fee and receive your certificate.'],
+            ],
+            'categories_label' => 'Choose a category',
+            'categories_heading' => 'Categories & Word Limits',
+            'preparation_label' => 'Prepare',
+            'preparation_heading' => 'Preparing Your Manuscript',
+            'guidelines_slug' => 'author-guidelines',
+            'preparation_text' => 'Follow the formatting and citation rules of your category, and keep the manuscript anonymous for double-blind review.',
+            'checklist_heading' => 'Submission Checklist',
+            'checklist' => array_map(fn ($text) => ['text' => $text], [
+                'Manuscript in .docx format within the category word limit', 'Abstract of not more than 250 words', 'Three to six keywords',
+                'Co-authors listed and consenting', 'Originality, plagiarism and AI-use declarations ready', 'Billing address for the pre-screening invoice',
+            ]),
+            'fees_label' => 'Fees',
+            'fees_heading' => 'Fee Structure',
+            'fees_submission' => 'Plagiarism pre-screening fee',
+            'fees_publication' => 'Depends on your author category and content category (table below)',
+            'fees_note' => 'All fees are in {currency} and inclusive of all taxes.',
+            'more_label' => 'Good to know',
+            'more_heading' => 'More Information',
+            'cta_text' => 'Ready to submit your manuscript?',
+            'cta_button' => 'Back to the form',
         ];
     }
 

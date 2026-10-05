@@ -1,4 +1,9 @@
-@php $editing = $page->exists; @endphp
+@php
+    $editing = $page->exists;
+    // A field that was never saved shows the template's default wording (what the website shows for it).
+    $templateDefaults = App\Support\PageTemplates::defaults($page->template);
+    $metaValue = fn (string $key) => $editing ? $page->meta($key, $templateDefaults[$key] ?? null) : ($templateDefaults[$key] ?? null);
+@endphp
 <x-layouts.admin :title="$editing ? 'Edit page' : 'Add page'">
     <x-admin.heading :title="$editing ? 'Edit page · '.$page->title : 'Add page'" description="Standard page data plus the fields of the selected template.">
         <x-slot:actions>
@@ -31,7 +36,7 @@
                     <div class="space-y-6">
                         @foreach ($fields as $key => $field)
                             @if ($field['type'] === 'sections')
-                                @php $sections = App\Support\PageTemplates::teamSections(old("meta.{$key}", $page->exists ? $page->meta($key) : null)); @endphp
+                                @php $sections = App\Support\PageTemplates::teamSections(old("meta.{$key}", $metaValue($key))); @endphp
                                 <div>
                                     <p class="label-caps text-xs text-muted-foreground">{{ $field['label'] }}</p>
                                     <p class="mt-1 text-sm text-muted-foreground">The small label and the heading shown above each group on the public page. Leave a field empty to hide it.</p>
@@ -47,7 +52,7 @@
                                 </div>
                             @elseif ($field['type'] === 'repeater')
                                 @php
-                                    $rows = old("meta.{$key}", $page->exists ? $page->meta($key, []) : []);
+                                    $rows = old("meta.{$key}", $metaValue($key) ?? []);
                                     // Select columns can take their option labels from another field (e.g. renamed team sections).
                                     foreach ($field['columns'] as $columnKey => $column) {
                                         if (isset($column['labels_from'])) {
@@ -100,9 +105,9 @@
                                     @error("meta.{$key}.*")<p class="mt-2 text-sm text-destructive">{{ $message }}</p>@enderror
                                 </div>
                             @elseif ($field['type'] === 'textarea')
-                                <x-form.textarea :name="'meta['.$key.']'" :label="$field['label']" :value="$page->exists ? $page->meta($key) : null" rows="3" />
+                                <x-form.textarea :name="'meta['.$key.']'" :label="$field['label']" :value="$metaValue($key)" rows="3" />
                             @else
-                                <x-form.input :name="'meta['.$key.']'" :type="$field['type'] === 'email' ? 'email' : 'text'" :label="$field['label']" :hint="$field['hint'] ?? null" :value="$page->exists ? $page->meta($key) : null" />
+                                <x-form.input :name="'meta['.$key.']'" :type="$field['type'] === 'email' ? 'email' : 'text'" :label="$field['label']" :hint="$field['hint'] ?? null" :value="$metaValue($key)" />
                             @endif
                         @endforeach
                     </div>

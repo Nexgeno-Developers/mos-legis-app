@@ -8,7 +8,6 @@ use App\Models\ContentCategory;
 use App\Models\ManuscriptFee;
 use App\Models\Page;
 use App\Services\Manuscripts\FeeCalculator;
-use App\Support\PublicPages;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
@@ -26,7 +25,6 @@ class SubmitPageController extends Controller
 
         return view('site.submit', [
             'page' => $page,
-            'guidelines' => PublicPages::bySlug('author-guidelines'),
             'authorCategories' => $authorCategories,
             'contentCategories' => $contentCategories,
             'fees' => $matrix,
