@@ -37,7 +37,7 @@
                     @if ($job->isPendingApproval())<x-badge tone="warning">Awaiting approval</x-badge>@elseif ($job->isExpired())<x-badge>Expired</x-badge>@else<x-status-badge :status="$job->status" />@endif
                 </td>
                 <td>
-                    <div class="flex flex-wrap items-center gap-3">
+                    <x-row-actions>
                         <x-action-link :href="route('admin.job-postings.show', $job)" icon="eye">View</x-action-link>
                         @can('update', $job)
                             @if ($job->isPendingApproval())
@@ -55,7 +55,7 @@
                         @can('delete', $job)
                             <x-delete-button :action="route('admin.job-postings.destroy', $job)" />
                         @endcan
-                    </div>
+                    </x-row-actions>
                 </td>
             </tr>
         @endforeach

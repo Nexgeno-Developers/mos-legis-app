@@ -30,12 +30,12 @@
                 <td><x-similarity :value="$submission->plagiarism_similarity" :threshold="$threshold" /></td>
                 <td class="whitespace-nowrap text-sm">{!! $submission->reviewer ? e($submission->reviewer->name) : '<span class="text-muted-foreground">Unassigned</span>' !!}</td>
                 <td>
-                    <div class="flex flex-wrap items-center gap-3">
+                    <x-row-actions>
                         <x-action-link :href="route('admin.submissions.show', $submission)" icon="eye">View</x-action-link>
                         @can('update', $submission)
                             <x-action-link :href="route('admin.submissions.edit', $submission)" icon="pencil">Edit</x-action-link>
                         @endcan
-                    </div>
+                    </x-row-actions>
                 </td>
             </tr>
         @endforeach

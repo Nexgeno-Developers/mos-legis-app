@@ -21,7 +21,7 @@
                 <td><x-status-badge :status="$tag->status" /></td>
                 <td class="whitespace-nowrap text-sm text-muted-foreground">{{ format_date($tag->created_at) }}</td>
                 <td>
-                    <div class="flex flex-wrap items-center gap-3">
+                    <x-row-actions>
                         @can('blog-tags.edit')
                             <x-action-link icon="pencil" @click="$dispatch('open-modal', { name: 'blog-tag', record: {{ Js::from([
                                 'tag_name' => $tag->tag_name, 'slug' => $tag->slug, 'status' => $tag->status->value,
@@ -41,7 +41,7 @@
                         @can('blog-tags.delete')
                             <x-delete-button :action="route('admin.blog-tags.destroy', $tag)" />
                         @endcan
-                    </div>
+                    </x-row-actions>
                 </td>
             </tr>
         @endforeach

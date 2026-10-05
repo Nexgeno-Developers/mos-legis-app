@@ -38,10 +38,10 @@
                 <td class="whitespace-nowrap text-sm">{{ format_date($payment->paid_at, true) }}</td>
                 <td class="max-w-[12rem] text-sm text-muted-foreground">{{ $payment->remarks ?? '—' }}</td>
                 <td>
-                    <div class="flex items-center gap-3">
+                    <x-row-actions>
                         <x-action-link :href="route('admin.payments.show', $payment)" icon="eye">View</x-action-link>
                         <x-action-link :href="route('admin.payments.invoice', $payment)" icon="file-text" target="_blank">Invoice</x-action-link>
-                    </div>
+                    </x-row-actions>
                 </td>
             </tr>
         @endforeach

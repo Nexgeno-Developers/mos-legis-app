@@ -24,7 +24,7 @@
                 <td>{{ $theme->contentCategory->name }}</td>
                 <td class="whitespace-nowrap text-sm text-muted-foreground">{{ format_date($theme->created_at) }}</td>
                 <td>
-                    <div class="flex flex-wrap items-center gap-3">
+                    <x-row-actions>
                         @can('themes.edit')
                             <x-action-link icon="pencil" @click="$dispatch('open-modal', { name: 'theme', record: {{ Js::from([
                                 'content_category_id' => (string) $theme->content_category_id, 'name' => $theme->name, 'volume' => $theme->volume,
@@ -35,7 +35,7 @@
                         @can('themes.delete')
                             <x-delete-button :action="route('admin.themes.destroy', $theme)" />
                         @endcan
-                    </div>
+                    </x-row-actions>
                 </td>
             </tr>
         @endforeach

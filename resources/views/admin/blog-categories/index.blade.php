@@ -21,7 +21,7 @@
                 <td><x-status-badge :status="$category->status" /></td>
                 <td class="whitespace-nowrap text-sm text-muted-foreground">{{ format_date($category->created_at) }}</td>
                 <td>
-                    <div class="flex flex-wrap items-center gap-3">
+                    <x-row-actions>
                         @can('blog-categories.edit')
                             <x-action-link icon="pencil" @click="$dispatch('open-modal', { name: 'blog-category', record: {{ Js::from([
                                 'category_name' => $category->category_name, 'slug' => $category->slug, 'description' => (string) $category->description,
@@ -41,7 +41,7 @@
                         @can('blog-categories.delete')
                             <x-delete-button :action="route('admin.blog-categories.destroy', $category)" />
                         @endcan
-                    </div>
+                    </x-row-actions>
                 </td>
             </tr>
         @endforeach

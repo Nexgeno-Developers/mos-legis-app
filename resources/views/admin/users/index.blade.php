@@ -27,7 +27,7 @@
                 <td><x-status-badge :status="$user->status" /></td>
                 <td class="whitespace-nowrap text-sm text-muted-foreground">{{ format_date($user->created_at) }}</td>
                 <td>
-                    <div class="flex flex-wrap items-center gap-3">
+                    <x-row-actions>
                         @can('update', $user)
                             <x-action-link :href="route('admin.users.edit', $user)" icon="pencil">Edit</x-action-link>
                             @unless ($user->is(auth()->user()))
@@ -40,7 +40,7 @@
                         @can('delete', $user)
                             <x-delete-button :action="route('admin.users.destroy', $user)" />
                         @endcan
-                    </div>
+                    </x-row-actions>
                 </td>
             </tr>
         @endforeach

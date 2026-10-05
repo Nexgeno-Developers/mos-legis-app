@@ -28,12 +28,12 @@
                 </td>
                 <td class="whitespace-nowrap text-sm text-muted-foreground">{{ format_date($enquiry->created_at, true) }}</td>
                 <td>
-                    <div class="flex items-center gap-3">
+                    <x-row-actions>
                         <x-action-link :href="route('admin.enquiries.show', $enquiry)" icon="eye">View</x-action-link>
                         @can('enquiries.delete')
                             <x-delete-button :action="route('admin.enquiries.destroy', $enquiry)" />
                         @endcan
-                    </div>
+                    </x-row-actions>
                 </td>
             </tr>
         @endforeach

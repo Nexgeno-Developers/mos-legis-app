@@ -22,7 +22,7 @@
                 <td><x-status-badge :status="$page->status" /></td>
                 <td class="whitespace-nowrap text-sm text-muted-foreground">{{ format_date($page->created_at) }}</td>
                 <td>
-                    <div class="flex flex-wrap items-center gap-3">
+                    <x-row-actions>
                         @can('pages.edit')
                             <x-action-link :href="route('admin.pages.edit', $page)" icon="pencil">Edit</x-action-link>
                             @unless ($page->isHome())
@@ -41,7 +41,7 @@
                         @if (! $page->isHome() && auth()->user()->can('pages.delete'))
                             <x-delete-button :action="route('admin.pages.destroy', $page)" />
                         @endif
-                    </div>
+                    </x-row-actions>
                 </td>
             </tr>
         @endforeach

@@ -14,7 +14,7 @@ import {
     KeyRound, Layout, Lock, LogIn, LogOut, Mail,
     Menu, MessageSquare, Network, PanelLeft, Pencil, Phone,
     Plus, Receipt, RefreshCw, Reply, Route, Rows,
-    Save, ScanSearch, Search, Send, Settings, ShieldCheck, CircleX, LoaderCircle, Hourglass,
+    Save, ScanSearch, Search, Send, Settings, ShieldCheck, CircleX, LoaderCircle, Hourglass, EllipsisVertical,
     Shuffle, SquareUser, Star, Summary, Tag, Tags,
     Text, ToggleLeft, ToggleRight, Trash2, Type, Upload,
     User, UserCheck, UserPlus, Users, Volume, X, MapPin, GripVertical, Link,
@@ -22,10 +22,32 @@ import {
 import { countDocxWords } from './word-count';
 import { initForms, refreshSelects } from './forms';
 
-const usedIcons = { CircleX, LoaderCircle, Hourglass, Activity, Archive, ArrowLeft, ArrowRight, Award, BadgeCheck, BadgeIndianRupee, Ban, BookOpen, Briefcase, CalendarRange, Check, ChevronDown, ChevronLeft, ChevronRight, CircleAlert, CircleCheck, Clock, Columns, Contact, Copy, CreditCard, Delete, Download, ExternalLink, Eye, EyeOff, File, FileText, Files, Filter, Folder, Form, Gauge, Gavel, Ghost, GitBranch, Heading, Home, Image, Inbox, Info, KeyRound, Layout, Lock, LogIn, LogOut, Mail, Menu, MessageSquare, Network, PanelLeft, Pencil, Phone, Plus, Receipt, RefreshCw, Reply, Route, Rows, Save, ScanSearch, Search, Send, Settings, ShieldCheck, Shuffle, CircleX, LoaderCircle, Hourglass, SquareUser, Star, Summary, Tag, Tags, Text, ToggleLeft, ToggleRight, Trash2, Type, Upload, User, UserCheck, UserPlus, Users, Volume, X, MapPin, GripVertical, Link };
+const usedIcons = { CircleX, LoaderCircle, Hourglass, EllipsisVertical, Activity, Archive, ArrowLeft, ArrowRight, Award, BadgeCheck, BadgeIndianRupee, Ban, BookOpen, Briefcase, CalendarRange, Check, ChevronDown, ChevronLeft, ChevronRight, CircleAlert, CircleCheck, Clock, Columns, Contact, Copy, CreditCard, Delete, Download, ExternalLink, Eye, EyeOff, File, FileText, Files, Filter, Folder, Form, Gauge, Gavel, Ghost, GitBranch, Heading, Home, Image, Inbox, Info, KeyRound, Layout, Lock, LogIn, LogOut, Mail, Menu, MessageSquare, Network, PanelLeft, Pencil, Phone, Plus, Receipt, RefreshCw, Reply, Route, Rows, Save, ScanSearch, Search, Send, Settings, ShieldCheck, Shuffle, CircleX, LoaderCircle, Hourglass, SquareUser, Star, Summary, Tag, Tags, Text, ToggleLeft, ToggleRight, Trash2, Type, Upload, User, UserCheck, UserPlus, Users, Volume, X, MapPin, GripVertical, Link };
 
 window.Alpine = Alpine;
 Alpine.plugin(collapse);
+
+// "⋯" row-actions menu: fixed position next to its button (right-aligned), flipped above when there is no room below.
+Alpine.data('rowActions', () => ({
+    open: false,
+    style: '',
+    toggle() {
+        if (this.open) return this.close();
+        this.style = 'visibility: hidden;'; // measured first, then placed
+        this.open = true;
+        this.$nextTick(() => {
+            const button = this.$refs.trigger.getBoundingClientRect();
+            const menu = this.$refs.menu.getBoundingClientRect();
+            const left = Math.max(8, Math.min(button.right - menu.width, window.innerWidth - menu.width - 8));
+            const below = button.bottom + 4;
+            const top = below + menu.height > window.innerHeight - 8 ? Math.max(8, button.top - menu.height - 4) : below;
+            this.style = `top: ${top}px; left: ${left}px;`;
+        });
+    },
+    close() {
+        this.open = false;
+    },
+}));
 
 /**
  * Reusable modal state: `x-data="modal(open)"`, `@click="show(record)"`.
@@ -36,6 +58,7 @@ Alpine.data('modal', (initiallyOpen = false, defaults = {}) => ({
     form: { ...defaults },
     show(record = {}) {
         this.form = { ...defaults, ...record };
+        this.style = 'visibility: hidden;'; // measured first, then placed
         this.open = true;
         this.$nextTick(() => {
             renderIcons();

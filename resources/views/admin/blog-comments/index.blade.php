@@ -26,7 +26,7 @@
                 <td><x-status-badge :status="$comment->status" /></td>
                 <td class="whitespace-nowrap text-sm text-muted-foreground">{{ format_date($comment->created_at, true) }}</td>
                 <td>
-                    <div class="flex flex-wrap items-center gap-3">
+                    <x-row-actions>
                         @can('blog-comments.edit')
                             @foreach (['Approved' => 'check', 'Rejected' => 'ban'] as $status => $icon)
                                 @if ($comment->status->value !== $status)
@@ -52,7 +52,7 @@
                         @can('blog-comments.delete')
                             <x-delete-button :action="route('admin.blog-comments.destroy', $comment)" />
                         @endcan
-                    </div>
+                    </x-row-actions>
                 </td>
             </tr>
         @endforeach

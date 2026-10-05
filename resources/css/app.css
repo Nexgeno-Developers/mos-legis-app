@@ -326,3 +326,16 @@ trix-editor.trix-invalid { border-color: var(--color-destructive) !important; }
 .iti__dial-code { color: var(--color-muted-foreground); }
 /* Checkbox / radio errors sit under the option, aligned with its label text (1rem box + 0.75rem gap). */
 .choice-error { padding-left: 1.75rem; }
+
+/* Row actions ("⋯" menu in table rows): every action — link, button or form — becomes one full-width menu line. */
+.row-actions-menu > a,
+.row-actions-menu > button,
+.row-actions-menu > form > button {
+    display: flex; width: 100%; align-items: center; gap: 0.6rem;
+    padding: 0.55rem 0.9rem; font-size: 0.875rem; line-height: 1.25rem; white-space: nowrap; text-align: left;
+}
+.row-actions-menu > form { display: block; }
+.row-actions-menu > a:hover,
+.row-actions-menu > button:hover,
+.row-actions-menu > form > button:hover { background: var(--color-secondary); text-decoration: none; }
+.row-actions-menu > form[data-delete] { margin-top: 0.25rem; border-top: 1px solid var(--color-border); padding-top: 0.25rem; }

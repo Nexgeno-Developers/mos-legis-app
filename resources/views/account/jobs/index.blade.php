@@ -12,10 +12,10 @@
                 <td class="text-sm">{{ format_date($job->application_deadline) }}</td>
                 <td>@if ($job->isPendingApproval())<x-badge tone="warning">Awaiting approval</x-badge>@elseif ($job->isExpired())<x-badge>Expired</x-badge>@else<x-status-badge :status="$job->status" />@endif</td>
                 <td>
-                    <div class="flex items-center gap-3">
+                    <x-row-actions>
                         <x-action-link :href="route('account.jobs.edit', $job)" icon="pencil">Edit</x-action-link>
                         <x-delete-button :action="route('account.jobs.destroy', $job)" />
-                    </div>
+                    </x-row-actions>
                 </td>
             </tr>
         @endforeach

@@ -27,7 +27,7 @@
                 <td>{{ $role->users_count }}</td>
                 <td class="whitespace-nowrap text-sm text-muted-foreground">{{ format_date($role->created_at) }}</td>
                 <td>
-                    <div class="flex items-center gap-3">
+                    <x-row-actions>
                         @if ($role->name !== 'superadmin' && $role->name !== 'author')
                             @can('roles.edit')
                                 <x-action-link :href="route('admin.roles.edit', $role)" icon="pencil">Edit</x-action-link>
@@ -38,7 +38,7 @@
                                 <x-delete-button :action="route('admin.roles.destroy', $role)" />
                             @endcan
                         @endif
-                    </div>
+                    </x-row-actions>
                 </td>
             </tr>
         @endforeach

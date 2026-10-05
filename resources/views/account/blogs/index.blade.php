@@ -9,11 +9,11 @@
                 <td class="text-sm">{{ format_date($blog->publish_date) }}</td>
                 <td class="text-sm">{{ number_format($blog->views) }}</td>
                 <td>
-                    <div class="flex items-center gap-3">
+                    <x-row-actions>
                         @if ($blog->status->value === 'Published')<x-action-link :href="route('blogs.show', $blog->slug)" icon="external-link">View</x-action-link>@endif
                         <x-action-link :href="route('account.blogs.edit', $blog)" icon="pencil">Edit</x-action-link>
                         <x-delete-button :action="route('account.blogs.destroy', $blog)" />
-                    </div>
+                    </x-row-actions>
                 </td>
             </tr>
         @endforeach

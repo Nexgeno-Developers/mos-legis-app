@@ -35,7 +35,7 @@
                 <td>@if ($blog->featured_post)<x-icon name="star" class="text-gold" />@else<span class="text-muted-foreground">—</span>@endif</td>
                 <td class="whitespace-nowrap text-sm text-muted-foreground">{{ format_date($blog->updated_at) }}</td>
                 <td>
-                    <div class="flex flex-wrap items-center gap-3">
+                    <x-row-actions>
                         @can('update', $blog)
                             <x-action-link :href="route('admin.blogs.edit', $blog)" icon="pencil">Edit</x-action-link>
                             <form method="POST" action="{{ route('admin.blogs.toggle-status', $blog) }}">
@@ -54,7 +54,7 @@
                         @can('delete', $blog)
                             <x-delete-button :action="route('admin.blogs.destroy', $blog)" />
                         @endcan
-                    </div>
+                    </x-row-actions>
                 </td>
             </tr>
         @endforeach

@@ -14,6 +14,23 @@ abstract class TestCase extends BaseTestCase
 
     protected string $seeder = BaseDataSeeder::class;
 
+    /**
+     * Tests wipe and re-migrate the database. Refuse to start unless it is a test database: a cached
+     * config (php artisan optimize / config:cache) ignores phpunit.xml and would point at the real one.
+     */
+    public function createApplication()
+    {
+        $app = parent::createApplication();
+        $connection = $app['config']->get('database.default');
+        $database = (string) $app['config']->get("database.connections.{$connection}.database");
+
+        if (! str_ends_with($database, '_test') && $database !== ':memory:') {
+            throw new \RuntimeException("Refusing to run tests against the \"{$database}\" database. Run `php artisan config:clear` (a cached config ignores phpunit.xml) and make sure DB_DATABASE ends with _test.");
+        }
+
+        return $app;
+    }
+
     protected function setUp(): void
     {
         parent::setUp();

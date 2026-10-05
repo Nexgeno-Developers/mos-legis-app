@@ -28,7 +28,7 @@
                 <td><x-status-badge :status="$category->status" /></td>
                 <td class="whitespace-nowrap text-sm text-muted-foreground">{{ format_date($category->created_at) }}</td>
                 <td>
-                    <div class="flex flex-wrap items-center gap-3">
+                    <x-row-actions>
                         @can('content-categories.edit')
                             <x-action-link icon="pencil" @click="$dispatch('open-modal', { name: 'content-category', record: {{ Js::from([
                                 'name' => $category->name, 'min_word_limit' => $category->min_word_limit, 'max_word_limit' => $category->max_word_limit,
@@ -43,7 +43,7 @@
                         @can('content-categories.delete')
                             <x-delete-button :action="route('admin.content-categories.destroy', $category)" />
                         @endcan
-                    </div>
+                    </x-row-actions>
                 </td>
             </tr>
         @endforeach

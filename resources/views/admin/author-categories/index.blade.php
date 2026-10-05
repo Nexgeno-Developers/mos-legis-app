@@ -20,7 +20,7 @@
                 <td class="text-sm text-muted-foreground">{{ $category->fees_count }}</td>
                 <td class="whitespace-nowrap text-sm text-muted-foreground">{{ format_date($category->created_at) }}</td>
                 <td>
-                    <div class="flex flex-wrap items-center gap-3">
+                    <x-row-actions>
                         @can('author-categories.edit')
                             <x-action-link icon="pencil" @click="$dispatch('open-modal', { name: 'author-category', record: {{ Js::from([
                                 'name' => $category->name, 'status' => $category->status->value,
@@ -34,7 +34,7 @@
                         @can('author-categories.delete')
                             <x-delete-button :action="route('admin.author-categories.destroy', $category)" />
                         @endcan
-                    </div>
+                    </x-row-actions>
                 </td>
             </tr>
         @endforeach
