@@ -20,8 +20,8 @@
         {{-- 1. Form + contact details (equal height) --}}
         <div class="grid gap-6 lg:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)] lg:gap-8">
             <section id="enquiry" class="flex flex-col border border-border bg-card p-6 md:p-8">
-                <h2 class="font-display text-2xl">Send us a message</h2>
-                <p class="mt-1 text-sm text-muted-foreground">Fill in the form and the right desk will reply by email, usually within two working days.</p>
+                @if ($page->meta('form_heading'))<h2 class="font-display text-2xl">{{ $page->meta('form_heading') }}</h2>@endif
+                @if ($page->meta('form_text'))<p class="mt-1 text-sm text-muted-foreground">{{ $page->meta('form_text') }}</p>@endif
                 <form method="POST" action="{{ route('contact.store') }}" class="mt-6 flex flex-1 flex-col gap-5">
                     @csrf
                     <input type="text" name="website" class="hidden" tabindex="-1" autocomplete="off" aria-hidden="true">
@@ -40,10 +40,12 @@
             </section>
 
             <aside class="flex flex-col border border-border bg-card">
-                <div class="border-b border-border p-6">
-                    <h2 class="font-display text-2xl">Editorial contacts</h2>
-                    <p class="mt-1 text-sm text-muted-foreground">Prefer email? Write to us directly.</p>
-                </div>
+                @if ($page->meta('contacts_heading') || $page->meta('contacts_text'))
+                    <div class="border-b border-border p-6">
+                        @if ($page->meta('contacts_heading'))<h2 class="font-display text-2xl">{{ $page->meta('contacts_heading') }}</h2>@endif
+                        @if ($page->meta('contacts_text'))<p class="mt-1 text-sm text-muted-foreground">{{ $page->meta('contacts_text') }}</p>@endif
+                    </div>
+                @endif
                 <ul class="flex-1 divide-y divide-border">
                     @foreach ($contacts as [$icon, $label, $value, $scheme])
                         <li class="flex items-center gap-4 px-6 py-4">
@@ -78,8 +80,8 @@
                     class="block h-80 w-full border-0 md:h-[26rem]" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>
                 @if ($address)
                     <div class="border-t border-border bg-card p-5 md:absolute md:top-6 md:right-6 md:w-80 md:border md:shadow-lg">
-                        <p class="label-caps text-[0.65rem] text-primary">Visit us</p>
-                        <p class="mt-1 font-display text-lg leading-snug">{{ settings('general.application_name') }} Editorial Office</p>
+                        @if ($page->meta('map_label'))<p class="label-caps text-[0.65rem] text-primary">{{ $page->meta('map_label') }}</p>@endif
+                        @if ($page->meta('map_heading'))<p class="mt-1 font-display text-lg leading-snug">{{ $page->meta('map_heading') }}</p>@endif
                         <p class="mt-2 text-sm text-muted-foreground">{!! nl2br(e($address)) !!}</p>
                         @if ($page?->meta('desk_hours'))<p class="mt-2 text-sm"><span class="text-muted-foreground">Open:</span> {{ $page->meta('desk_hours') }}</p>@endif
                         @if ($directions)
@@ -90,16 +92,18 @@
             </section>
         @endif
 
+        @if ($page->content)<div class="prose-legis measure">{!! $page->content !!}</div>@endif
+
         {{-- 3. FAQ --}}
         @if ($faqs)
             <section class="grid gap-8 border-t border-border pt-12 md:pt-16 lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] lg:gap-12">
                 <div class="lg:sticky lg:top-40 lg:self-start">
-                    <p class="label-caps text-sm text-primary">Before you write</p>
-                    <h2 class="mt-2 font-display text-3xl">Common questions</h2>
-                    <p class="mt-3 text-muted-foreground">Quick answers about submissions, review timelines and fees.</p>
+                    @if ($page->meta('faq_label'))<p class="label-caps text-sm text-primary">{{ $page->meta('faq_label') }}</p>@endif
+                    @if ($page->meta('faq_heading'))<h2 class="mt-2 font-display text-3xl">{{ $page->meta('faq_heading') }}</h2>@endif
+                    @if ($page->meta('faq_text'))<p class="mt-3 text-muted-foreground">{{ $page->meta('faq_text') }}</p>@endif
                     <div class="mt-6 border border-border bg-secondary/60 p-5">
-                        <p class="font-semibold">Still have a question?</p>
-                        <p class="mt-1 text-sm text-muted-foreground">Our editorial desk is happy to help.</p>
+                        @if ($page->meta('help_heading'))<p class="font-semibold">{{ $page->meta('help_heading') }}</p>@endif
+                        @if ($page->meta('help_text'))<p class="mt-1 text-sm text-muted-foreground">{{ $page->meta('help_text') }}</p>@endif
                         <div class="mt-4 flex flex-wrap gap-3">
                             <x-button href="#enquiry" variant="primary" size="sm" icon="send">Send a message</x-button>
                             @if ($generalEmail)<x-button :href="'mailto:'.$generalEmail" size="sm" icon="mail">Email us</x-button>@endif

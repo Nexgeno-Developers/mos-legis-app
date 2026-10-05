@@ -6,7 +6,7 @@
             @if ($page?->meta('apply_email'))<p class="mt-6 text-muted-foreground">Questions? Write to <a class="text-primary hover:underline" href="mailto:{{ $page->meta('apply_email') }}">{{ $page->meta('apply_email') }}</a>.</p>@endif
         </section>
         <section>
-            <x-section-heading eyebrow="Apply" title="Application Form" />
+            <x-section-heading :eyebrow="$page->meta('form_label')" :title="$page->meta('form_heading')" />
             <form method="POST" action="{{ route('careers.store') }}" enctype="multipart/form-data" class="mt-8 space-y-5">
                 @csrf
                 <input type="text" name="website" class="hidden" tabindex="-1" autocomplete="off">

@@ -35,29 +35,51 @@ final class PageTemplates
                 ]],
             ],
             PageTemplate::Patron => [
+                'list_label' => ['label' => 'Acknowledgements label', 'type' => 'text'],
+                'list_heading' => ['label' => 'Acknowledgements heading', 'type' => 'text'],
                 'entries' => ['label' => 'Patron acknowledgements', 'type' => 'repeater', 'columns' => [
                     'description' => ['label' => 'Description', 'type' => 'textarea'],
                     'month_year' => ['label' => 'Date (Month/Year)', 'type' => 'text'],
                 ]],
             ],
             PageTemplate::PaperWinner => [
-                'winner_choose_desc' => ['label' => 'How the winner is chosen', 'type' => 'textarea'],
-                'prize_desc' => ['label' => 'Prize description', 'type' => 'textarea'],
-                'be_considered_desc' => ['label' => 'Be considered next month', 'type' => 'textarea'],
+                'current_label' => ['label' => '“Current winner” label', 'type' => 'text'],
+                'cards_label' => ['label' => 'Label above the three boxes', 'type' => 'text'],
+                'winner_choose_title' => ['label' => 'Box 1 heading', 'type' => 'text'],
+                'winner_choose_desc' => ['label' => 'Box 1 text (how the winner is chosen)', 'type' => 'textarea'],
+                'prize_title' => ['label' => 'Box 2 heading', 'type' => 'text'],
+                'prize_desc' => ['label' => 'Box 2 text (the prize)', 'type' => 'textarea'],
+                'be_considered_title' => ['label' => 'Box 3 heading', 'type' => 'text'],
+                'be_considered_desc' => ['label' => 'Box 3 text (be considered next month)', 'type' => 'textarea'],
+                'past_label' => ['label' => 'Past winners label', 'type' => 'text'],
+                'past_heading' => ['label' => 'Past winners heading', 'type' => 'text'],
             ],
             PageTemplate::Contact => [
+                'form_heading' => ['label' => 'Form heading', 'type' => 'text'],
+                'form_text' => ['label' => 'Form text', 'type' => 'textarea'],
+                'contacts_heading' => ['label' => 'Contacts box heading', 'type' => 'text'],
+                'contacts_text' => ['label' => 'Contacts box text', 'type' => 'text'],
                 'chief_editor_email' => ['label' => 'Chief editor email', 'type' => 'email'],
                 'general_query_email' => ['label' => 'General query email', 'type' => 'email'],
                 'telephone' => ['label' => 'Telephone', 'type' => 'text'],
                 'office_address' => ['label' => 'Office address', 'type' => 'textarea'],
                 'desk_hours' => ['label' => 'Desk hours', 'type' => 'text'],
+                'map_label' => ['label' => 'Map card label', 'type' => 'text'],
+                'map_heading' => ['label' => 'Map card heading', 'type' => 'text'],
                 'map_embed_url' => ['label' => 'Google Maps embed URL', 'type' => 'map', 'hint' => 'Optional. In Google Maps choose Share → Embed a map and paste the link or the whole <iframe> code. Leave blank to hide the map.'],
+                'faq_label' => ['label' => 'FAQ label', 'type' => 'text'],
+                'faq_heading' => ['label' => 'FAQ heading', 'type' => 'text'],
+                'faq_text' => ['label' => 'FAQ text', 'type' => 'textarea'],
+                'help_heading' => ['label' => '“Still have a question?” heading', 'type' => 'text'],
+                'help_text' => ['label' => '“Still have a question?” text', 'type' => 'text'],
                 'faqs' => ['label' => 'FAQs', 'type' => 'repeater', 'columns' => [
                     'question' => ['label' => 'Question', 'type' => 'text'],
                     'answer' => ['label' => 'Answer', 'type' => 'textarea'],
                 ]],
             ],
             PageTemplate::Career => [
+                'form_label' => ['label' => 'Form label', 'type' => 'text'],
+                'form_heading' => ['label' => 'Form heading', 'type' => 'text'],
                 'apply_email' => ['label' => 'Careers email (shown on the page)', 'type' => 'email'],
             ],
             // Job Postings: title, intro, content and SEO only — the filters and listings are dynamic.
@@ -234,8 +256,44 @@ final class PageTemplates
         return match ($template) {
             PageTemplate::Submit => self::submitDefaults(),
             PageTemplate::PlagiarismChecker => self::plagiarismDefaults(),
+            PageTemplate::PaperWinner => [
+                'current_label' => 'Current Winner', 'cards_label' => 'The Award',
+                'winner_choose_title' => 'How Winners Are Chosen', 'prize_title' => 'The Prize',
+                'be_considered_title' => 'Be Considered Next Month',
+                'past_label' => 'Archive', 'past_heading' => 'Past Winners',
+            ],
+            PageTemplate::Contact => [
+                'form_heading' => 'Send us a message',
+                'form_text' => 'Fill in the form and the right desk will reply by email, usually within two working days.',
+                'contacts_heading' => 'Editorial contacts', 'contacts_text' => 'Prefer email? Write to us directly.',
+                'map_label' => 'Visit us', 'map_heading' => 'MOS Legis Editorial Office',
+                'faq_label' => 'Before you write', 'faq_heading' => 'Common questions',
+                'faq_text' => 'Quick answers about submissions, review timelines and fees.',
+                'help_heading' => 'Still have a question?', 'help_text' => 'Our editorial desk is happy to help.',
+            ],
+            PageTemplate::Career => ['form_label' => 'Apply', 'form_heading' => 'Application Form'],
+            PageTemplate::Patron => ['list_label' => 'With Gratitude', 'list_heading' => 'Acknowledgements'],
             default => [],
         };
+    }
+
+    /** Stores the starting wording for any field the page doesn't have yet (never overwrites). */
+    public static function storeMissingDefaults(Page $page): void
+    {
+        $fields = self::fields($page->template);
+        $existing = $page->metas()->pluck('meta_key')->all();
+
+        foreach (self::defaults($page->template) as $key => $value) {
+            if (! isset($fields[$key]) || in_array($key, $existing, true)) {
+                continue;
+            }
+            $type = self::metaType($fields[$key]);
+            $page->metas()->create([
+                'meta_key' => $key,
+                'meta_type' => $type,
+                'meta_value' => $type === MetaType::Json ? json_encode($value, JSON_UNESCAPED_UNICODE) : $value,
+            ]);
+        }
     }
 
     /**

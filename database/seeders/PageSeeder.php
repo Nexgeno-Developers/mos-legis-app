@@ -20,7 +20,6 @@ class PageSeeder extends Seeder
         $pages[] = $this->aboutPage();
         $pages[] = $this->jobsPage();
         $pages[] = $this->plagiarismCheckerPage();
-        $pages = array_map(fn ($page) => $page['template'] === 'submit' && empty($page['metas']) ? ['metas' => self::submitMetas()] + $page : $page, $pages);
 
         foreach ($pages as $data) {
             $page = Page::firstOrCreate(['slug' => $data['slug']], [
@@ -44,6 +43,9 @@ class PageSeeder extends Seeder
                     'meta_value' => $meta['type'] === 'json' ? json_encode($meta['value'], JSON_UNESCAPED_UNICODE) : $meta['value'],
                 ]);
             }
+
+            // Headings and other wording of the template (Submit steps, section headings…).
+            PageTemplates::storeMissingDefaults($page);
         }
     }
 

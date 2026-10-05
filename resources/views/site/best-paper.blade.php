@@ -2,7 +2,7 @@
     <x-page-header :title="$page->title" :intro="$page->excerpt" />
     <div class="mx-auto max-w-[1200px] space-y-12 px-4 py-8 sm:px-6 md:py-10">
         <section>
-            <x-section-heading eyebrow="Current Winner" :title="$current ? 'Best Paper — '.$current->periodLabel() : 'This month\'s winner will be announced soon'" />
+            <x-section-heading :eyebrow="$page->meta('current_label')" :title="$current ? 'Best Paper — '.$current->periodLabel() : 'This month\'s winner will be announced soon'" />
             @if ($current)
                 <div class="mt-8 grid gap-8 border border-gold/60 bg-card p-8 md:grid-cols-[auto_1fr]">
                     <x-icon name="award" class="h-16 w-16 text-gold" />
@@ -17,21 +17,24 @@
         </section>
 
         <section class="grid gap-8 md:grid-cols-3">
-            @foreach (['winner_choose_desc' => 'How Winners Are Chosen', 'prize_desc' => 'The Prize', 'be_considered_desc' => 'Be Considered Next Month'] as $key => $heading)
-                @if ($page?->meta($key))
+            {{-- Three boxes: heading + text from Admin → Pages; a box with neither is left out. --}}
+            @foreach (['winner_choose', 'prize', 'be_considered'] as $box)
+                @if ($page->meta($box.'_title') || $page->meta($box.'_desc'))
                     <div class="border border-border bg-card p-6">
-                        <p class="label-caps text-sm text-primary">The Award</p>
-                        <h3 class="mt-2 font-display text-2xl">{{ $heading }}</h3>
-                        <p class="mt-3 text-muted-foreground">{{ $page->meta($key) }}</p>
-                        @if ($key === 'be_considered_desc')<x-button class="mt-5" variant="primary" icon="send" :href="page_url('submit')">Submit a Manuscript</x-button>@endif
+                        @if ($page->meta('cards_label'))<p class="label-caps text-sm text-primary">{{ $page->meta('cards_label') }}</p>@endif
+                        @if ($page->meta($box.'_title'))<h3 class="mt-2 font-display text-2xl">{{ $page->meta($box.'_title') }}</h3>@endif
+                        @if ($page->meta($box.'_desc'))<p class="mt-3 whitespace-pre-line text-muted-foreground">{{ $page->meta($box.'_desc') }}</p>@endif
+                        @if ($box === 'be_considered')<x-button class="mt-5" variant="primary" icon="send" :href="page_url('submit')">Submit a Manuscript</x-button>@endif
                     </div>
                 @endif
             @endforeach
         </section>
 
+        @if ($page->content)<div class="prose-legis measure">{!! $page->content !!}</div>@endif
+
         <section id="past">
             <div class="flex flex-wrap items-end justify-between gap-4">
-                <x-section-heading eyebrow="Archive" title="Past Winners" class="flex-1" />
+                <x-section-heading :eyebrow="$page->meta('past_label')" :title="$page->meta('past_heading')" class="flex-1" />
                 <form method="GET" action="{{ page_url('paper_winner') }}#past" class="flex flex-wrap items-end gap-3">
                     <x-filter.select name="year" label="Year" :options="$years->mapWithKeys(fn ($y) => [$y => $y])" all="All years" />
                     <x-filter.select name="category" label="Category" :options="$categories" all="All categories" />
