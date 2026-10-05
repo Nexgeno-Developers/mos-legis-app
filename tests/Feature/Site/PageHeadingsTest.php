@@ -30,7 +30,8 @@ class PageHeadingsTest extends TestCase
     public function best_paper_has_fixed_headings_and_shows_its_content_last(): void
     {
         $page = Page::where('template', 'paper_winner')->firstOrFail();
-        $this->get(page_url('paper_winner'))->assertSee('Past Winners')->assertDontSee('How Winners Are Chosen'); // no info boxes
+        $this->get(page_url('paper_winner'))->assertSee('Past Winners')->assertDontSee('The Award') // no info boxes
+            ->assertSee('<h2>How Winners Are Chosen</h2>', false); // seeded as page content
 
         $this->actingAs($this->superadmin())->get(route('admin.pages.edit', $page))->assertOk()
             ->assertDontSee('Paper winner fields')->assertDontSee('Past winners heading'); // headings are fixed
