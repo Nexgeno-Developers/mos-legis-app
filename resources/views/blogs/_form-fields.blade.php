@@ -17,7 +17,7 @@
     </x-admin.panel>
 
     <x-admin.panel title="Blog content">
-        <x-form.rich-text name="content" :value="$blog->content" required />
+        <x-form.rich-text name="content" :value="$blog->content" required :full="$admin" />
     </x-admin.panel>
 
     <x-admin.panel title="SEO">

@@ -26,7 +26,8 @@ class SavePage
                 'slug' => $data['slug'],
                 'status' => $data['status'],
                 'excerpt' => $data['excerpt'] ?? null,
-                'content' => Html::clean($data['content'] ?? null),
+                // Pages are edited in the admin's full editor, so formatting is kept.
+                'content' => Html::cleanRich($data['content'] ?? null),
                 'seo_title' => $data['seo_title'] ?? null,
                 'seo_description' => $data['seo_description'] ?? null,
                 'updated_by' => $editorId,

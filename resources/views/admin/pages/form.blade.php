@@ -58,7 +58,7 @@
                         @endif
                     </div>
                     <x-form.textarea name="excerpt" label="Excerpt / introduction" :value="$page->excerpt" rows="2" />
-                    <x-form.rich-text name="content" label="Content" :value="$page->content" />
+                    <x-form.rich-text name="content" label="Content" :value="$page->content" full />
                 </div>
             </x-admin.panel>
 

@@ -20,6 +20,7 @@
         "@alpinejs/collapse": "^3.17.4",
         "alpinejs": "^3.17.4",
         "intl-tel-input": "^25.15.1",
+        "jodit": "^4.17.1",
         "jquery": "^3.7.1",
         "jquery-validation": "^1.22.1",
         "jszip": "^3.10.2",

@@ -37,7 +37,8 @@ class SaveBlog
                 'category_id' => $data['category_id'],
                 'author_name' => $data['author_name'] ?? $actor->name,
                 'excerpt' => $data['excerpt'],
-                'content' => Html::clean($data['content']),
+                // Admins use the full editor (formatting kept); authors the simple one.
+                'content' => $asAuthor ? Html::clean($data['content']) : Html::cleanRich($data['content']),
                 'meta_title' => $data['meta_title'] ?? null,
                 'meta_description' => $data['meta_description'] ?? null,
                 'status' => $status,

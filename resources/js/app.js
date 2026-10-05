@@ -243,10 +243,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const menuTree = document.querySelector('[data-menu-tree]');
     if (menuTree) import('./menu-builder').then(({ initMenuBuilder }) => initMenuBuilder(menuTree));
+
+    // Admin full text editor (loaded only where used).
+    if (document.querySelector('textarea[data-rich-editor]')) import('./rich-editor').then(({ initRichEditors }) => initRichEditors());
 });
 document.addEventListener('alpine:initialized', renderIcons);
 
-// Block file attachments in Trix; images are managed through dedicated upload fields.
+// Block file attachments in the simple (author) editor; its attach button is hidden too.
 document.addEventListener('trix-file-accept', (event) => event.preventDefault());
 
 Alpine.start();

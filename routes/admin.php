@@ -94,6 +94,7 @@ Route::middleware('admin')->group(function () {
     Route::patch('users/{user}/status', [Admin\UserController::class, 'toggleStatus'])->name('users.toggle-status');
     Route::resource('users', Admin\UserController::class)->except('show');
     Route::resource('roles', Admin\RoleController::class)->except('show');
+    Route::post('editor-images', Admin\EditorImageController::class)->middleware('throttle:60,1')->name('editor-images.store');
     Route::get('settings', [Admin\SettingController::class, 'edit'])->name('settings.edit');
     Route::put('settings', [Admin\SettingController::class, 'update'])->name('settings.update');
 

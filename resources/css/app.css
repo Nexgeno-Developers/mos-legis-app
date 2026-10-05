@@ -151,6 +151,15 @@
     & li { margin-bottom: 0.35rem; }
     & a { color: var(--color-primary); text-decoration: underline; text-underline-offset: 3px; }
     & blockquote { border-left: 2px solid var(--color-gold); padding-left: 1rem; font-style: italic; color: var(--color-muted-foreground); }
+    & h1 { font-size: 2.1rem; margin-top: 2rem; margin-bottom: 0.75rem; }
+    & h4 { font-size: 1.15rem; margin-top: 1.25rem; margin-bottom: 0.5rem; font-weight: 600; }
+    & img { max-width: 100%; height: auto; }
+    & hr { margin: 2rem 0; border-color: var(--color-border); }
+    & table { width: 100%; border-collapse: collapse; margin-bottom: 1.25rem; display: block; overflow-x: auto; }
+    & th, & td { border: 1px solid var(--color-border); padding: 0.5rem 0.75rem; text-align: left; vertical-align: top; }
+    & th { background: var(--color-secondary); font-weight: 600; }
+    & pre { background: var(--color-secondary); padding: 1rem; overflow-x: auto; margin-bottom: 1rem; }
+    & sup, & sub { font-size: 0.75em; }
 }
 
 /*
@@ -288,7 +297,13 @@ trix-editor:focus { outline: none; border-color: var(--color-gold) !important; }
 .select2-results__message { color: var(--color-muted-foreground); }
 
 /* Error state for the rich-text editor */
-trix-editor.trix-invalid { border-color: var(--color-destructive) !important; }
+trix-editor.trix-invalid, .jodit-container.trix-invalid { border-color: var(--color-destructive) !important; }
+/* The simple (author) editor has no file/image attachments. */
+trix-toolbar .trix-button-group--file-tools { display: none; }
+/* Admin full editor (Jodit) in the site's look. */
+.jodit-container:not(.jodit_inline) { border-color: var(--color-border); border-radius: 0; }
+.jodit-container .jodit-workplace { background: var(--color-card); }
+.jodit-toolbar__box:not(:empty) { background: var(--color-secondary); border-color: var(--color-border); }
 
 /* Admin → Menus drag and drop */
 .menu-ghost { opacity: 0.4; outline: 2px dashed var(--color-gold); outline-offset: -2px; }
