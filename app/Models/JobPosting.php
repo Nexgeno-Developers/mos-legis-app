@@ -21,7 +21,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
     'user_id', 'job_title', 'organisation', 'location', 'work_mode', 'employment_type', 'experience',
     'practice_area', 'salary', 'summary', 'responsibilities', 'qualifications', 'required_skills',
     'application_method', 'application_email_url', 'application_deadline', 'published_date', 'expiry_date',
-    'source_name', 'source_url', 'status',
+    'source_name', 'source_url', 'status', 'approved_at',
 ])]
 class JobPosting extends Model
 {
@@ -37,6 +37,7 @@ class JobPosting extends Model
             'application_deadline' => 'date',
             'published_date' => 'date',
             'expiry_date' => 'date',
+            'approved_at' => 'datetime',
         ];
     }
 
@@ -54,8 +55,21 @@ class JobPosting extends Model
     protected function live(Builder $query): void
     {
         $query->where('status', RecordStatus::Active)
+            ->whereNotNull('approved_at')
             ->whereDate('expiry_date', '>=', today())
             ->whereDate('published_date', '<=', today());
+    }
+
+    /** Posted by an author while job approval is on, and not yet approved by an admin. */
+    public function isPendingApproval(): bool
+    {
+        return $this->approved_at === null;
+    }
+
+    #[Scope]
+    protected function pendingApproval(Builder $query): void
+    {
+        $query->whereNull('approved_at');
     }
 
     #[Scope]

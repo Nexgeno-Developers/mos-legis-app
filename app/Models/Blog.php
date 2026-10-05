@@ -34,6 +34,12 @@ class Blog extends Model
         ];
     }
 
+    /** Estimated reading time at ~200 words a minute. */
+    public function readingMinutes(): int
+    {
+        return max(1, (int) ceil(str_word_count(strip_tags((string) $this->content)) / 200));
+    }
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);

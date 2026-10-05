@@ -1,4 +1,4 @@
-<x-layouts.account title="Blogs Posting" intro="Write for the MOS Legis blog. {{ settings()->bool('general.blog_author_approval_required') ? 'Posts are reviewed by the editors before they go live.' : 'Published posts go live immediately.' }}">
+<x-layouts.account title="Blogs Posting" intro="Write for the MOS Legis blog. {{ settings()->bool('approvals.blog_author_approval_required') ? 'Posts are reviewed by the editors before they go live.' : 'Published posts go live immediately.' }}">
     <div class="flex justify-end"><x-button variant="primary" icon="plus" :href="route('account.blogs.create')">New blog post</x-button></div>
     <x-table class="mt-6" :columns="['Title', 'Category', 'Status', 'Publish Date', 'Views', 'Actions']" :rows="$blogs" empty="You have not written any posts yet.">
         @foreach ($blogs as $blog)

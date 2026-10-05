@@ -15,7 +15,8 @@ use Illuminate\Support\Str;
 /**
  * Creates/updates a blog post for the admin panel (A.05) and the author portal (B.05).
  * Author posts that ask to be published become "Pending" when the
- * "Author blog posts require approval" setting is on.
+ * "Blog posts approval required" setting is on. Authors don't pick a publish date:
+ * it is the day the post first goes live (or is approved).
  */
 class SaveBlog
 {
@@ -26,7 +27,7 @@ class SaveBlog
             $blog ??= new Blog(['user_id' => $actor->id]);
             $status = BlogStatus::from($data['status']);
 
-            if ($asAuthor && $status === BlogStatus::Published && settings()->bool('general.blog_author_approval_required')) {
+            if ($asAuthor && $status === BlogStatus::Published && settings()->bool('approvals.blog_author_approval_required')) {
                 $status = BlogStatus::Pending;
             }
 
@@ -40,7 +41,7 @@ class SaveBlog
                 'meta_title' => $data['meta_title'] ?? null,
                 'meta_description' => $data['meta_description'] ?? null,
                 'status' => $status,
-                'publish_date' => $data['publish_date'] ?? today(),
+                'publish_date' => $asAuthor ? $this->authorPublishDate($blog) : ($data['publish_date'] ?? today()),
                 'featured_post' => $asAuthor ? $blog->featured_post ?? false : (bool) ($data['featured_post'] ?? false),
             ]);
 
@@ -57,6 +58,10 @@ class SaveBlog
             $blog->save();
             $blog->tags()->sync($data['tag_ids'] ?? []);
 
+            if ($wasPending && $status === BlogStatus::Published) {
+                $this->approved($blog, dateToday: false); // the admin form sets the date
+            }
+
             if ($status === BlogStatus::Pending && ! $wasPending) {
                 app(WorkflowNotifier::class)->toAdmins('blog_pending_approval', [
                     'title' => $blog->blog_title,
@@ -66,6 +71,26 @@ class SaveBlog
 
             return $blog;
         });
+    }
+
+    /** An approved author post goes live (today, unless the admin set the date); its author is told. */
+    public function approved(Blog $blog, bool $dateToday = true): void
+    {
+        if ($dateToday) {
+            $blog->forceFill(['publish_date' => today()])->save();
+        }
+
+        if ($blog->user?->isAuthor()) {
+            app(WorkflowNotifier::class)->toUser('blog_approved', $blog->user, ['title' => $blog->blog_title]);
+        }
+    }
+
+    /** Keeps the date of a post that is already live; otherwise today. */
+    private function authorPublishDate(Blog $blog): mixed
+    {
+        return $blog->exists && $blog->getOriginal('status') === BlogStatus::Published && $blog->publish_date
+            ? $blog->publish_date
+            : today();
     }
 
     public function uniqueSlug(string $value, ?int $ignoreId = null): string

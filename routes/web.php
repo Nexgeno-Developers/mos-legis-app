@@ -29,6 +29,7 @@ Route::get('archive/{submission}/download', [Site\ArchiveController::class, 'dow
 Route::get('blogs', [Site\BlogController::class, 'index'])->name('blogs.index');
 Route::get('blogs/{slug}', [Site\BlogController::class, 'show'])->name('blogs.show');
 Route::post('blogs/{slug}/comments', [Site\BlogController::class, 'comment'])->middleware(['auth', 'throttle:10,1'])->name('blogs.comments.store');
+Route::delete('blogs/{slug}/comments/{comment}', [Site\BlogController::class, 'destroyComment'])->middleware('auth')->name('blogs.comments.destroy');
 
 Route::post('contact', [Site\EnquiryController::class, 'storeContact'])->middleware('throttle:5,1')->name('contact.store');
 Route::post('careers', [Site\EnquiryController::class, 'storeCareer'])->middleware('throttle:5,1')->name('careers.store');

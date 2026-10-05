@@ -33,7 +33,7 @@ class SettingsAndActivityTest extends TestCase
             ->assertOk()
             ->assertSee('Plagiarism Pre-Screening Fee')
             ->assertSee('Tax Rate Percentage')
-            ->assertSee('Author Blog Posts Require Approval');
+            ->assertSee('Blog Posts Approval Required');
     }
 
     #[Test]
@@ -44,13 +44,13 @@ class SettingsAndActivityTest extends TestCase
 
         $this->actingAs($this->superadmin())->put(route('admin.settings.update'), $this->validSettings([
             'manuscript_plagiarism_prescreening_fee' => '200',
-            'general_blog_author_approval_required' => '0',
+            'approvals_blog_author_approval_required' => '0',
             'general_application_logo' => UploadedFile::fake()->create('logo.png', 12, 'image/png'),
         ]))->assertSessionHasNoErrors();
 
         $settings = app(Settings::class);
         $this->assertSame('200', $settings->get('manuscript.plagiarism_prescreening_fee'));
-        $this->assertFalse($settings->bool('general.blog_author_approval_required'));
+        $this->assertFalse($settings->bool('approvals.blog_author_approval_required'));
         Storage::disk('public')->assertExists($settings->get('general.application_logo'));
     }
 

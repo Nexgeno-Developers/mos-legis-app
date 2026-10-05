@@ -85,8 +85,13 @@ class BlogController extends Controller
     {
         Gate::authorize('update', $blog);
 
+        $wasPending = $blog->status === BlogStatus::Pending;
         $blog->update(['status' => $blog->status === BlogStatus::Published ? BlogStatus::Draft : BlogStatus::Published]);
         activity()->log('Blogs', 'Changed status to '.$blog->status->value, $blog);
+
+        if ($wasPending) {
+            app(SaveBlog::class)->approved($blog);
+        }
 
         return back()->with('success', "“{$blog->blog_title}” is now {$blog->status->value}.");
     }

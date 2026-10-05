@@ -12,4 +12,5 @@ enum SettingGroup: string
     case Manuscript = 'manuscript';
     case Payment = 'payment';
     case SeoSocial = 'seo_social';
+    case Approvals = 'approvals';
 }

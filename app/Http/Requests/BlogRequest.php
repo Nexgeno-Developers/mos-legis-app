@@ -38,7 +38,8 @@ class BlogRequest extends FormRequest
             'og_image' => ['nullable', 'image', 'max:2048'],
             // Authors choose Draft or Published; Pending is set by the approval rule.
             'status' => ['required', Rule::in($isAdmin ? BlogStatus::values() : [BlogStatus::Draft->value, BlogStatus::Published->value])],
-            'publish_date' => ['required', 'date'],
+            // Authors don't choose it: the post is dated the day it goes live.
+            'publish_date' => [$isAdmin ? 'required' : 'exclude', 'date'],
             'featured_post' => ['nullable', 'boolean'],
         ];
     }

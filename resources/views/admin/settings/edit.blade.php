@@ -4,6 +4,7 @@
         'manuscript' => 'Screening thresholds and manuscript-pipeline toggles.',
         'payment' => 'Currency and gateway configuration. Gateway keys are set in the server .env file.',
         'seo_social' => 'Default metadata and social links used across the public site.',
+        'approvals' => 'Choose what an admin must approve before it appears on the website. When a setting is off, it goes live straight away.',
     ];
     $canEdit = auth()->user()->can('settings.edit');
 @endphp

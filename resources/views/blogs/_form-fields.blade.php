@@ -32,8 +32,14 @@
         <div @class(['grid gap-5', 'md:grid-cols-3' => $admin, 'md:grid-cols-2' => ! $admin])>
             <x-form.select name="status" label="Status" :value="$blog->status"
                 :options="$admin ? App\Enums\BlogStatus::options() : ['Draft' => 'Draft', 'Published' => 'Publish']" required
-                :hint="$admin ? null : (settings()->bool('general.blog_author_approval_required') ? 'Published posts are reviewed by the editors before they go live.' : null)" />
-            <x-form.input name="publish_date" type="date" label="Publish date" :value="$blog->publish_date?->toDateString()" required />
+                :hint="$admin ? null : (settings()->bool('approvals.blog_author_approval_required') ? 'Published posts are reviewed by the editors before they go live.' : null)" />
+            @if ($admin)
+                <x-form.input name="publish_date" type="date" label="Publish date" :value="$blog->publish_date?->toDateString()" required />
+            @else
+                <x-form.field label="Publish date" name="publish_date_info">
+                    <p class="field-input flex items-center bg-secondary text-muted-foreground">{{ $blog->status === App\Enums\BlogStatus::Published && $blog->publish_date ? format_date($blog->publish_date) : 'Set automatically when the post goes live' }}</p>
+                </x-form.field>
+            @endif
             @if ($admin)
                 <div class="flex items-end pb-2">
                     <x-form.checkbox name="featured_post" label="Featured post" :checked="$blog->featured_post" />

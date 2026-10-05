@@ -12,7 +12,7 @@
         <x-filter.select name="practice_area" label="Practice area" :options="$practiceAreas" />
         <x-filter.select name="work_mode" label="Work mode" :options="App\Enums\WorkMode::options()" />
         <x-filter.select name="employment_type" label="Type" :options="App\Enums\EmploymentType::options()" />
-        <x-filter.select name="status" label="Status" :options="['Active' => 'Active', 'Inactive' => 'Inactive', 'expired' => 'Expired']" />
+        <x-filter.select name="status" label="Status" :options="['pending' => 'Awaiting approval', 'Active' => 'Active', 'Inactive' => 'Inactive', 'expired' => 'Expired']" />
         <button type="button" @click="more = !more" class="text-sm text-primary hover:underline" x-text="more ? 'Fewer filters' : 'More filters'"></button>
         <div x-show="more" x-cloak class="flex w-full flex-wrap items-end gap-3">
             <x-filter.text name="experience" label="Experience" placeholder="e.g. 2–4 years" />
@@ -34,12 +34,18 @@
                 <td class="whitespace-nowrap text-sm">{{ format_date($job->application_deadline) }}</td>
                 <td class="whitespace-nowrap text-sm">{{ format_date($job->published_date) }}</td>
                 <td>
-                    @if ($job->isExpired())<x-badge>Expired</x-badge>@else<x-status-badge :status="$job->status" />@endif
+                    @if ($job->isPendingApproval())<x-badge tone="warning">Awaiting approval</x-badge>@elseif ($job->isExpired())<x-badge>Expired</x-badge>@else<x-status-badge :status="$job->status" />@endif
                 </td>
                 <td>
                     <div class="flex flex-wrap items-center gap-3">
                         <x-action-link :href="route('admin.job-postings.show', $job)" icon="eye">View</x-action-link>
                         @can('update', $job)
+                            @if ($job->isPendingApproval())
+                                <form method="POST" action="{{ route('admin.job-postings.approve', $job) }}">
+                                    @csrf @method('PATCH')
+                                    <x-action-link type="submit" icon="check">Approve</x-action-link>
+                                </form>
+                            @endif
                             <x-action-link :href="route('admin.job-postings.edit', $job)" icon="pencil">Edit</x-action-link>
                             <form method="POST" action="{{ route('admin.job-postings.toggle-status', $job) }}">
                                 @csrf @method('PATCH')

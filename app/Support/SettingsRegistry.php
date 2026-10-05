@@ -22,8 +22,15 @@ final class SettingsRegistry
                 'default_country' => ['label' => 'Default Country', 'type' => 'text', 'default' => 'India'],
                 'default_timezone' => ['label' => 'Default Timezone', 'type' => 'timezone', 'default' => 'Asia/Kolkata'],
                 'date_format' => ['label' => 'Date Format', 'type' => 'select', 'default' => 'DD-MM-YYYY', 'options' => ['DD-MM-YYYY', 'MM-DD-YYYY', 'YYYY-MM-DD', 'DD MMM YYYY']],
-                // Added per client decision: whether author blog posts go live immediately.
-                'blog_author_approval_required' => ['label' => 'Author Blog Posts Require Approval', 'type' => 'boolean', 'default' => '1'],
+            ],
+        ],
+        // What authors and readers publish on the website: on = an admin approves it first, off = it goes live at once.
+        'approvals' => [
+            'label' => 'Approvals',
+            'fields' => [
+                'blog_author_approval_required' => ['label' => 'Blog Posts Approval Required (author posts are reviewed before they go live)', 'type' => 'boolean', 'default' => '1'],
+                'blog_comment_approval_required' => ['label' => 'Blog Comment Approval Required (comments appear after an admin approves them)', 'type' => 'boolean', 'default' => '1'],
+                'job_author_approval_required' => ['label' => 'Job Posting Approval Required (author job postings are listed after an admin approves them)', 'type' => 'boolean', 'default' => '1'],
             ],
         ],
         'manuscript' => [

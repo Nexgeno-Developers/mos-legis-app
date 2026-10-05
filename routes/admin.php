@@ -85,6 +85,7 @@ Route::middleware('admin')->group(function () {
     Route::patch('menu-items/{menuItem}/status', [Admin\MenuController::class, 'toggleStatus'])->name('menus.items.toggle-status');
     Route::delete('menu-items/{menuItem}', [Admin\MenuController::class, 'destroy'])->name('menus.items.destroy');
 
+    Route::patch('job-postings/{job_posting}/approve', [Admin\JobPostingController::class, 'approve'])->name('job-postings.approve');
     Route::patch('job-postings/{job_posting}/status', [Admin\JobPostingController::class, 'toggleStatus'])->name('job-postings.toggle-status');
     Route::resource('job-postings', Admin\JobPostingController::class);
 

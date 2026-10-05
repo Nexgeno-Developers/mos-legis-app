@@ -39,6 +39,7 @@ class JobPostingFactory extends Factory
             'source_name' => 'Firm website',
             'source_url' => 'https://example.com/careers',
             'status' => RecordStatus::Active,
+            'approved_at' => now(),
         ];
     }
 

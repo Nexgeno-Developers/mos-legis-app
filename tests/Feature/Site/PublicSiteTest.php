@@ -79,7 +79,7 @@ class PublicSiteTest extends TestCase
         $this->post(route('blogs.comments.store', $blog->slug), ['comment' => 'Hello there'])->assertRedirect(route('login'));
         $this->actingAs($this->author())->post(route('blogs.comments.store', $blog->slug), ['comment' => 'Great analysis'])->assertSessionHas('success');
         $this->assertDatabaseHas('blog_comments', ['blog_id' => $blog->id, 'status' => 'Pending']);
-        $this->get(route('blogs.show', $blog->slug))->assertDontSee('Great analysis');
+        $this->actingAs($this->author())->get(route('blogs.show', $blog->slug))->assertDontSee('Great analysis'); // others don't see it until approved
     }
 
     #[Test]

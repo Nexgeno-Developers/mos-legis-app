@@ -8,6 +8,7 @@ use App\Enums\WorkMode;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\JobPostingRequest;
 use App\Models\JobPosting;
+use App\Notifications\WorkflowNotifier;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
@@ -34,6 +35,7 @@ class JobPostingController extends Controller
             ->when($request->string('experience')->trim()->value(), fn ($q, $exp) => $q->where('experience', 'like', "%{$exp}%"))
             ->when($request->string('status')->value(), fn ($q, $status) => match ($status) {
                 'expired' => $q->expired(),
+                'pending' => $q->pendingApproval(),
                 default => $q->where('status', $status),
             })
             ->when($request->date('published_from'), fn ($q, $d) => $q->whereDate('published_date', '>=', $d))
@@ -65,7 +67,7 @@ class JobPostingController extends Controller
 
     public function store(JobPostingRequest $request): RedirectResponse
     {
-        $job = JobPosting::create($request->jobData() + ['user_id' => $request->user()->id]);
+        $job = JobPosting::create($request->jobData() + ['user_id' => $request->user()->id, 'approved_at' => now()]);
         activity()->log('Job Postings', 'Created job posting', $job, $request->safe()->only(['job_title', 'organisation', 'status']));
 
         return redirect()->route('admin.job-postings.index')->with('success', 'Job posting created.');
@@ -91,6 +93,23 @@ class JobPostingController extends Controller
         activity()->log('Job Postings', 'Updated job posting', $jobPosting, $request->safe()->only(['job_title', 'organisation', 'status']));
 
         return redirect()->route('admin.job-postings.index')->with('success', 'Job posting updated.');
+    }
+
+    /** Approves an author's job posting so it is listed; the author is told. */
+    public function approve(JobPosting $jobPosting, WorkflowNotifier $notifier): RedirectResponse
+    {
+        Gate::authorize('update', $jobPosting);
+
+        if ($jobPosting->isPendingApproval()) {
+            $jobPosting->forceFill(['approved_at' => now()])->save();
+            activity()->log('Job Postings', 'Approved job posting', $jobPosting);
+
+            if ($jobPosting->user?->isAuthor()) {
+                $notifier->toUser('job_approved', $jobPosting->user, ['title' => $jobPosting->job_title]);
+            }
+        }
+
+        return back()->with('success', "{$jobPosting->job_title} is approved.");
     }
 
     public function toggleStatus(JobPosting $jobPosting): RedirectResponse

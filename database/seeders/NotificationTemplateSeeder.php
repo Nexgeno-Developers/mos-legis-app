@@ -45,6 +45,12 @@ class NotificationTemplateSeeder extends Seeder
             'Manuscript {reference} "{title}" has been selected as the Best Paper for {period}.'],
         'blog_pending_approval' => ['Blog awaiting approval', 'Blog post awaiting approval',
             'The blog post "{title}" by {author_name} is awaiting approval.'],
+        'blog_approved' => ['Blog approved', 'Your blog post is live',
+            'Your blog post "{title}" has been approved and is now published.'],
+        'job_pending_approval' => ['Job awaiting approval', 'Job posting awaiting approval',
+            'The job posting "{title}" by {author_name} is awaiting approval.'],
+        'job_approved' => ['Job approved', 'Your job posting is live',
+            'Your job posting "{title}" has been approved and is now listed on the job board.'],
         'enquiry_received' => ['Enquiry received', 'New {form} enquiry from {name}',
             'A new {form} form submission was received from {name} ({email}).'],
     ];

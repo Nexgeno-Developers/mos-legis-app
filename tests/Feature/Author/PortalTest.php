@@ -201,7 +201,7 @@ class PortalTest extends TestCase
         $this->actingAs($this->author)->post(route('account.blogs.store'), $payload)->assertRedirect(route('account.blogs.index'));
         $this->assertSame(BlogStatus::Pending, Blog::firstOrFail()->status);
 
-        settings()->update(['general' => ['blog_author_approval_required' => '0']]);
+        settings()->update(['approvals' => ['blog_author_approval_required' => '0']]);
         $this->actingAs($this->author)->post(route('account.blogs.store'), ['blog_title' => 'Second'] + $payload);
         $this->assertSame(BlogStatus::Published, Blog::where('blog_title', 'Second')->firstOrFail()->status);
     }
