@@ -92,7 +92,7 @@
             </section>
         @endif
 
-        @if ($page->content)<div class="prose-legis measure">{!! $page->content !!}</div>@endif
+        @if ($page->content)<div class="prose-legis">{!! $page->content !!}</div>@endif
 
         {{-- 3. FAQ --}}
         @if ($faqs)

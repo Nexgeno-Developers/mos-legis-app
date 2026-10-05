@@ -75,7 +75,7 @@
     @endif
 
     @if ($page?->content)
-        <section class="mx-auto max-w-[1200px] px-6 py-16"><div class="prose-legis measure">{!! $page->content !!}</div></section>
+        <section class="mx-auto max-w-[1200px] px-6 py-16"><div class="prose-legis">{!! $page->content !!}</div></section>
     @endif
 
     @if ($blogs->isNotEmpty())

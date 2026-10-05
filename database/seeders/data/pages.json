@@ -183,20 +183,7 @@
     "content": null,
     "seo_title": "Best Paper Winners | MOS Legis",
     "seo_description": "Quarterly best paper prize, criteria and past winners.",
-    "metas": {
-      "winner_choose_desc": {
-        "type": "string",
-        "value": "Each quarter, the editorial board selects one published manuscript as the Best Paper of the quarter, on the recommendation of the assigned reviewer and a final board vote."
-      },
-      "prize_desc": {
-        "type": "string",
-        "value": "The winning author receives a cash prize of Rs. 2,000, a certificate of recognition and a featured citation on the journal's home page."
-      },
-      "be_considered_desc": {
-        "type": "string",
-        "value": "Every manuscript accepted and published in a given quarter is automatically eligible. To be considered, simply submit your manuscript for publication."
-      }
-    }
+    "metas": {}
   },
   {
     "title": "Contact Us",

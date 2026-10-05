@@ -177,7 +177,7 @@
             @if ($page->content)
                 <section id="more" class="scroll-mt-28">
                     <x-section-heading :eyebrow="$text('more_label')" :title="$text('more_heading')" />
-                    <div class="prose-legis measure mt-6">{!! $page->content !!}</div>
+                    <div class="prose-legis mt-6">{!! $page->content !!}</div>
                 </section>
             @endif
 

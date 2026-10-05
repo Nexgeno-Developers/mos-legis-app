@@ -27,19 +27,27 @@ class PageHeadingsTest extends TestCase
     }
 
     #[Test]
-    public function best_paper_headings_and_content_are_managed_in_the_admin(): void
+    public function best_paper_has_fixed_headings_and_shows_its_content_last(): void
     {
         $page = Page::where('template', 'paper_winner')->firstOrFail();
-        $this->get(page_url('paper_winner'))->assertSee('How Winners Are Chosen')->assertSee('Past Winners'); // seeded wording
+        $this->get(page_url('paper_winner'))->assertSee('Past Winners')->assertDontSee('How Winners Are Chosen'); // no info boxes
 
-        $this->save($page, [
-            'winner_choose_title' => 'Selection', 'winner_choose_desc' => 'By vote.',
-            'prize_title' => '', 'prize_desc' => '', 'past_heading' => 'Hall of fame',
-        ], ['content' => '<p>Extra award notes</p>']);
+        $this->actingAs($this->superadmin())->get(route('admin.pages.edit', $page))->assertOk()
+            ->assertDontSee('Paper winner fields')->assertDontSee('Past winners heading'); // headings are fixed
 
-        $this->get(page_url('paper_winner'))->assertOk()
-            ->assertSee('Selection')->assertSee('By vote.')->assertSee('Hall of fame')->assertSee('Extra award notes')
-            ->assertDontSee('How Winners Are Chosen')->assertDontSee('The Prize')->assertDontSee('Past Winners');
+        $this->save($page, [], ['content' => '<p>Extra award notes</p>']);
+
+        $html = $this->get(page_url('paper_winner'))->assertOk()
+            ->assertSee('Current Winner')->assertSee('Past Winners')->assertSee('Extra award notes')->getContent();
+        // The page content comes last, after the past winners.
+        $this->assertGreaterThan(strpos($html, 'Past Winners'), strpos($html, 'Extra award notes'));
+    }
+
+    #[Test]
+    public function past_winners_have_the_standard_filter_bar_with_reset(): void
+    {
+        $this->get(page_url('paper_winner'))->assertOk()->assertDontSee('>Reset<', false);
+        $this->get(page_url('paper_winner').'?year=2026')->assertOk()->assertSee('Reset');
     }
 
     #[Test]

@@ -42,18 +42,8 @@ final class PageTemplates
                     'month_year' => ['label' => 'Date (Month/Year)', 'type' => 'text'],
                 ]],
             ],
-            PageTemplate::PaperWinner => [
-                'current_label' => ['label' => '“Current winner” label', 'type' => 'text'],
-                'cards_label' => ['label' => 'Label above the three boxes', 'type' => 'text'],
-                'winner_choose_title' => ['label' => 'Box 1 heading', 'type' => 'text'],
-                'winner_choose_desc' => ['label' => 'Box 1 text (how the winner is chosen)', 'type' => 'textarea'],
-                'prize_title' => ['label' => 'Box 2 heading', 'type' => 'text'],
-                'prize_desc' => ['label' => 'Box 2 text (the prize)', 'type' => 'textarea'],
-                'be_considered_title' => ['label' => 'Box 3 heading', 'type' => 'text'],
-                'be_considered_desc' => ['label' => 'Box 3 text (be considered next quarter)', 'type' => 'textarea'],
-                'past_label' => ['label' => 'Past winners label', 'type' => 'text'],
-                'past_heading' => ['label' => 'Past winners heading', 'type' => 'text'],
-            ],
+            // Best Paper: title, intro, content and SEO only — winners, headings and filters are fixed.
+            PageTemplate::PaperWinner => [],
             PageTemplate::Contact => [
                 'form_heading' => ['label' => 'Form heading', 'type' => 'text'],
                 'form_text' => ['label' => 'Form text', 'type' => 'textarea'],
@@ -256,12 +246,6 @@ final class PageTemplates
         return match ($template) {
             PageTemplate::Submit => self::submitDefaults(),
             PageTemplate::PlagiarismChecker => self::plagiarismDefaults(),
-            PageTemplate::PaperWinner => [
-                'current_label' => 'Current Winner', 'cards_label' => 'The Award',
-                'winner_choose_title' => 'How Winners Are Chosen', 'prize_title' => 'The Prize',
-                'be_considered_title' => 'Be Considered Next Quarter',
-                'past_label' => 'Archive', 'past_heading' => 'Past Winners',
-            ],
             PageTemplate::Contact => [
                 'form_heading' => 'Send us a message',
                 'form_text' => 'Fill in the form and the right desk will reply by email, usually within two working days.',
