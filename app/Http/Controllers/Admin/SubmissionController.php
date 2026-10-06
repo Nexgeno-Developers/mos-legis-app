@@ -12,6 +12,7 @@ use App\Models\ContentCategory;
 use App\Models\ManuscriptRevision;
 use App\Models\ManuscriptSubmission;
 use App\Models\User;
+use App\Services\Documents\CertificateGenerator;
 use App\Services\Manuscripts\FeeCalculator;
 use App\Services\Manuscripts\ReviewerAllocator;
 use Illuminate\Http\RedirectResponse;
@@ -19,6 +20,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 /**
@@ -72,6 +74,7 @@ class SubmissionController extends Controller
             'submission' => $submission,
             'eligibleReviewers' => $allocator->eligible($submission->content_category_id),
             'publicationFee' => $fees->publicationFeeFor($submission),
+            'publicationBreakdown' => $fees->publicationBreakdown($submission),
             'threshold' => settings()->float('manuscript.plagiarism_max_similarity_percent'),
         ]);
     }
@@ -142,13 +145,14 @@ class SubmissionController extends Controller
         return Storage::disk('local')->download($path, $submission->reference().'.docx');
     }
 
-    public function certificate(ManuscriptSubmission $submission): StreamedResponse
+    /** Rendered with the current certificate design from the frozen details. */
+    public function certificate(ManuscriptSubmission $submission, CertificateGenerator $certificates): Response
     {
         Gate::authorize('view', $submission);
         $certificate = $submission->certificate;
-        abort_unless($certificate && Storage::disk('local')->exists($certificate->document_path), 404);
+        abort_unless($certificate, 404);
 
-        return Storage::disk('local')->download($certificate->document_path, $certificate->certificate_number.'.pdf');
+        return $certificates->download($certificate);
     }
 
     private function formOptions(): array

@@ -125,7 +125,7 @@ class PaymentService
                 'invoice_number' => $settled->invoice_number,
             ];
             $this->notifier->toUser('payment_received', $settled->user, $data);
-            $this->notifier->toAdmins('payment_received', $data);
+            $this->notifier->toAdmins('payment_received_admin', $data + ['payer_name' => $settled->user->name, 'payer_email' => $settled->user->email]);
         }
 
         return $settled ?? $payment->fresh();

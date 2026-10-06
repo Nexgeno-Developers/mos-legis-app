@@ -172,6 +172,30 @@
                         </tbody>
                     </table>
                 </div>
+
+                @if ($coAuthorFees->isNotEmpty())
+                    <h3 class="mt-8 font-display text-xl">Co-author surcharge</h3>
+                    <p class="mt-1 text-sm text-muted-foreground">Added to the publication fee for each co-author named on the manuscript.</p>
+                    <div class="mt-3 overflow-x-auto border border-border bg-card">
+                        <table class="w-full min-w-[480px] text-left text-sm">
+                            <thead><tr class="border-b border-border bg-secondary/60">
+                                <th class="label-caps px-4 py-3 text-xs text-muted-foreground">Content category</th>
+                                <th class="label-caps px-4 py-3 text-xs text-muted-foreground">1st / 2nd co-author (each)</th>
+                                <th class="label-caps px-4 py-3 text-xs text-muted-foreground">3rd co-author onwards (each)</th>
+                            </tr></thead>
+                            <tbody>
+                                @foreach ($contentCategories as $category)
+                                    @continue(! isset($coAuthorFees[$category->id]))
+                                    <tr class="border-b border-border last:border-0">
+                                        <th class="px-4 py-3 font-medium">{{ $category->name }}</th>
+                                        <td class="px-4 py-3">{{ money($coAuthorFees[$category->id][0]) }}</td>
+                                        <td class="px-4 py-3">{{ money($coAuthorFees[$category->id][1]) }}</td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                @endif
             </section>
 
             @if ($page->content)

@@ -29,6 +29,9 @@
             <div>
                 <p class="font-display text-xl text-success">Accepted for publication</p>
                 <p class="text-muted-foreground">Publication fee: {{ money($publicationFee) }} (inclusive of all taxes). Your manuscript is published once payment is received.</p>
+                @if (($b = $publicationBreakdown) && $b['surcharge'] > 0)
+                    <p class="text-sm text-muted-foreground">Base fee {{ money($b['base']) }} + co-author surcharge {{ money($b['surcharge']) }} ({{ $b['co_authors'] }} co-author{{ $b['co_authors'] === 1 ? '' : 's' }})</p>
+                @endif
             </div>
             <x-button variant="primary" icon="credit-card" :href="route('account.checkout.submission', [$submission, 'publication'])">Pay publication fee</x-button>
         </div>

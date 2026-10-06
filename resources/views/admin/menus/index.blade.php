@@ -2,7 +2,9 @@
     <x-admin.heading title="Menus" description="Manage the website’s header and footer navigation. Drag items to reorder them; use groups to build dropdowns (header) and link columns (footer).">
         <x-slot:actions>
             @can('menus.create')
+                {{-- "Add group" is hidden for now (no new menu groups are needed). Restore this line to bring it back.
                 <x-button icon="folder" @click="$dispatch('open-modal', { name: 'menu-item', record: { link_type: 'none' } })">Add group</x-button>
+                --}}
                 <x-button variant="primary" icon="plus" @click="$dispatch('open-modal', { name: 'menu-item' })">Add link</x-button>
             @endcan
         </x-slot:actions>

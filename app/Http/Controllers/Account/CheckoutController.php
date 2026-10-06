@@ -194,6 +194,9 @@ class CheckoutController extends Controller
             'payable' => $payable,
             'purpose' => $purpose,
             'amount' => $amount,
+            // Base fee + co-author surcharge lines for the publication fee.
+            'breakdown' => $purpose === PaymentPurpose::Publication && $payable instanceof ManuscriptSubmission
+                ? $this->fees->publicationBreakdown($payable) : null,
             'address' => $address,
             'taxRate' => settings()->float('payment.tax_rate_percent'),
             'countries' => config('countries'),

@@ -33,12 +33,12 @@ class FlexiblePageSlugsTest extends TestCase
     #[Test]
     public function a_new_slug_takes_effect_immediately_and_the_old_one_is_gone(): void
     {
-        $contact = Page::where('template', 'contact')->first();
-        $this->save($contact, ['slug' => 'get-in-touch'])->assertSessionHasNoErrors();
+        $careers = Page::where('template', 'career')->first();
+        $this->save($careers, ['slug' => 'work-with-us'])->assertSessionHasNoErrors();
 
-        $this->get('/get-in-touch')->assertOk()->assertSee($contact->title);
-        $this->get('/contact')->assertNotFound();
-        $this->assertSame(url('get-in-touch'), page_url('contact'));
+        $this->get('/work-with-us')->assertOk()->assertSee($careers->title);
+        $this->get('/careers')->assertNotFound();
+        $this->assertSame(url('work-with-us'), page_url('career'));
 
         $about = Page::where('slug', 'about')->first();
         $this->save($about, ['slug' => 'about-the-journal']);
@@ -93,6 +93,18 @@ class FlexiblePageSlugsTest extends TestCase
         $this->save($page, ['slug' => 'admin'])->assertSessionHasErrors('slug');
         // A POST-only address (the contact form) does not block the slug.
         $this->save(Page::where('template', 'contact')->first(), ['slug' => 'contact'])->assertSessionHasNoErrors();
+    }
+
+    #[Test]
+    public function submit_plagiarism_and_contact_keep_their_fixed_addresses(): void
+    {
+        foreach (['submit' => 'submit', 'plagiarism_checker' => 'plagiarism-checker', 'contact' => 'contact'] as $template => $slug) {
+            $page = Page::where('template', $template)->firstOrFail();
+            $this->save($page, ['slug' => 'renamed-'.$slug])->assertSessionHasNoErrors();
+            $this->assertSame($slug, $page->fresh()->slug);
+            $this->actingAs($this->superadmin())->get(route('admin.pages.edit', $page))->assertSee('This address is fixed');
+            $this->actingAs($this->superadmin())->delete(route('admin.pages.destroy', $page))->assertSessionHas('error');
+        }
     }
 
     #[Test]

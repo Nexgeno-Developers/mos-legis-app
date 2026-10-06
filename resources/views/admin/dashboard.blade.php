@@ -15,13 +15,16 @@
             </section>
         @endif
 
-        <div class="grid gap-8 lg:grid-cols-2">
+        {{-- Two columns only when both sections are shown; one section takes the full width. --}}
+        <div @class(['grid gap-8', 'lg:grid-cols-2' => $users && $payments])>
             @if ($users)
                 <section>
                     <h2 class="label-caps mb-3 text-sm text-muted-foreground">Users</h2>
-                    <div class="grid gap-px border border-border bg-border sm:grid-cols-2">
-                        <x-stat-card label="Total admins" :value="number_format($users['admins'])" :hint="$users['reviewers'].' reviewers'" />
-                        <x-stat-card label="Total authors" :value="number_format($users['authors'])" />
+                    {{-- One figure per card (no extra hint line), so the cards line up with the Payments cards. --}}
+                    <div class="grid gap-px border border-border bg-border sm:grid-cols-3">
+                        <x-stat-card label="Superadmins" :value="number_format($users['admins'] - $users['reviewers'])" :href="route('admin.users.index', ['role' => 'superadmin'])" />
+                        <x-stat-card label="Reviewers" :value="number_format($users['reviewers'])" :href="route('admin.users.index', ['role' => 'reviewer'])" />
+                        <x-stat-card label="Authors" :value="number_format($users['authors'])" :href="route('admin.users.index', ['role' => 'author'])" />
                     </div>
                 </section>
             @endif
@@ -61,7 +64,8 @@
             </section>
         @endif
 
-        <div class="grid gap-8 xl:grid-cols-2">
+        {{-- Side by side only when both tables are shown (a reviewer may see just one). --}}
+        <div @class(['grid gap-8', 'xl:grid-cols-2' => auth()->user()->can('submissions.view') && auth()->user()->can('activity-logs.view')])>
             @can('submissions.view')
                 <section>
                     <div class="mb-3 flex items-center justify-between">

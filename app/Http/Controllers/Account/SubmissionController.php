@@ -8,6 +8,7 @@ use App\Enums\PaymentPurpose;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ManuscriptSubmissionRequest;
 use App\Models\ManuscriptSubmission;
+use App\Services\Documents\CertificateGenerator;
 use App\Services\Manuscripts\DocxWordCounter;
 use App\Services\Manuscripts\FeeCalculator;
 use App\Services\Manuscripts\ManuscriptWorkflow;
@@ -17,6 +18,7 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Throwable;
 
@@ -64,6 +66,7 @@ class SubmissionController extends Controller
         return view('account.submissions.show', [
             'submission' => $submission,
             'publicationFee' => $fees->publicationFeeFor($submission),
+            'publicationBreakdown' => $fees->publicationBreakdown($submission),
             'prescreeningFee' => $fees->prescreeningFee(),
             'paymentsEnabled' => $fees->paymentsEnabled(),
         ]);
@@ -103,12 +106,13 @@ class SubmissionController extends Controller
         return Storage::disk('local')->download($submission->manuscript_attachment, $submission->reference().'.docx');
     }
 
-    public function certificate(ManuscriptSubmission $submission): StreamedResponse
+    /** Rendered with the current certificate design from the frozen details. */
+    public function certificate(ManuscriptSubmission $submission, CertificateGenerator $certificates): Response
     {
         Gate::authorize('view', $submission);
         $certificate = $submission->certificate;
-        abort_unless($certificate && Storage::disk('local')->exists($certificate->document_path), 404);
+        abort_unless($certificate, 404);
 
-        return Storage::disk('local')->download($certificate->document_path, $certificate->certificate_number.'.pdf');
+        return $certificates->download($certificate);
     }
 }

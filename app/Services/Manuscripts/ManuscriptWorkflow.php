@@ -37,7 +37,7 @@ class ManuscriptWorkflow
         $submission->forceFill(['stage_changed_at' => now()])->save();
 
         activity()->log('Submissions', 'Manuscript submitted', $submission, ['title' => $submission->title]);
-        $this->notifyParties('submission_received', $submission, reviewer: false);
+        $this->notify($submission, ['author' => 'submission_received', 'admins' => 'submission_received_admin']);
 
         // With payments switched off (Settings → Payment) screening starts immediately.
         if (! $this->fees->paymentsEnabled()) {
@@ -84,14 +84,14 @@ class ManuscriptWorkflow
         if ($similarity > $threshold) {
             $this->transition($submission, ManuscriptStage::Rejected, "Similarity {$similarity}% above {$threshold}% threshold");
             $submission->prescreeningPayment?->update(['remarks' => "Similarity {$similarity}% — above {$threshold}% threshold"]);
-            $this->notifyParties('submission_plagiarism_rejected', $submission, ['similarity' => $similarity, 'threshold' => $threshold], reviewer: false);
+            $this->notify($submission, ['author' => 'submission_plagiarism_rejected', 'admins' => 'submission_plagiarism_rejected'], ['similarity' => $similarity, 'threshold' => $threshold]);
 
             return;
         }
 
         if ($submission->stage !== ManuscriptStage::PlagiarismAccepted) {
             $this->transition($submission, ManuscriptStage::PlagiarismAccepted, "Similarity {$similarity}%");
-            $this->notifyParties('submission_plagiarism_accepted', $submission, ['similarity' => $similarity, 'threshold' => $threshold], reviewer: false);
+            $this->notify($submission, ['author' => 'submission_plagiarism_accepted', 'admins' => 'submission_plagiarism_accepted'], ['similarity' => $similarity, 'threshold' => $threshold]);
         }
 
         if (! $submission->assigned_to && settings()->bool('manuscript.auto_assign_reviewer_enabled')) {
@@ -127,8 +127,10 @@ class ManuscriptWorkflow
             throw ValidationException::withMessages(['reviewer_id' => 'A reviewer can be assigned once the manuscript has passed plagiarism screening.']);
         }
 
-        DB::transaction(function () use ($submission, $reviewer, $actor) {
-            $previous = $submission->assigned_to;
+        $previous = $submission->assigned_to;
+        $firstAssignment = $submission->stage === ManuscriptStage::PlagiarismAccepted;
+
+        DB::transaction(function () use ($submission, $reviewer, $actor, $previous) {
             $submission->forceFill(['assigned_to' => $reviewer->id, 'assigned_at' => now()])->save();
 
             if ($submission->stage === ManuscriptStage::PlagiarismAccepted) {
@@ -140,7 +142,16 @@ class ManuscriptWorkflow
             ]);
         });
 
-        $this->notifyParties('submission_assigned', $submission->fresh('reviewer'), ['reviewer_name' => $reviewer->name]);
+        // Double-blind: the author is told the manuscript is under review, never who the reviewer is.
+        $this->notify($submission->fresh('reviewer'), [
+            'author' => $firstAssignment ? 'submission_in_review' : null,
+            'reviewer' => $previous === $reviewer->id ? null : 'submission_assigned_reviewer',
+            'admins' => 'submission_assigned',
+        ], ['reviewer_name' => $reviewer->name]);
+
+        if ($previous && $previous !== $reviewer->id) {
+            $this->notifier->toUser('submission_reassigned_reviewer', User::find($previous), $this->placeholders($submission));
+        }
     }
 
     /** Reviewer (or superadmin) decision on a manuscript in review / resubmitted. */
@@ -177,18 +188,21 @@ class ManuscriptWorkflow
 
             // Nothing to pay (zero fee or payments switched off) → publish straight away.
             if ($fee <= 0 || ! $this->fees->paymentsEnabled()) {
-                $this->notifyParties('submission_approved', $submission, $data);
+                $this->notify($submission, ['author' => 'submission_approved', 'reviewer' => 'submission_approved_staff', 'admins' => 'submission_approved_staff'], $data, $reviewer);
                 $this->publish($submission);
 
                 return $revision;
             }
         }
 
-        $this->notifyParties(match ($decision) {
+        $authorTemplate = match ($decision) {
             RevisionDecision::Approved => 'submission_approved',
             RevisionDecision::Revision => 'submission_revision_requested',
             RevisionDecision::Rejected => 'submission_rejected',
-        }, $submission, $data);
+        };
+        $staffTemplate = $decision === RevisionDecision::Approved ? 'submission_approved_staff' : $authorTemplate;
+        // The person who made the decision isn't emailed about it.
+        $this->notify($submission, ['author' => $authorTemplate, 'reviewer' => $staffTemplate, 'admins' => $staffTemplate], $data, $reviewer);
 
         return $revision;
     }
@@ -212,7 +226,7 @@ class ManuscriptWorkflow
             $this->transition($submission, ManuscriptStage::Resubmitted);
         });
 
-        $this->notifyParties('submission_resubmitted', $submission, author: false);
+        $this->notify($submission, ['reviewer' => 'submission_resubmitted', 'admins' => 'submission_resubmitted']);
     }
 
     /** Publication fee paid (or waived): publish and issue the certificate (clarification #1). */
@@ -231,7 +245,7 @@ class ManuscriptWorkflow
             $this->certificates->issue($submission);
         }
 
-        $this->notifyParties('submission_published', $submission);
+        $this->notify($submission, ['author' => 'submission_published', 'reviewer' => 'submission_published_staff', 'admins' => 'submission_published_staff']);
     }
 
     /** Superadmin "Change Stage" override (SOW A.16). */
@@ -248,7 +262,7 @@ class ManuscriptWorkflow
         }
 
         $this->transition($submission, $stage, $remarks ?: 'Changed by '.$actor->name);
-        $this->notifyParties('submission_stage_changed', $submission, ['stage' => $stage->label()]);
+        $this->notify($submission, ['author' => 'submission_stage_changed', 'reviewer' => 'submission_stage_changed', 'admins' => 'submission_stage_changed'], ['stage' => $stage->label()]);
     }
 
     private function transition(ManuscriptSubmission $submission, ManuscriptStage $stage, ?string $remarks = null): void
@@ -260,17 +274,26 @@ class ManuscriptWorkflow
         activity()->log('Submissions', "Stage changed to {$stage->value}", $submission, ['from' => $from?->value, 'to' => $stage->value], $remarks);
     }
 
-    private function notifyParties(string $template, ManuscriptSubmission $submission, array $extra = [], bool $author = true, bool $reviewer = true): void
+    /**
+     * Emails each audience its own template (null = not notified):
+     * ['author' => …, 'reviewer' => … (the assigned reviewer), 'admins' => … (every superadmin)].
+     * The assigned reviewer is skipped when they are the one who acted.
+     *
+     * @param  array{author?: ?string, reviewer?: ?string, admins?: ?string}  $templates
+     */
+    private function notify(ManuscriptSubmission $submission, array $templates, array $extra = [], ?User $actor = null): void
     {
         $data = $this->placeholders($submission) + $extra;
 
-        if ($author) {
+        if ($template = $templates['author'] ?? null) {
             $this->notifier->toUser($template, $submission->author, $data);
         }
-        if ($reviewer && $submission->reviewer) {
+        if (($template = $templates['reviewer'] ?? null) && $submission->reviewer && ! $submission->reviewer->is($actor)) {
             $this->notifier->toUser($template, $submission->reviewer, $data);
         }
-        $this->notifier->toAdmins($template, $data);
+        if ($template = $templates['admins'] ?? null) {
+            $this->notifier->toAdmins($template, $data);
+        }
     }
 
     /** @return array<string, scalar|null> */
@@ -284,6 +307,7 @@ class ManuscriptWorkflow
             'stage' => $submission->stage->label(),
             'content_category' => $submission->contentCategory?->name,
             'reviewer_name' => $submission->reviewer?->name,
+            'author_name' => $submission->author?->name,
             'similarity' => $submission->plagiarism_similarity,
         ];
     }

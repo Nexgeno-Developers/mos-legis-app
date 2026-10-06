@@ -47,14 +47,17 @@ class Page extends Model
     }
 
     /**
-     * Pages whose address can't change: Home (/) and the Journal Archive (/archive — each manuscript's
-     * page lives under /archive/…). Null for every other page.
+     * Pages whose address can't change: Home (/), the Journal Archive (/archive — each manuscript's page
+     * lives under /archive/…), Submit, Plagiarism Checker and Contact. Null for every other page.
      */
     public function fixedSlug(): ?string
     {
         return match (true) {
             $this->isHome() => 'home',
             $this->template === \App\Enums\PageTemplate::Archive => 'archive',
+            $this->template === \App\Enums\PageTemplate::Submit => 'submit',
+            $this->template === \App\Enums\PageTemplate::PlagiarismChecker => 'plagiarism-checker',
+            $this->template === \App\Enums\PageTemplate::Contact => 'contact',
             default => null,
         };
     }

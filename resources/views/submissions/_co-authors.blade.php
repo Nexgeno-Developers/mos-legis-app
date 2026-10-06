@@ -1,5 +1,5 @@
 {{-- Repeatable co-author names (stored as a JSON array). Starts empty; "Add co-author" adds a row. Expects $submission. --}}
-<div class="mt-5" x-data="repeater(@js(collect(old('co_authors', $submission->co_authors ?? []))->filter()->map(fn ($n) => ['name' => $n])->values()), { name: '' }, 0)">
+<div class="mt-5" x-data="repeater(@js(collect(old('co_authors', $submission->co_authors ?? []))->filter()->map(fn ($n) => ['name' => $n])->values()), { name: '' }, 0)" x-effect="$dispatch('co-authors-changed', rows.filter(r => (r.name || '').trim() !== '').length)">
     <div class="flex flex-wrap items-center justify-between gap-3">
         <div>
             <p class="label-caps text-xs text-muted-foreground">Co-authors</p>

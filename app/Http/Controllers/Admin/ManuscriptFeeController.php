@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\ManuscriptFeeRequest;
 use App\Models\AuthorCategory;
 use App\Models\ContentCategory;
+use App\Models\ManuscriptCoAuthorFee;
 use App\Models\ManuscriptFee;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
@@ -15,6 +16,7 @@ use Illuminate\View\View;
 /**
  * SOW A.15 — fee matrix: author categories as rows, content categories as columns.
  * New categories appear automatically; a blank cell means the combination is not offered.
+ * Below it, the co-author surcharge per content category (added to the publication fee).
  */
 class ManuscriptFeeController extends Controller
 {
@@ -28,6 +30,7 @@ class ManuscriptFeeController extends Controller
             'fees' => ManuscriptFee::all()->mapWithKeys(fn (ManuscriptFee $fee) => [
                 "{$fee->author_category_id}-{$fee->content_category_id}" => $fee->fees,
             ]),
+            'coAuthorFees' => ManuscriptCoAuthorFee::all()->keyBy('content_category_id'),
         ]);
     }
 
@@ -45,9 +48,27 @@ class ManuscriptFeeController extends Controller
                     }
                 }
             }
+
+            // Co-author surcharge: both cells blank removes the row (no surcharge for that category).
+            foreach ($request->validated('coauthor_fees', []) as $contentCategoryId => $rates) {
+                $firstTwo = $rates['first_two'] ?? null;
+                $additional = $rates['additional'] ?? null;
+
+                if ($firstTwo === null && $additional === null) {
+                    ManuscriptCoAuthorFee::where('content_category_id', $contentCategoryId)->delete();
+                } else {
+                    ManuscriptCoAuthorFee::updateOrCreate(
+                        ['content_category_id' => $contentCategoryId],
+                        ['first_two_fee' => $firstTwo ?? 0, 'additional_fee' => $additional ?? 0],
+                    );
+                }
+            }
         });
 
-        activity()->log('Manuscript Fees', 'Updated fee matrix', null, ['fees' => $request->validated('fees')]);
+        activity()->log('Manuscript Fees', 'Updated fee matrix', null, [
+            'fees' => $request->validated('fees'),
+            'coauthor_fees' => $request->validated('coauthor_fees'),
+        ]);
 
         return back()->with('success', 'Manuscript fees saved.');
     }

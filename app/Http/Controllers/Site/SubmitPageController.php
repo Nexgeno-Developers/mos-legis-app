@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Site;
 use App\Http\Controllers\Controller;
 use App\Models\AuthorCategory;
 use App\Models\ContentCategory;
+use App\Models\ManuscriptCoAuthorFee;
 use App\Models\ManuscriptFee;
 use App\Models\Page;
 use App\Services\Manuscripts\FeeCalculator;
@@ -28,6 +29,9 @@ class SubmitPageController extends Controller
             'authorCategories' => $authorCategories,
             'contentCategories' => $contentCategories,
             'fees' => $matrix,
+            // content category id => [each of 1st/2nd co-authors, each from the 3rd on]
+            'coAuthorFees' => ManuscriptCoAuthorFee::whereIn('content_category_id', $contentCategories->pluck('id'))->get()
+                ->mapWithKeys(fn (ManuscriptCoAuthorFee $f) => [$f->content_category_id => [(float) $f->first_two_fee, (float) $f->additional_fee]]),
             'prescreeningFee' => $fees->prescreeningFee(),
             'taxRate' => settings()->float('payment.tax_rate_percent'),
             'isAuthor' => (bool) $request->user()?->isAuthor(),

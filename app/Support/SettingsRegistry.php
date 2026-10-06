@@ -8,29 +8,33 @@ namespace App\Support;
  */
 final class SettingsRegistry
 {
-    /** @var array<string, array{label: string, fields: array<string, array{label: string, type: string, default: string, options?: list<string>}>}> */
+    /**
+     * 'span' => 'full' makes a field take the whole row on the Settings screen (textareas always do).
+     *
+     * @var array<string, array{label: string, fields: array<string, array{label: string, type: string, default: string, options?: list<string>, span?: string}>}>
+     */
     public const GROUPS = [
         'general' => [
             'label' => 'General',
             'fields' => [
                 'application_name' => ['label' => 'Application Name', 'type' => 'text', 'default' => 'MOS Legis'],
-                'application_logo' => ['label' => 'Application Logo', 'type' => 'image', 'default' => ''],
-                'favicon' => ['label' => 'Favicon', 'type' => 'image', 'default' => ''],
                 'application_email' => ['label' => 'Application Email', 'type' => 'email', 'default' => 'admin@moslegis.com'],
                 'contact_number' => ['label' => 'Contact Number', 'type' => 'text', 'default' => ''],
-                'address' => ['label' => 'Address', 'type' => 'textarea', 'default' => ''],
                 'default_country' => ['label' => 'Default Country', 'type' => 'text', 'default' => 'India'],
                 'default_timezone' => ['label' => 'Default Timezone', 'type' => 'timezone', 'default' => 'Asia/Kolkata'],
                 'date_format' => ['label' => 'Date Format', 'type' => 'select', 'default' => 'DD-MM-YYYY', 'options' => ['DD-MM-YYYY', 'MM-DD-YYYY', 'YYYY-MM-DD', 'DD MMM YYYY']],
+                'application_logo' => ['label' => 'Application Logo', 'type' => 'image', 'default' => ''],
+                'favicon' => ['label' => 'Favicon', 'type' => 'image', 'default' => ''],
+                'address' => ['label' => 'Address', 'type' => 'textarea', 'default' => ''],
             ],
         ],
         // What authors and readers publish on the website: on = an admin approves it first, off = it goes live at once.
         'approvals' => [
             'label' => 'Approvals',
             'fields' => [
-                'blog_author_approval_required' => ['label' => 'Blog Posts Approval Required (author posts are reviewed before they go live)', 'type' => 'boolean', 'default' => '1'],
-                'blog_comment_approval_required' => ['label' => 'Blog Comment Approval Required (comments appear after an admin approves them)', 'type' => 'boolean', 'default' => '1'],
-                'job_author_approval_required' => ['label' => 'Job Posting Approval Required (author job postings are listed after an admin approves them)', 'type' => 'boolean', 'default' => '1'],
+                'blog_author_approval_required' => ['label' => 'Blog Posts Approval Required (author posts are reviewed before they go live)', 'type' => 'boolean', 'default' => '1', 'span' => 'full'],
+                'blog_comment_approval_required' => ['label' => 'Blog Comment Approval Required (comments appear after an admin approves them)', 'type' => 'boolean', 'default' => '1', 'span' => 'full'],
+                'job_author_approval_required' => ['label' => 'Job Posting Approval Required (author job postings are listed after an admin approves them)', 'type' => 'boolean', 'default' => '1', 'span' => 'full'],
             ],
         ],
         'manuscript' => [
@@ -41,6 +45,11 @@ final class SettingsRegistry
                 'manuscript_certificate_enabled' => ['label' => 'Manuscript Certificate', 'type' => 'boolean', 'default' => '1'],
                 'auto_assign_reviewer_enabled' => ['label' => 'Auto Assign Reviewer', 'type' => 'boolean', 'default' => '1'],
                 'manuscript_email_notifications_enabled' => ['label' => 'Manuscript Email Notifications', 'type' => 'boolean', 'default' => '1'],
+                // Publication certificate: who signs it and the journal ISSN printed on it.
+                'certificate_signatory_name' => ['label' => 'Certificate Signatory Name', 'type' => 'text', 'default' => 'Dr. Priti Yadav'],
+                'certificate_signatory_title' => ['label' => 'Certificate Signatory Title', 'type' => 'text', 'default' => 'Editor-in-Chief'],
+                'journal_issn' => ['label' => 'Journal ISSN (printed on certificates)', 'type' => 'text', 'default' => 'Pending Assignment'],
+                'certificate_signature' => ['label' => 'Certificate Signature Image (PNG with transparent background, or JPG)', 'type' => 'image', 'default' => ''],
             ],
         ],
         'payment' => [
@@ -58,7 +67,7 @@ final class SettingsRegistry
         'seo_social' => [
             'label' => 'SEO & Social',
             'fields' => [
-                'default_meta_title' => ['label' => 'Default Meta Title', 'type' => 'text', 'default' => 'MOS Legis'],
+                'default_meta_title' => ['label' => 'Default Meta Title', 'type' => 'text', 'default' => 'MOS Legis', 'span' => 'full'],
                 'default_meta_description' => ['label' => 'Default Meta Description', 'type' => 'textarea', 'default' => ''],
                 'default_og_image' => ['label' => 'Default OG Image', 'type' => 'image', 'default' => ''],
                 'facebook_url' => ['label' => 'Facebook URL', 'type' => 'url', 'default' => ''],

@@ -43,9 +43,19 @@
             author: @js((string) $details['author_category_id']),
             content: @js((string) old('content_category_id')),
             fees: @js($fees),
+            coAuthorFees: @js($coAuthorFees ?? (object) []),
+            coAuthors: 0,
             themes: @js($themes),
             get fee() { return this.fees[this.author + '-' + this.content]; },
-        }">
+            {{-- Mirrors FeeCalculator::surcharge(): 1st/2nd co-authors pay the first rate each, the rest the second. --}}
+            get surcharge() {
+                const rates = this.coAuthorFees[this.content];
+                if (! rates) return 0;
+                return Math.min(this.coAuthors, 2) * rates[0] + Math.max(this.coAuthors - 2, 0) * rates[1];
+            },
+            money(amount) { return @js(settings('payment.currency_symbol')) + Number(amount).toLocaleString('en-IN', { minimumFractionDigits: 2 }); },
+        }"
+        @co-authors-changed="coAuthors = $event.detail">
         @csrf
 
         {{-- Submitting as (from the profile) --}}
@@ -92,6 +102,8 @@
                         <input type="file" name="manuscript" accept=".docx" class="field-input" required data-rule-docx="true" data-rule-wordrange="#content_category" data-rule-maxbytes="{{ App\Support\UploadLimits::bytes(20480) }}" data-msg-maxbytes="This file is larger than {{ App\Support\UploadLimits::label(20480) }}. Please upload a smaller file." @change="count($event, '#auto_word_count')">
                         <p x-show="counting" class="text-sm text-muted-foreground">Counting words…</p>
                         <p x-show="error" x-text="error" class="text-sm text-destructive"></p>
+                        {{-- Sample article template authors can follow (public/downloads). --}}
+                        <a href="{{ asset('downloads/MLR-Article-Template-Sample.pdf') }}" target="_blank" rel="noopener" class="inline-flex items-center gap-1.5 text-sm text-primary hover:underline"><x-icon name="download" class="h-4 w-4" /> Download the sample article template (PDF)</a>
                     </x-form.field>
                     <x-form.field label="Word count" hint="Filled automatically from your document.">
                         <input id="auto_word_count" type="number" class="field-input" readonly placeholder="Upload your manuscript">
@@ -99,6 +111,10 @@
                 </div>
                 <x-form.textarea name="abstract" label="Abstract" rows="6" required maxlength="5000" data-rule-maxwords="250" hint="Not more than 250 words." />
                 @include('submissions._co-authors', ['submission' => new App\Models\ManuscriptSubmission])
+                <p x-show="coAuthors > 0 && surcharge > 0" x-cloak class="-mt-2 text-sm text-muted-foreground">
+                    Co-author surcharge: <strong class="text-foreground" x-text="money(surcharge)"></strong>
+                    for <span x-text="coAuthors === 1 ? '1 co-author' : coAuthors + ' co-authors'"></span>, added to the publication fee if the manuscript is accepted.
+                </p>
             </div>
 
             <div x-show="step === 1" data-step="1" x-cloak class="space-y-4">
@@ -112,8 +128,14 @@
                     <div class="flex justify-between"><span>Plagiarism pre-screening fee (payable now)</span><strong>{{ money($prescreeningFee) }}</strong></div>
                     <div class="mt-2 flex justify-between text-muted-foreground">
                         <span>Publication fee (only if accepted)</span>
-                        <span x-text="fee !== undefined ? @js(settings('payment.currency_symbol')) + Number(fee).toLocaleString('en-IN', { minimumFractionDigits: 2 }) : (content ? 'Not offered for this combination' : 'Select a content category')"></span>
+                        <span x-text="fee !== undefined ? money(Number(fee) + surcharge) : (content ? 'Not offered for this combination' : 'Select a content category')"></span>
                     </div>
+                    <template x-if="fee !== undefined && surcharge > 0">
+                        <div class="mt-1 space-y-1 border-l-2 border-border pl-3 text-sm text-muted-foreground">
+                            <div class="flex justify-between"><span>Base publication fee</span><span x-text="money(fee)"></span></div>
+                            <div class="flex justify-between"><span x-text="'Co-author surcharge (' + (coAuthors === 1 ? '1 co-author' : coAuthors + ' co-authors') + ')'"></span><span x-text="money(surcharge)"></span></div>
+                        </div>
+                    </template>
                     <p class="mt-3 text-sm text-muted-foreground">All fees are inclusive of taxes. The manuscript is screened for plagiarism once the pre-screening fee is paid.</p>
                 </div>
             </div>

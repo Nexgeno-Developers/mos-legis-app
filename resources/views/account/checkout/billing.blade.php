@@ -35,6 +35,10 @@
             <p class="mt-2 font-display text-xl">{{ $purpose->label() }} fee</p>
             <p class="text-sm text-muted-foreground">{{ $isSubmission ? $payable->reference().' — '.Str::limit($payable->title, 60) : 'Plagiarism check: '.Str::limit($payable->title, 60) }}</p>
             <dl class="mt-5 space-y-2 text-base">
+                @if (($b = $breakdown ?? null) && $b['surcharge'] > 0)
+                    <div class="flex justify-between"><dt>Publication fee</dt><dd>{{ money($b['base']) }}</dd></div>
+                    <div class="flex justify-between"><dt>Co-author surcharge <span class="text-sm text-muted-foreground">({{ $b['co_authors'] }} co-author{{ $b['co_authors'] === 1 ? '' : 's' }})</span></dt><dd>{{ money($b['surcharge']) }}</dd></div>
+                @endif
                 <div class="flex justify-between border-t border-border pt-2 text-lg font-semibold"><dt>Total payable</dt><dd>{{ money($amount) }}</dd></div>
             </dl>
             <p class="mt-1 text-sm text-muted-foreground">Inclusive of all taxes. The tax breakup is shown on your invoice.</p>

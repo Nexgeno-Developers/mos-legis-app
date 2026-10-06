@@ -89,7 +89,12 @@
                     @endforeach
                 </x-table>
                 @if ($publicationFee !== null)
-                    <p class="mt-3 text-sm text-muted-foreground">Publication fee for this combination: {{ money($publicationFee) }} (inclusive of all taxes).</p>
+                    <p class="mt-3 text-sm text-muted-foreground">
+                        Publication fee for this manuscript: {{ money($publicationFee) }} (inclusive of all taxes).
+                        @if (($b = $publicationBreakdown) && $b['surcharge'] > 0)
+                            Base fee {{ money($b['base']) }} + co-author surcharge {{ money($b['surcharge']) }} ({{ $b['co_authors'] }} co-author{{ $b['co_authors'] === 1 ? '' : 's' }}).
+                        @endif
+                    </p>
                 @endif
             </x-admin.panel>
 

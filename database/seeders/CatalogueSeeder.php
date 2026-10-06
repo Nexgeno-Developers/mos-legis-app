@@ -7,6 +7,7 @@ use App\Models\AuthorCategory;
 use App\Models\BlogCategory;
 use App\Models\ContentCategory;
 use App\Models\ContentCategoryTheme;
+use App\Models\ManuscriptCoAuthorFee;
 use App\Models\ManuscriptFee;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
@@ -45,6 +46,35 @@ class CatalogueSeeder extends Seeder
         ['International Scholar', 'Policy Papers / Policy Briefs', 5000],
     ];
 
+    /**
+     * Co-author surcharge grid: [name keywords, fee for each of the 1st/2nd co-authors, fee for each from the 3rd on].
+     * Checked in order ("Case Notes" must match case commentaries before notes).
+     */
+    private const CO_AUTHOR_RATES = [
+        [['research'], 300, 200],
+        [['legislative', 'policy'], 270, 180],
+        [['case'], 225, 150],
+        [['book review'], 150, 100],
+        [['book chapter'], 420, 280],
+        [['short', 'note'], 180, 120],
+    ];
+
+    /** @return array{0: int, 1: int}|null Co-author rates for a content category name. */
+    public static function coAuthorRatesFor(string $name): ?array
+    {
+        $name = strtolower($name);
+
+        foreach (self::CO_AUTHOR_RATES as [$keywords, $firstTwo, $additional]) {
+            foreach ($keywords as $keyword) {
+                if (str_contains($name, $keyword)) {
+                    return [$firstTwo, $additional];
+                }
+            }
+        }
+
+        return null;
+    }
+
     private const BLOG_CATEGORIES = ['Constitutional Law', 'Technology & Data', 'Criminal Justice', 'Corporate & Commercial', 'Editorial Board'];
 
     public function run(): void
@@ -63,6 +93,12 @@ class CatalogueSeeder extends Seeder
                 ['author_category_id' => $authors[$author]->id, 'content_category_id' => $contents[$content]->id],
                 ['fees' => $fee],
             );
+        }
+
+        foreach ($contents as $name => $content) {
+            if ($rates = self::coAuthorRatesFor($name)) {
+                ManuscriptCoAuthorFee::firstOrCreate(['content_category_id' => $content->id], ['first_two_fee' => $rates[0], 'additional_fee' => $rates[1]]);
+            }
         }
 
         ContentCategoryTheme::firstOrCreate(

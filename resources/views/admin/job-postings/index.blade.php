@@ -13,7 +13,7 @@
         <x-filter.select name="work_mode" label="Work mode" :options="App\Enums\WorkMode::options()" />
         <x-filter.select name="employment_type" label="Type" :options="App\Enums\EmploymentType::options()" />
         <x-filter.select name="status" label="Status" :options="['pending' => 'Awaiting approval', 'Active' => 'Active', 'Inactive' => 'Inactive', 'expired' => 'Expired']" />
-        <button type="button" @click="more = !more" class="text-sm text-primary hover:underline" x-text="more ? 'Fewer filters' : 'More filters'"></button>
+        <button type="button" @click="more = !more" class="inline-flex h-11 items-center gap-1 px-1 text-sm text-primary hover:underline" x-text="more ? 'Fewer filters' : 'More filters'"></button>
         <div x-show="more" x-cloak class="flex w-full flex-wrap items-end gap-3">
             <x-filter.text name="experience" label="Experience" placeholder="e.g. 2–4 years" />
             <x-filter.date-range label="Published date" from="published_from" to="published_to" />
