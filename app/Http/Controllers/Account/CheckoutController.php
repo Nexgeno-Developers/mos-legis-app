@@ -109,8 +109,17 @@ class CheckoutController extends Controller
             return redirect()->route('account.payments.status', $payment);
         }
 
+        $payment->load('payable');
+        // Base fee + co-author surcharge lines, shown only while they still add up to the amount being charged.
+        $breakdown = $payment->payment_purpose === PaymentPurpose::Publication && $payment->payable instanceof ManuscriptSubmission
+            ? $this->fees->publicationBreakdown($payment->payable) : null;
+        if ($breakdown && abs($breakdown['total'] - (float) $payment->total_amount) >= 0.005) {
+            $breakdown = null;
+        }
+
         return view('account.checkout.pay', [
-            'payment' => $payment->load('payable'),
+            'payment' => $payment,
+            'breakdown' => $breakdown,
             'item' => $this->itemLabel($payment),
             'checkoutUrl' => $this->checkoutUrl($payment),
             'gateway' => $this->gateway->name(),

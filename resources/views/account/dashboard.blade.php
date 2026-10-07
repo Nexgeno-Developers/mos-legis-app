@@ -18,6 +18,17 @@
         <section>
             <x-section-heading eyebrow="Action required" title="Needs your attention" />
             <ul class="mt-4 divide-y divide-border border border-border bg-card">
+                @foreach ($unpaidChecks as $check)
+                    <li class="flex flex-wrap items-center justify-between gap-3 px-5 py-4">
+                        <div>
+                            <a href="{{ route('account.plagiarism-checks.show', $check) }}" class="font-medium hover:text-primary">{{ $check->title }}</a>
+                            <p class="text-sm text-muted-foreground">Plagiarism check #{{ $check->id }} · waiting for payment</p>
+                        </div>
+                        @if (settings()->bool('payment.payment_enabled'))
+                            <x-button size="sm" variant="primary" icon="credit-card" :href="route('account.checkout.plagiarism', $check)">Pay to run check</x-button>
+                        @endif
+                    </li>
+                @endforeach
                 @forelse ($actionRequired as $submission)
                     <li class="flex flex-wrap items-center justify-between gap-3 px-5 py-4">
                         <div>
@@ -35,7 +46,9 @@
                         @endif
                     </li>
                 @empty
-                    <li class="px-5 py-6 text-muted-foreground">Nothing needs your attention right now.</li>
+                    @if ($unpaidChecks->isEmpty())
+                        <li class="px-5 py-6 text-muted-foreground">Nothing needs your attention right now.</li>
+                    @endif
                 @endforelse
             </ul>
         </section>

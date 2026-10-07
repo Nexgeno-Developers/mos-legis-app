@@ -22,7 +22,7 @@ class UserFactory extends Factory
         return [
             'name' => fake()->name(),
             'email' => fake()->unique()->safeEmail(),
-            'phone' => '9'.fake()->numerify('#########'),
+            'phone' => '+919'.fake()->numerify('#########'), // E.164, as the app stores it
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
             'status' => RecordStatus::Active,

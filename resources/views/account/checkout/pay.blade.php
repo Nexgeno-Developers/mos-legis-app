@@ -17,7 +17,12 @@
             <p class="text-sm text-muted-foreground">{{ $item }}</p>
 
             <dl class="mt-6 space-y-2">
-                <div class="flex justify-between"><dt>{{ $payment->payment_purpose->label() }} fee</dt><dd>{{ money($payment->total_amount) }}</dd></div>
+                @if (($b = $breakdown ?? null) && $b['surcharge'] > 0)
+                    <div class="flex justify-between"><dt>Publication fee</dt><dd>{{ money($b['base']) }}</dd></div>
+                    <div class="flex justify-between"><dt>Co-author surcharge <span class="text-sm text-muted-foreground">({{ $b['co_authors'] }} co-author{{ $b['co_authors'] === 1 ? '' : 's' }})</span></dt><dd>{{ money($b['surcharge']) }}</dd></div>
+                @else
+                    <div class="flex justify-between"><dt>{{ $payment->payment_purpose->label() }} fee</dt><dd>{{ money($payment->total_amount) }}</dd></div>
+                @endif
                 <div class="flex justify-between border-t border-border pt-3 text-lg font-semibold"><dt>Total payable</dt><dd>{{ money($payment->total_amount) }}</dd></div>
             </dl>
             <p class="mt-1 text-sm text-muted-foreground">Inclusive of all taxes. The tax breakup is shown on your invoice.</p>

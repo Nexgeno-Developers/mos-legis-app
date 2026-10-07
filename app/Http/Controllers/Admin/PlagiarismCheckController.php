@@ -92,6 +92,10 @@ class PlagiarismCheckController extends Controller implements HasMiddleware
     /** Re-runs the check as a new history row; manuscript stage rules apply only while still in screening. */
     public function recheck(PlagiarismCheck $plagiarismCheck): RedirectResponse
     {
+        if (! $plagiarismCheck->canBeRechecked()) {
+            return back()->with('error', 'This standalone check has not been paid for, so it cannot be re-run.');
+        }
+
         $copy = $plagiarismCheck->replicate(['similarity_percentage', 'api_response', 'report_file', 'checked_at', 'check_status']);
         $copy->check_status = PlagiarismCheckStatus::Pending;
         $copy->save();

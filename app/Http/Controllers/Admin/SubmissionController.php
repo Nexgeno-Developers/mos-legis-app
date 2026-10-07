@@ -36,10 +36,11 @@ class SubmissionController extends Controller
         $submissions = ManuscriptSubmission::query()
             ->visibleTo($user)
             ->with(['author:id,name', 'reviewer:id,name', 'contentCategory:id,name'])
-            ->when($request->string('search')->trim()->value(), function ($q, $search) {
+            ->when($request->string('search')->trim()->value(), function ($q, $search) use ($user) {
                 $id = (int) preg_replace('/\D/', '', $search);
                 $q->where(fn ($q) => $q->where('title', 'like', "%{$search}%")
-                    ->orWhereHas('author', fn ($q) => $q->where('name', 'like', "%{$search}%"))
+                    // Double-blind: reviewers cannot look manuscripts up by author name.
+                    ->when($user->can('submissions.view-all'), fn ($q) => $q->orWhereHas('author', fn ($q) => $q->where('name', 'like', "%{$search}%")))
                     ->when($id, fn ($q) => $q->orWhere('id', $id)));
             })
             ->when($request->enum('stage', ManuscriptStage::class), fn ($q, $stage) => $q->where('stage', $stage))

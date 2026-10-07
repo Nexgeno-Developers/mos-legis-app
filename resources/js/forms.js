@@ -236,6 +236,13 @@ $.validator.addMethod('maxwords', function (value, element, max) {
     return this.optional(element) || wordCount(value) <= Number(max);
 }, (max, element) => `Keep this within ${max} words (currently ${wordCount(element.value)}).`);
 
+/** data-rule-gtefield="min_word_limit": a number at least as large as another field of the same form (by name). */
+$.validator.addMethod('gtefield', function (value, element, name) {
+    const other = element.form?.elements[name];
+    if (this.optional(element) || !other || other.value === '') return true;
+    return Number(value) >= Number(other.value);
+}, (name, element) => `Must be at least ${element.form?.elements[name]?.value || 'the minimum'}.`);
+
 /** data-rule-docx: a Word .docx file. */
 $.validator.addMethod('docx', function (value, element) {
     return this.optional(element) || [...(element.files || [])].every((file) => file.name.toLowerCase().endsWith('.docx'));

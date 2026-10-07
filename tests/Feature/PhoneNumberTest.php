@@ -8,6 +8,7 @@ use App\Models\Enquiry;
 use App\Support\PhoneNumbers;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
 use Database\Seeders\PageSeeder;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -20,6 +21,7 @@ class PhoneNumberTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+        Storage::fake('local'); // the careers form stores an uploaded résumé
         $this->seed(PageSeeder::class);
     }
 

@@ -79,13 +79,21 @@ class ArchiveController extends Controller
         $zip = new ZipArchive;
         $zip->open($path, ZipArchive::OVERWRITE);
 
+        $added = 0;
         foreach ($submissions as $submission) {
             $file = Storage::disk('local')->path($submission->manuscript_attachment);
             if (is_file($file)) {
                 $zip->addFile($file, $this->fileName($submission));
+                $added++;
             }
         }
         $zip->close();
+
+        // An archive with no files is never written to disk; say so instead of failing.
+        if ($added === 0) {
+            @unlink($path);
+            abort(404, 'The manuscript files for these filters are not available for download.');
+        }
 
         return response()->download($path, 'mos-legis-archive-'.now()->format('Ymd').'.zip')->deleteFileAfterSend();
     }

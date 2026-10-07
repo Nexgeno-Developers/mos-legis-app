@@ -8,7 +8,7 @@
     </x-admin.heading>
 
     <x-filter-bar>
-        <x-filter.search placeholder="Search ID, title, author…" />
+        <x-filter.search :placeholder="auth()->user()->can('submissions.view-all') ? 'Search ID, title, author…' : 'Search ID or title…'" />
         <x-filter.select name="stage" label="Stage" :options="App\Enums\ManuscriptStage::options()" />
         @can('submissions.view-all')
             <x-filter.select name="reviewer" label="Reviewer" :options="$reviewers" />
@@ -23,7 +23,7 @@
                 <td class="whitespace-nowrap font-mono text-sm">{{ $submission->reference() }}</td>
                 <td class="max-w-md">
                     <a href="{{ route('admin.submissions.show', $submission) }}" class="font-medium hover:text-primary">{{ $submission->title }}</a>
-                    <span class="block text-sm text-muted-foreground">{{ $submission->author->name }} · {{ $submission->contentCategory->name }}</span>
+                    <span class="block text-sm text-muted-foreground">@can('submissions.view-all'){{ $submission->author->name }} · @endcan{{ $submission->contentCategory->name }}</span>
                 </td>
                 <td><x-status-badge :status="$submission->stage" /></td>
                 <td class="whitespace-nowrap text-sm" title="{{ format_date($submission->waitingSince(), true) }}">{{ (int) $submission->waitingSince()->diffInDays() }}d</td>

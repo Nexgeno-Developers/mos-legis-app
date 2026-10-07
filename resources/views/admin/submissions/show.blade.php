@@ -45,15 +45,20 @@
                 </div>
             </x-admin.panel>
 
+            {{-- Double-blind review: only users who may see every submission (e.g. superadmins) see who wrote it. --}}
             <x-admin.panel title="Author details">
-                <x-dl :items="[
-                    'Author' => e($submission->author->name).'<br><span class=\'text-sm text-muted-foreground\'>'.e($submission->author->email).'</span>',
-                    'Author category' => e($submission->authorCategory->name),
-                    'Institution' => e($submission->institution),
-                    'Country' => e($submission->country),
-                    'Co-authors' => e(implode(', ', $submission->co_authors ?? [])),
-                    'ORCID' => e($submission->author->authorProfile?->orcid),
-                ]" />
+                @can('submissions.view-all')
+                    <x-dl :items="[
+                        'Author' => e($submission->author->name).'<br><span class=\'text-sm text-muted-foreground\'>'.e($submission->author->email).'</span>',
+                        'Author category' => e($submission->authorCategory->name),
+                        'Institution' => e($submission->institution),
+                        'Country' => e($submission->country),
+                        'Co-authors' => e(implode(', ', $submission->co_authors ?? [])),
+                        'ORCID' => e($submission->author->authorProfile?->orcid),
+                    ]" />
+                @else
+                    <p class="text-sm text-muted-foreground">The author's identity is hidden for double-blind peer review.</p>
+                @endcan
             </x-admin.panel>
 
             <x-admin.panel title="Review history">

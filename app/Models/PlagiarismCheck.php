@@ -47,6 +47,17 @@ class PlagiarismCheck extends Model
         return $this->belongsTo(Payment::class);
     }
 
+    /**
+     * A standalone check that was never paid for has never run: re-running it from the admin panel would run
+     * the check (and use vendor credits) without payment. Manuscript, paid or already completed checks can be re-run.
+     */
+    public function canBeRechecked(): bool
+    {
+        return $this->check_type === \App\Enums\PlagiarismCheckType::Manuscript
+            || $this->isCompleted()
+            || (bool) $this->payment?->isPaid();
+    }
+
     /** Standalone checks own their payment through the polymorphic side. */
     public function payments(): MorphMany
     {

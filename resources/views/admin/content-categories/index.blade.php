@@ -57,7 +57,7 @@
         <x-form.input name="name" label="Name" x-model="form.name" required />
         <div class="grid gap-5 sm:grid-cols-2">
             <x-form.input name="min_word_limit" type="number" min="0" label="Min word limit" x-model="form.min_word_limit" required />
-            <x-form.input name="max_word_limit" type="number" min="0" label="Max word limit" x-model="form.max_word_limit" required />
+            <x-form.input name="max_word_limit" type="number" min="0" label="Max word limit" x-model="form.max_word_limit" required data-rule-gtefield="min_word_limit" />
         </div>
         <x-form.textarea name="guideline" label="Guideline" x-model="form.guideline" required />
         <x-form.select name="status" label="Status" :options="App\Enums\RecordStatus::options()" x-model="form.status" required />

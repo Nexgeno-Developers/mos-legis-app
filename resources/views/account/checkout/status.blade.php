@@ -93,7 +93,7 @@
                         <p class="font-display text-2xl">We're still waiting for your bank</p>
                         <p class="mt-2 text-sm text-muted-foreground">
                             Your payment of {{ money($payment->total_amount) }} has not been confirmed yet. This usually takes a few minutes.
-                            <strong class="text-foreground">Please don't pay again.</strong> We will update your account and email you at {{ $payment->user->email }} as soon as it is confirmed.
+                            <strong class="text-foreground">If you completed the payment in your bank or UPI app, please don't pay again.</strong> We will update your account and email you at {{ $payment->user->email }} as soon as it is confirmed.
                             If the payment fails, any amount debited is refunded by your bank.
                         </p>
                     </div>

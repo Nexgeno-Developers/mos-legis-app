@@ -9,6 +9,7 @@
                     'Manuscript' => e($certificate->snapshot_json['reference'] ?? ''),
                     'Title' => e($certificate->snapshot_json['title'] ?? ''),
                     'Author' => e($certificate->snapshot_json['author'] ?? ''),
+                    'Co-authors' => ! empty($certificate->snapshot_json['co_authors']) ? e(implode(', ', $certificate->snapshot_json['co_authors'])) : null,
                     'Category' => e($certificate->snapshot_json['content_category'] ?? ''),
                     'Published' => format_date($certificate->snapshot_json['published_at'] ?? null),
                     'Issued' => format_date($certificate->issued_at),

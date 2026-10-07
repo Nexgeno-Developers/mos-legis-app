@@ -2,9 +2,9 @@
 <x-layouts.admin :title="'Plagiarism check #'.$check->id">
     <x-admin.heading :title="'Plagiarism check #'.$check->id" :description="$check->title">
         <x-slot:actions>
-            @can('plagiarism-checks.recheck')
+            @if (auth()->user()->can('plagiarism-checks.recheck') && $check->canBeRechecked())
                 <form method="POST" action="{{ route('admin.plagiarism-checks.recheck', $check) }}">@csrf<x-button type="submit" icon="refresh-cw">Re-check</x-button></form>
-            @endcan
+            @endif
             <x-button :href="route('admin.plagiarism-checks.index')" icon="arrow-left">Back</x-button>
         </x-slot:actions>
     </x-admin.heading>

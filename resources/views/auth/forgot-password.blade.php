@@ -2,6 +2,7 @@
     <p class="text-center text-base text-muted-foreground">Enter the email on your account and we'll send a reset link.</p>
 
     @if (session('status'))
+        @php(app()->instance('flash.status-inline', true))
         <div class="mt-6 border-l-2 border-gold/60 bg-secondary px-4 py-3 text-base text-foreground">{{ session('status') }}</div>
     @endif
 

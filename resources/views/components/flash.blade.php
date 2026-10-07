@@ -1,5 +1,6 @@
 @php
-    $messages = array_filter(['success' => session('success'), 'error' => session('error'), 'status' => session('status')]);
+    // Auth pages print the status message inline (components/auth-card); skip it here so it isn't shown twice.
+    $messages = array_filter(['success' => session('success'), 'error' => session('error'), 'status' => app()->bound('flash.status-inline') ? null : session('status')]);
 @endphp
 @if ($messages || $errors->any())
     <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 7000)" class="fixed right-4 top-4 z-[60] w-full max-w-sm space-y-2">

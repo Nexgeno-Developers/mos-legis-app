@@ -21,6 +21,7 @@ use App\Models\Payment;
 use App\Models\PublicationCertificate;
 use App\Models\User;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 /**
@@ -31,6 +32,8 @@ class DemoSeeder extends Seeder
 {
     public function run(): void
     {
+        self::ensureSampleManuscript();
+
         if (User::where('email', 'author@moslegis.test')->exists()) {
             return;
         }
@@ -134,5 +137,26 @@ class DemoSeeder extends Seeder
             'phone' => '9876543210',
             'form_data' => ['position' => 'Editorial Assistant', 'resume_path' => null],
         ]);
+    }
+    /**
+     * Demo manuscripts point at manuscripts/sample.docx (ManuscriptSubmissionFactory); create a small real
+     * Word file there so archive downloads work with demo data.
+     */
+    public static function ensureSampleManuscript(): void
+    {
+        $path = 'manuscripts/sample.docx';
+        if (Storage::disk('local')->exists($path)) {
+            return;
+        }
+
+        $temp = tempnam(sys_get_temp_dir(), 'docx');
+        $zip = new \ZipArchive;
+        $zip->open($temp, \ZipArchive::OVERWRITE);
+        $zip->addFromString('[Content_Types].xml', '<?xml version="1.0" encoding="UTF-8"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="xml" ContentType="application/xml"/><Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/></Types>');
+        $zip->addFromString('word/document.xml', '<?xml version="1.0" encoding="UTF-8"?><w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body><w:p><w:r><w:t>Sample manuscript (demo data).</w:t></w:r></w:p></w:body></w:document>');
+        $zip->close();
+
+        Storage::disk('local')->put($path, file_get_contents($temp));
+        @unlink($temp);
     }
 }
