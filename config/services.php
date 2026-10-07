@@ -57,12 +57,21 @@ return [
         'webhook_secret' => env('RAZORPAY_WEBHOOK_SECRET'),
     ],
 
-    // SOW A.18 — third-party plagiarism checker. The vendor is not chosen yet;
-    // "fake" returns a simulated result. Add a driver class and set PLAGIARISM_DRIVER.
+    // SOW A.18 — plagiarism checker. "originality" = Originality.ai API v3 (https://docs.originality.ai);
+    // "fake" returns a simulated result (local development and tests).
     'plagiarism' => [
         'driver' => env('PLAGIARISM_DRIVER', 'fake'),
-        'api_url' => env('PLAGIARISM_API_URL'),
+        'api_url' => env('PLAGIARISM_API_URL', 'https://api.originality.ai/api/v3'),
         'api_key' => env('PLAGIARISM_API_KEY'),
+        // Long manuscripts are scanned in chunks of this many words (a scan can take up to 60 s).
+        'chunk_words' => (int) env('PLAGIARISM_CHUNK_WORDS', 1500),
+        'timeout' => (int) env('PLAGIARISM_TIMEOUT', 180),
+        // Keep scans in the Originality.ai dashboard (false = results cannot be viewed there again).
+        'store_scan' => (bool) env('PLAGIARISM_STORE_SCAN', true),
+        // Required by the API even though AI detection is not requested.
+        'ai_model' => env('PLAGIARISM_AI_MODEL', 'lite'),
+        // Comma-separated URLs never counted as matches (the site itself is always excluded).
+        'excluded_urls' => env('PLAGIARISM_EXCLUDED_URLS', ''),
         'fake_similarity' => env('PLAGIARISM_FAKE_SIMILARITY'),
     ],
 ];

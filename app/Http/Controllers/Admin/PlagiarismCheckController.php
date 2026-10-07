@@ -7,10 +7,13 @@ use App\Enums\PlagiarismCheckType;
 use App\Http\Controllers\Controller;
 use App\Jobs\RunPlagiarismCheck;
 use App\Models\PlagiarismCheck;
+use App\Services\Plagiarism\OriginalityPlagiarismChecker;
+use App\Services\Plagiarism\PlagiarismChecker;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -49,8 +52,12 @@ class PlagiarismCheckController extends Controller implements HasMiddleware
             ->paginate(20)
             ->withQueryString();
 
+        $provider = config('services.plagiarism.driver');
+
         return view('admin.plagiarism-checks.index', [
             'checks' => $checks,
+            'provider' => $provider,
+            'balance' => $provider === 'originality' ? $this->originalityBalance() : null,
             'threshold' => settings()->float('manuscript.plagiarism_max_similarity_percent'),
         ]);
     }
@@ -68,6 +75,18 @@ class PlagiarismCheckController extends Controller implements HasMiddleware
                 ->latest('id')->get(),
             'threshold' => settings()->float('manuscript.plagiarism_max_similarity_percent'),
         ]);
+    }
+
+    /** Originality.ai credits (cached 10 minutes); null when the API can't be reached or the key is wrong. */
+    private function originalityBalance(): ?array
+    {
+        $checker = app(PlagiarismChecker::class);
+
+        if (! $checker instanceof OriginalityPlagiarismChecker) {
+            return null;
+        }
+
+        return Cache::remember('originality-balance', now()->addMinutes(10), fn () => rescue(fn () => $checker->balance(), null, false));
     }
 
     /** Re-runs the check as a new history row; manuscript stage rules apply only while still in screening. */

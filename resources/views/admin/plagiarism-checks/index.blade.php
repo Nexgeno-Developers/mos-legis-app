@@ -1,5 +1,17 @@
 <x-layouts.admin title="Plagiarism Checks">
     <x-admin.heading title="Plagiarism Checks" description="Every plagiarism check performed through the system — manuscript-submission checks and paid standalone checks alike." />
+    <p class="mt-3 text-sm text-muted-foreground">
+        @if ($provider === 'originality')
+            Checker: Originality.ai ·
+            @if ($balance !== null)
+                Credits remaining: <strong class="text-foreground">{{ number_format(($balance['credits'] ?? 0) + ($balance['subscriptionCredits'] ?? 0)) }}</strong>
+            @else
+                <span class="text-warning">credit balance unavailable — check PLAGIARISM_API_KEY</span>
+            @endif
+        @else
+            Checker: simulated results (set PLAGIARISM_DRIVER=originality and PLAGIARISM_API_KEY to use Originality.ai).
+        @endif
+    </p>
 
     <x-filter-bar>
         <x-filter.search placeholder="Search ID, title, user or manuscript ID…" />

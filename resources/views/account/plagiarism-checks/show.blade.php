@@ -15,7 +15,10 @@
                 <h3 class="label-caps mt-8 text-sm text-primary">Matched sources</h3>
                 <ul class="mt-2 divide-y divide-border border border-border">
                     @forelse ($matches as $match)
-                        <li class="flex justify-between gap-4 px-4 py-2 text-sm"><span>{{ $match['source'] ?? 'Unknown' }}</span><span class="font-mono">{{ $match['similarity'] ?? '—' }}%</span></li>
+                        <li class="flex justify-between gap-4 px-4 py-2 text-sm">
+                            <span class="min-w-0">{{ $match['source'] ?? 'Unknown' }}@if (! empty($match['url']))<a href="{{ $match['url'] }}" target="_blank" rel="noopener noreferrer nofollow" class="block truncate text-xs text-primary hover:underline">{{ $match['url'] }}</a>@endif</span>
+                            <span class="shrink-0 font-mono">{{ $match['similarity'] ?? '—' }}%</span>
+                        </li>
                     @empty
                         <li class="px-4 py-2 text-sm text-muted-foreground">No matches reported.</li>
                     @endforelse

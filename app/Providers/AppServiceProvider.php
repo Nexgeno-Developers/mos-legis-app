@@ -10,6 +10,7 @@ use App\Services\Payments\PaymentGateway;
 use App\Services\Payments\RazorpayGateway;
 use App\Services\Payments\SimulatedGateway;
 use App\Services\Plagiarism\FakePlagiarismChecker;
+use App\Services\Plagiarism\OriginalityPlagiarismChecker;
 use App\Services\Plagiarism\PlagiarismChecker;
 use App\Socialite\OrcidProvider;
 use App\Support\ActivityLogger;
@@ -43,8 +44,9 @@ class AppServiceProvider extends ServiceProvider
             return new SimulatedGateway;
         });
 
-        // SOW A.18: the plagiarism vendor is chosen later; add its driver here.
+        // SOW A.18: PLAGIARISM_DRIVER=originality uses Originality.ai; anything else the simulated checker.
         $this->app->bind(PlagiarismChecker::class, fn () => match (config('services.plagiarism.driver')) {
+            'originality' => new OriginalityPlagiarismChecker(config('services.plagiarism')),
             default => new FakePlagiarismChecker(config('services.plagiarism.fake_similarity')),
         });
     }
