@@ -72,21 +72,31 @@
 
     {{-- 4. How it works --}}
     @if ($steps->isNotEmpty())
-    <section class="border-y border-border bg-secondary">
-        <div class="mx-auto max-w-[1200px] px-4 py-16 sm:px-6 md:py-20">
-            <div class="flex flex-wrap items-end justify-between gap-4">
-                <x-section-heading :eyebrow="$m('steps_label')" :title="$m('steps_heading')" class="flex-1" />
-                @if ($m('steps_link'))<a href="{{ page_url('submit') }}#process" class="inline-flex items-center gap-1 text-sm text-primary hover:underline">{{ $m('steps_link') }} <x-icon name="arrow-right" /></a>@endif
+    <section class="relative overflow-hidden border-y border-gold/40 bg-foreground text-background">
+        <div aria-hidden="true" class="pointer-events-none absolute inset-0 opacity-[0.07]" style="background-image: radial-gradient(circle at 1px 1px, var(--color-gold) 1px, transparent 0); background-size: 22px 22px;"></div>
+        <div class="relative mx-auto max-w-[1200px] px-4 py-16 sm:px-6 md:py-16">
+            <div class="mx-auto max-w-2xl text-center">
+                @if ($m('steps_label'))<p class="label-caps text-sm text-gold">{{ $m('steps_label') }}</p>@endif
+                @if (filled($m('steps_heading')))<h2 class="mt-3 font-display text-3xl text-background md:text-4xl">{{ $m('steps_heading') }}</h2>@endif
+                <div class="gold-rule mx-auto mt-6 max-w-xs"></div>
             </div>
-            <ol class="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+            <ol class="mt-14 grid gap-10 sm:grid-cols-2 lg:grid-cols-5 lg:gap-0">
                 @foreach ($steps as $step)
-                    <li class="relative border border-border bg-card p-5">
-                        <span class="grid h-9 w-9 place-items-center rounded-full bg-primary font-mono text-sm text-primary-foreground">{{ $loop->iteration }}</span>
-                        @if (filled($step['title'] ?? null))<p class="mt-3 font-display text-lg">{{ $fill($step['title']) }}</p>@endif
-                        @if (filled($step['text'] ?? null))<p class="mt-1 text-sm text-muted-foreground">{{ $fill($step['text']) }}</p>@endif
+                    <li class="group relative px-2 text-center lg:px-5">
+                        @unless ($loop->last)
+                            <span aria-hidden="true" class="absolute left-1/2 top-7 hidden h-px w-full bg-gradient-to-r from-gold via-gold/50 to-gold/50 lg:block"></span>
+                        @endunless
+                        <span class="relative z-10 mx-auto grid h-14 w-14 place-items-center rounded-full border-2 border-gold bg-foreground font-display text-2xl text-gold shadow-[0_0_0_6px_var(--color-foreground)] transition duration-300 group-hover:scale-110 group-hover:bg-primary group-hover:text-primary-foreground {{ $loop->last ? '!bg-gold !text-gold-foreground' : '' }}">{{ $loop->iteration }}</span>
+                        @if (filled($step['title'] ?? null))<p class="mt-6 font-display text-xl text-background">{{ $fill($step['title']) }}</p>@endif
+                        @if (filled($step['text'] ?? null))<p class="mx-auto mt-2 max-w-[15rem] text-sm leading-relaxed text-background/70">{{ $fill($step['text']) }}</p>@endif
                     </li>
                 @endforeach
             </ol>
+            @if ($m('steps_link'))
+                <div class="mt-8 text-center">
+                    <a href="{{ page_url('submit') }}#process" class="inline-flex items-center gap-2 border border-gold px-6 py-3 text-sm font-medium text-gold transition hover:bg-gold hover:text-gold-foreground">{{ $m('steps_link') }} <x-icon name="arrow-right" /></a>
+                </div>
+            @endif
         </div>
     </section>
     @endif

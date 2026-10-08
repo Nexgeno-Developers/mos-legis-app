@@ -354,3 +354,36 @@ trix-toolbar .trix-button-group--file-tools { display: none; }
 .row-actions-menu > button:hover,
 .row-actions-menu > form > button:hover { background: var(--color-secondary); text-decoration: none; }
 .row-actions-menu > form[data-delete] { margin-top: 0.25rem; border-top: 1px solid var(--color-border); padding-top: 0.25rem; }
+
+
+@media (max-width: 767px) {
+    main .max-w-\[1200px\],
+    main .max-w-\[1040px\],
+    main .max-w-\[760px\],
+    footer .max-w-\[1200px\],
+    main.flex-1 {
+        padding-top: 30px;
+        padding-bottom: 30px;
+    }
+
+    h1 {
+        font-size: 1.6rem;
+        line-height: 1.2;
+    }
+
+    h2:not(.label-caps) {
+        font-size: 1.3rem;
+        line-height: 1.25;
+    }
+
+    h3:not(.label-caps) {
+        font-size: 1.05rem;
+        line-height: 1.3;
+    }
+
+    p:not(.text-xs):not(.label-caps),
+    .prose-legis li {
+        font-size: 16px;
+        line-height: 1.6;
+    }
+}
