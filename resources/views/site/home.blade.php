@@ -162,9 +162,10 @@
                 <x-section-heading :eyebrow="$m('blog_label')" :title="$m('blog_heading')" class="flex-1" />
                 @if ($m('blog_link'))<a href="{{ route('blogs.index') }}" class="inline-flex items-center gap-1 text-sm text-primary hover:underline">{{ $m('blog_link') }} <x-icon name="arrow-right" /></a>@endif
             </div>
-            <div class="lg:mt-10 mt-6 grid gap-6 md:grid-cols-3">
+            <div x-data="{ i: 0 }" class="mt-6 lg:mt-10">
+            <div x-ref="track" @scroll.passive="i = Math.round($refs.track.scrollLeft / ($refs.track.scrollWidth / {{ $blogs->count() }}))" class="-mx-4 flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 pb-2 [scrollbar-width:none] sm:mx-0 sm:grid sm:snap-none sm:grid-cols-2 sm:gap-6 sm:overflow-visible sm:px-0 sm:pb-0 md:grid-cols-3 [&::-webkit-scrollbar]:hidden">
                 @foreach ($blogs as $blog)
-                    <a href="{{ route('blogs.show', $blog->slug) }}" class="group flex flex-col overflow-hidden border border-border bg-card transition hover:-translate-y-0.5 hover:border-gold hover:shadow-md">
+                    <a href="{{ route('blogs.show', $blog->slug) }}" class="group flex w-[85%] shrink-0 snap-center flex-col sm:w-auto overflow-hidden border border-border bg-card transition hover:-translate-y-0.5 hover:border-gold hover:shadow-md">
                         <span class="block aspect-[16/9] overflow-hidden bg-secondary">
                             @if ($blog->featured_image)
                                 <img src="{{ Storage::disk('public')->url($blog->featured_image) }}" alt="" loading="lazy" class="h-full w-full object-cover transition duration-500 group-hover:scale-105">
@@ -179,6 +180,12 @@
                         </span>
                     </a>
                 @endforeach
+            </div>
+            <div class="mt-5 flex justify-center gap-2 sm:hidden">
+                @foreach ($blogs as $blog)
+                    <button type="button" aria-label="Go to post {{ $loop->iteration }}" @click="$refs.track.children[{{ $loop->index }}].scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' })" class="h-2 rounded-full transition-all duration-300" :class="i === {{ $loop->index }} ? 'w-6 bg-primary' : 'w-2 bg-primary/25'"></button>
+                @endforeach
+            </div>
             </div>
             </div>
         </section>
