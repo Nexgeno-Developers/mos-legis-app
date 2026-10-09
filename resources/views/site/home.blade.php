@@ -57,7 +57,7 @@
         <div class="max-w-2xl">
             <x-section-heading :eyebrow="$m('features_label')" :title="$m('features_heading')" />
         </div>
-        <div class="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div class="lg:mt-10 mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             @foreach ($features as $feature)
                 <div class="border border-border bg-card p-6 transition hover:border-gold">
                     <span class="grid h-11 w-11 place-items-center border border-gold/60 text-primary"><x-icon :name="$featureIcons[$loop->index % count($featureIcons)]" class="h-5 w-5" /></span>
@@ -80,7 +80,7 @@
                 @if (filled($m('steps_heading')))<h2 class="mt-3 font-display text-3xl text-background md:text-4xl">{{ $m('steps_heading') }}</h2>@endif
                 <div class="gold-rule mx-auto mt-6 max-w-xs"></div>
             </div>
-            <div x-data="{ i: 0 }" class="mt-10 sm:mt-14">
+            <div x-data="{ i: 0 }" class="mt-6 sm:mt-14">
             <ol x-ref="track" @scroll.passive="i = Math.round($refs.track.scrollLeft / ($refs.track.scrollWidth / {{ $steps->count() }}))" class="-mx-4 flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 pb-2 [scrollbar-width:none] sm:mx-0 sm:grid sm:snap-none sm:grid-cols-2 sm:gap-10 sm:overflow-visible sm:px-0 sm:pb-0 lg:grid-cols-5 lg:gap-0 [&::-webkit-scrollbar]:hidden">
                 @foreach ($steps as $step)
                     <li class="group relative w-[78%] shrink-0 snap-center border border-gold/30 bg-background/5 px-4 py-8 text-center sm:w-auto sm:border-0 sm:bg-transparent sm:px-2 sm:py-0 lg:px-5">
@@ -138,8 +138,17 @@
             @if ($publications->isEmpty())
                 <p class="mt-10 border border-dashed border-border bg-card p-8 text-center text-muted-foreground">The first articles will appear here once published.</p>
             @else
-                <div class="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-                    @foreach ($publications as $submission)@include('site._article-card')@endforeach
+                <div x-data="{ i: 0 }" class="lg:mt-10 mt-6">
+                    <div x-ref="track" @scroll.passive="i = Math.round($refs.track.scrollLeft / ($refs.track.scrollWidth / {{ $publications->count() }}))" class="-mx-4 flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 pb-2 [scrollbar-width:none] sm:mx-0 sm:grid sm:snap-none sm:grid-cols-2 sm:gap-5 sm:overflow-visible sm:px-0 sm:pb-0 lg:grid-cols-3 [&::-webkit-scrollbar]:hidden">
+                        @foreach ($publications as $submission)
+                            <div class="flex w-[85%] shrink-0 snap-center flex-col sm:w-auto [&>article]:flex-1">@include('site._article-card')</div>
+                        @endforeach
+                    </div>
+                    <div class="mt-5 flex justify-center gap-2 sm:hidden">
+                        @foreach ($publications as $submission)
+                            <button type="button" aria-label="Go to article {{ $loop->iteration }}" @click="$refs.track.children[{{ $loop->index }}].scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' })" class="h-2 rounded-full transition-all duration-300" :class="i === {{ $loop->index }} ? 'w-6 bg-primary' : 'w-2 bg-primary/25'"></button>
+                        @endforeach
+                    </div>
                 </div>
             @endif
         </div>
@@ -153,7 +162,7 @@
                 <x-section-heading :eyebrow="$m('blog_label')" :title="$m('blog_heading')" class="flex-1" />
                 @if ($m('blog_link'))<a href="{{ route('blogs.index') }}" class="inline-flex items-center gap-1 text-sm text-primary hover:underline">{{ $m('blog_link') }} <x-icon name="arrow-right" /></a>@endif
             </div>
-            <div class="mt-10 grid gap-6 md:grid-cols-3">
+            <div class="lg:mt-10 mt-6 grid gap-6 md:grid-cols-3">
                 @foreach ($blogs as $blog)
                     <a href="{{ route('blogs.show', $blog->slug) }}" class="group flex flex-col overflow-hidden border border-border bg-card transition hover:-translate-y-0.5 hover:border-gold hover:shadow-md">
                         <span class="block aspect-[16/9] overflow-hidden bg-secondary">
