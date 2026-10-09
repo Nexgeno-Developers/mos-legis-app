@@ -39,7 +39,7 @@
     <section class="border-b border-border bg-card">
         <dl class="mx-auto grid max-w-[1200px] grid-cols-2 divide-border px-4 sm:px-6 md:grid-cols-4 md:divide-x">
             @foreach ([['articles', $m('stat_articles'), 'file-text'], ['authors', $m('stat_authors'), 'users'], ['categories', $m('stat_categories'), 'book-open'], ['awards', $m('stat_awards'), 'award']] as [$key, $label, $icon])
-                <div class="flex items-center gap-3 px-2 py-6 md:justify-center md:px-6">
+                <div class="flex flex-col items-center gap-3 px-2 lg:py-6 py-3 text-center md:flex-row md:justify-center md:px-6 md:text-left">
                     <span class="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-secondary text-primary"><x-icon :name="$icon" class="h-5 w-5" /></span>
                     <div>
                         <dd class="font-display text-2xl leading-none">{{ number_format($stats[$key]) }}</dd>
