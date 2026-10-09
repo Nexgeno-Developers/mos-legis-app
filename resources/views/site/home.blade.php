@@ -80,9 +80,10 @@
                 @if (filled($m('steps_heading')))<h2 class="mt-3 font-display text-3xl text-background md:text-4xl">{{ $m('steps_heading') }}</h2>@endif
                 <div class="gold-rule mx-auto mt-6 max-w-xs"></div>
             </div>
-            <ol class="mt-14 grid gap-10 sm:grid-cols-2 lg:grid-cols-5 lg:gap-0">
+            <div x-data="{ i: 0 }" class="mt-10 sm:mt-14">
+            <ol x-ref="track" @scroll.passive="i = Math.round($refs.track.scrollLeft / ($refs.track.scrollWidth / {{ $steps->count() }}))" class="-mx-4 flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 pb-2 [scrollbar-width:none] sm:mx-0 sm:grid sm:snap-none sm:grid-cols-2 sm:gap-10 sm:overflow-visible sm:px-0 sm:pb-0 lg:grid-cols-5 lg:gap-0 [&::-webkit-scrollbar]:hidden">
                 @foreach ($steps as $step)
-                    <li class="group relative px-2 text-center lg:px-5">
+                    <li class="group relative w-[78%] shrink-0 snap-center border border-gold/30 bg-background/5 px-4 py-8 text-center sm:w-auto sm:border-0 sm:bg-transparent sm:px-2 sm:py-0 lg:px-5">
                         @unless ($loop->last)
                             <span aria-hidden="true" class="absolute left-1/2 top-7 hidden h-px w-full bg-gradient-to-r from-gold via-gold/50 to-gold/50 lg:block"></span>
                         @endunless
@@ -92,6 +93,12 @@
                     </li>
                 @endforeach
             </ol>
+            <div class="mt-5 flex justify-center gap-2 sm:hidden">
+                @foreach ($steps as $step)
+                    <button type="button" aria-label="Go to step {{ $loop->iteration }}" @click="$refs.track.children[{{ $loop->index }}].scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' })" class="h-2 rounded-full transition-all duration-300" :class="i === {{ $loop->index }} ? 'w-6 bg-gold' : 'w-2 bg-gold/30'"></button>
+                @endforeach
+            </div>
+            </div>
             @if ($m('steps_link'))
                 <div class="mt-8 text-center">
                     <a href="{{ page_url('submit') }}#process" class="inline-flex items-center gap-2 border border-gold px-6 py-3 text-sm font-medium text-gold transition hover:bg-gold hover:text-gold-foreground">{{ $m('steps_link') }} <x-icon name="arrow-right" /></a>
