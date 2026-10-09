@@ -7,14 +7,14 @@
 @endphp
 <x-layouts.site :title="$page->seo_title ?: $page->title" :description="$page->seo_description ?: $page->excerpt" :og-image="$page->og_image">
     <x-page-header :title="$page->title" :intro="$page->excerpt" />
-    <div class="mx-auto grid max-w-[1200px] gap-12 px-4 py-[30px] md:py-[70px] sm:px-6 lg:grid-cols-[1.4fr_1fr]">
-        <section>
+    <div class="mx-auto grid max-w-[1200px] grid-cols-1 gap-10 px-4 py-[30px] md:py-[70px] sm:px-6 lg:grid-cols-[1.4fr_1fr] lg:gap-12">
+        <section class="min-w-0">
             @auth
                 @if (auth()->user()->isAuthor())
-                    <form method="POST" action="{{ route('plagiarism-checker.store') }}" enctype="multipart/form-data" class="space-y-5 border border-border bg-card p-8" x-data="{ mode: @js(old('content') ? 'paste' : 'paste') }">
+                    <form method="POST" action="{{ route('plagiarism-checker.store') }}" enctype="multipart/form-data" class="space-y-5 border border-border bg-card p-5 sm:p-8" x-data="{ mode: @js(old('content') ? 'paste' : 'paste') }">
                         @csrf
                         <x-form.input name="title" label="Title / label" placeholder="Draft article on federalism" required />
-                        <div class="flex gap-2">
+                        <div class="flex flex-wrap gap-2">
                             <button type="button" @click="mode = 'paste'" :class="mode === 'paste' ? 'border-primary text-primary' : 'border-border'" class="label-caps border px-4 py-2 text-xs">Paste content</button>
                             <button type="button" @click="mode = 'upload'" :class="mode === 'upload' ? 'border-primary text-primary' : 'border-border'" class="label-caps border px-4 py-2 text-xs">Upload .docx</button>
                         </div>
@@ -30,17 +30,17 @@
                     <p class="border-l-2 border-gold/60 bg-card px-4 py-3">The plagiarism checker is available to author accounts.</p>
                 @endif
             @else
-                <div class="border border-border bg-card p-8">
+                <div class="border border-border bg-card p-5 sm:p-8">
                     @if ($meta('guest_heading'))<p class="font-display text-2xl">{{ $meta('guest_heading') }}</p>@endif
                     @if ($meta('guest_text'))<p class="mt-2 text-muted-foreground">{{ $meta('guest_text') }}</p>@endif
-                    <div class="mt-5 flex gap-3">
+                    <div class="mt-5 flex flex-wrap gap-3">
                         <x-button variant="primary" icon="log-in" :href="route('login')">Sign in</x-button>
                         <x-button icon="user-plus" :href="route('register')">Create account</x-button>
                     </div>
                 </div>
             @endauth
         </section>
-        <aside>
+        <aside class="min-w-0">
             @if ($meta('steps_label') || $meta('steps_heading'))
                 <x-section-heading :eyebrow="$meta('steps_label')" :title="$meta('steps_heading')" />
             @endif
