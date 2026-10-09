@@ -15,7 +15,7 @@
 <x-layouts.site :title="null" :description="$page?->seo_description">
     {{-- 1. Hero: who we are + the two main actions --}}
     <section class="relative overflow-hidden border-b border-border bg-secondary">
-        <div class="mx-auto grid max-w-[1200px] items-center gap-10 px-4 py-14 sm:px-6 md:py-20 lg:grid-cols-[1.3fr_1fr]">
+        <div class="mx-auto grid max-w-[1200px] items-center gap-10 px-4 py-[30px] md:py-[70px] sm:px-6 lg:grid-cols-[1.3fr_1fr]">
             <div>
                 @if ($m('hero_label'))<p class="label-caps text-sm text-primary">{{ $m('hero_label') }}</p>@endif
                 @if ($m('hero_heading'))<h1 class="mt-4 font-display text-4xl leading-[1.1] sm:text-5xl lg:text-[3.4rem]">{!! nl2br(e($m('hero_heading'))) !!}</h1>@endif
@@ -53,7 +53,7 @@
     {{-- 3. Why publish with us --}}
     @if ($features->isNotEmpty())
     <section class="bg-background">
-        <div class="mx-auto max-w-[1200px] px-4 py-16 sm:px-6 md:py-20">
+        <div class="mx-auto max-w-[1200px] px-4 py-[30px] md:py-[70px] sm:px-6">
         <div class="max-w-2xl">
             <x-section-heading :eyebrow="$m('features_label')" :title="$m('features_heading')" />
         </div>
@@ -74,7 +74,7 @@
     @if ($steps->isNotEmpty())
     <section class="relative overflow-hidden border-y border-gold/40 bg-foreground text-background">
         <div aria-hidden="true" class="pointer-events-none absolute inset-0 opacity-[0.07]" style="background-image: radial-gradient(circle at 1px 1px, var(--color-gold) 1px, transparent 0); background-size: 22px 22px;"></div>
-        <div class="relative mx-auto max-w-[1200px] px-4 py-16 sm:px-6 md:py-16">
+        <div class="relative mx-auto max-w-[1200px] px-4 py-[30px] md:py-[70px] sm:px-6">
             <div class="mx-auto max-w-2xl text-center">
                 @if ($m('steps_label'))<p class="label-caps text-sm text-gold">{{ $m('steps_label') }}</p>@endif
                 @if (filled($m('steps_heading')))<h2 class="mt-3 font-display text-3xl text-background md:text-4xl">{{ $m('steps_heading') }}</h2>@endif
@@ -104,7 +104,7 @@
     {{-- 5. Browse by category --}}
     @if ($categories->isNotEmpty())
         <section class="border-b border-border bg-card">
-            <div class="mx-auto max-w-[1200px] px-4 py-16 sm:px-6 md:py-20">
+            <div class="mx-auto max-w-[1200px] px-4 py-[30px] md:py-[70px] sm:px-6">
             <x-section-heading :eyebrow="$m('categories_label')" :title="$m('categories_heading')" />
             <div class="mt-10 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
                 @foreach ($categories as $category)
@@ -123,7 +123,7 @@
 
     {{-- 6. Latest publications --}}
     <section class="bg-background">
-        <div class="mx-auto max-w-[1200px] px-4 py-16 sm:px-6 md:py-20">
+        <div class="mx-auto max-w-[1200px] px-4 py-[30px] md:py-[70px] sm:px-6">
             <div class="flex flex-wrap items-end justify-between gap-4">
                 <x-section-heading :eyebrow="$m('latest_label')" :title="$m('latest_heading')" class="flex-1" />
                 @if ($m('latest_link'))<a href="{{ route('archive.index') }}" class="inline-flex items-center gap-1 text-sm text-primary hover:underline">{{ $m('latest_link') }} <x-icon name="arrow-right" /></a>@endif
@@ -141,7 +141,7 @@
     {{-- 8. From the blog --}}
     @if ($blogs->isNotEmpty())
         <section class="border-y border-border bg-secondary">
-            <div class="mx-auto max-w-[1200px] px-4 py-16 sm:px-6 md:py-20">
+            <div class="mx-auto max-w-[1200px] px-4 py-[30px] md:py-[70px] sm:px-6">
             <div class="flex flex-wrap items-end justify-between gap-4">
                 <x-section-heading :eyebrow="$m('blog_label')" :title="$m('blog_heading')" class="flex-1" />
                 @if ($m('blog_link'))<a href="{{ route('blogs.index') }}" class="inline-flex items-center gap-1 text-sm text-primary hover:underline">{{ $m('blog_link') }} <x-icon name="arrow-right" /></a>@endif
@@ -170,13 +170,13 @@
 
     {{-- Optional content from Admin → Pages → Home --}}
     @if ($page?->content)
-        <section class="border-b border-border bg-card"><div class="mx-auto max-w-[1200px] px-4 py-14 sm:px-6"><div class="prose-legis">{!! $page->content !!}</div></div></section>
+        <section class="border-b border-border bg-card"><div class="mx-auto max-w-[1200px] px-4 py-[30px] md:py-[70px] sm:px-6"><div class="prose-legis">{!! $page->content !!}</div></div></section>
     @endif
 
     {{-- 9. Call to action --}}
     @if ($m('cta_heading') || $m('cta_text') || $m('cta_primary') || $m('cta_secondary'))
     <section class="bg-foreground text-background">
-        <div class="mx-auto grid max-w-[1200px] items-center gap-8 px-4 py-14 sm:px-6 md:grid-cols-[1fr_auto]">
+        <div class="mx-auto grid max-w-[1200px] items-center gap-8 px-4 py-[30px] md:py-[70px] sm:px-6 md:grid-cols-[1fr_auto]">
             <div>
                 @if ($m('cta_label'))<p class="label-caps text-sm text-gold">{{ $m('cta_label') }}</p>@endif
                 @if ($m('cta_heading'))<h2 class="mt-2 font-display text-3xl">{{ $m('cta_heading') }}</h2>@endif

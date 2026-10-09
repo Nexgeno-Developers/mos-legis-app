@@ -15,7 +15,7 @@
 <x-layouts.site :title="$page->seo_title ?: $page->title" :description="$page->seo_description ?: $page->excerpt">
     <x-page-header :title="$page->title" :intro="$page->excerpt" />
 
-    <div class="mx-auto max-w-[1200px] space-y-12 px-4 py-8 sm:px-6 md:space-y-16 md:py-10">
+    <div class="mx-auto max-w-[1200px] space-y-12 px-4 py-[30px] md:py-[70px] sm:px-6 md:space-y-16">
 
         {{-- 1. Form + contact details (equal height) --}}
         <div class="grid gap-6 lg:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)] lg:gap-8">

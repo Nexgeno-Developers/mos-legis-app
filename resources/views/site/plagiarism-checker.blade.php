@@ -7,7 +7,7 @@
 @endphp
 <x-layouts.site :title="$page->seo_title ?: $page->title" :description="$page->seo_description ?: $page->excerpt" :og-image="$page->og_image">
     <x-page-header :title="$page->title" :intro="$page->excerpt" />
-    <div class="mx-auto grid max-w-[1200px] gap-12 px-4 py-8 sm:px-6 md:py-10 lg:grid-cols-[1.4fr_1fr]">
+    <div class="mx-auto grid max-w-[1200px] gap-12 px-4 py-[30px] md:py-[70px] sm:px-6 lg:grid-cols-[1.4fr_1fr]">
         <section>
             @auth
                 @if (auth()->user()->isAuthor())

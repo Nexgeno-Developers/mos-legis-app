@@ -18,7 +18,7 @@
         </div>
     </x-page-header>
 
-    <div class="mx-auto grid max-w-[1200px] gap-12 px-4 py-10 sm:px-6 lg:grid-cols-[minmax(0,1fr)_18rem]">
+    <div class="mx-auto grid max-w-[1200px] gap-12 px-4 py-[30px] md:py-[70px] sm:px-6 lg:grid-cols-[minmax(0,1fr)_18rem]">
         <article class="min-w-0">
             @if ($blog->featured_image)
                 <img src="{{ Storage::disk('public')->url($blog->featured_image) }}" alt="" class="mb-10 aspect-[16/9] w-full border border-border object-cover">

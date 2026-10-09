@@ -38,7 +38,7 @@
         @endif
     </x-page-header>
 
-    <div class="mx-auto grid max-w-[1200px] gap-10 px-4 py-8 sm:px-6 md:py-10 lg:grid-cols-[minmax(0,1fr)_20rem]">
+    <div class="mx-auto grid max-w-[1200px] gap-10 px-4 py-[30px] md:py-[70px] sm:px-6 lg:grid-cols-[minmax(0,1fr)_20rem]">
         <article class="min-w-0 space-y-8">
             {{-- Best Paper recognition --}}
             @if ($awards->isNotEmpty())
@@ -121,7 +121,7 @@
     {{-- More in this category --}}
     @if ($related->isNotEmpty())
         <section class="border-t border-border bg-secondary/40">
-            <div class="mx-auto max-w-[1200px] px-4 py-10 sm:px-6">
+            <div class="mx-auto max-w-[1200px] px-4 py-[30px] md:py-[70px] sm:px-6">
                 <div class="flex flex-wrap items-end justify-between gap-3">
                     <h2 class="font-display text-2xl">More in {{ $submission->contentCategory->name }}</h2>
                     <a href="{{ $categoryUrl }}" class="label-caps inline-flex items-center gap-1 text-xs text-primary hover:underline">View all <x-icon name="arrow-right" class="h-3.5 w-3.5" /></a>

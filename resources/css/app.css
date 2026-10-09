@@ -130,9 +130,6 @@
     font-weight: 600;
 }
 
-@utility measure {
-    max-width: 68ch;
-}
 
 @utility script-flourish {
     font-family: var(--font-script);

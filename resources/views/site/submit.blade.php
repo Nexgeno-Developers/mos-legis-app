@@ -29,7 +29,7 @@
 <x-layouts.site :title="$page->seo_title ?: $page->title" :description="$page->seo_description ?: $page->excerpt">
     <x-page-header :title="$page->title" :intro="$page->excerpt" />
 
-    <div class="mx-auto max-w-[1200px] px-4 py-8 sm:px-6 md:py-10">
+    <div class="mx-auto max-w-[1200px] px-4 py-[30px] md:py-[70px] sm:px-6">
         {{-- 1. The form comes first --}}
         <section id="submission-form" class="scroll-mt-28">
             @if ($facts->isNotEmpty())

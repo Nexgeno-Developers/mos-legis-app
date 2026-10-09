@@ -15,7 +15,7 @@
 <x-layouts.site :title="$page->seo_title ?: $page->title" :description="$page->seo_description ?: $page->excerpt" :og-image="$page->og_image">
     <x-page-header :title="$page->title" :intro="$page->excerpt" />
 
-    <div class="mx-auto grid max-w-[1200px] gap-8 px-4 py-8 sm:px-6 md:py-10 lg:grid-cols-[18rem_minmax(0,1fr)]" x-data="{ filters: false }">
+    <div class="mx-auto grid max-w-[1200px] gap-8 px-4 py-[30px] md:py-[70px] sm:px-6 lg:grid-cols-[18rem_minmax(0,1fr)]" x-data="{ filters: false }">
         {{-- Sidebar filters (collapsible on phones) --}}
         <aside class="lg:sticky lg:top-28 lg:self-start">
             <button type="button" class="flex w-full items-center justify-between border border-border bg-card px-4 py-3 text-sm font-semibold lg:hidden" @click="filters = !filters" :aria-expanded="filters">
