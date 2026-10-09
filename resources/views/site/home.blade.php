@@ -23,8 +23,8 @@
                 @if ($page?->excerpt)<p class="measure text-lg leading-relaxed text-muted-foreground">{{ $page->excerpt }}</p>@endif
 
                 <div class="mt-8 flex flex-wrap gap-3">
-                    @if ($m('hero_primary'))<a href="{{ page_url('submit') }}" class="inline-flex h-12 items-center gap-2 border border-primary bg-primary px-6 text-sm font-semibold text-primary-foreground hover:bg-primary/90">{{ $m('hero_primary') }} <x-icon name="arrow-right" /></a>@endif
-                    @if ($m('hero_secondary'))<a href="{{ route('archive.index') }}" class="inline-flex h-12 items-center gap-2 border border-gold bg-card px-6 text-sm font-semibold hover:bg-gold/10"><x-icon name="book-open" /> {{ $m('hero_secondary') }}</a>@endif
+                    @if ($m('hero_primary'))<a href="{{ page_url('submit') }}" class="inline-flex h-10 items-center gap-2 border border-primary bg-primary px-4 text-xs font-semibold sm:h-12 sm:px-6 sm:text-sm text-primary-foreground hover:bg-primary/90">{{ $m('hero_primary') }} <x-icon name="arrow-right" /></a>@endif
+                    @if ($m('hero_secondary'))<a href="{{ route('archive.index') }}" class="inline-flex h-10 items-center gap-2 border border-gold bg-card px-4 text-xs font-semibold sm:h-12 sm:px-6 sm:text-sm hover:bg-gold/10"><x-icon name="book-open" /> {{ $m('hero_secondary') }}</a>@endif
                 </div>
 
             </div>
@@ -101,7 +101,7 @@
             </div>
             @if ($m('steps_link'))
                 <div class="mt-8 text-center">
-                    <a href="{{ page_url('submit') }}#process" class="inline-flex items-center gap-2 border border-gold px-6 py-3 text-sm font-medium text-gold transition hover:bg-gold hover:text-gold-foreground">{{ $m('steps_link') }} <x-icon name="arrow-right" /></a>
+                    <a href="{{ page_url('submit') }}#process" class="inline-flex items-center gap-2 border border-gold px-4 py-2 text-xs font-medium text-gold sm:px-6 sm:py-3 sm:text-sm transition hover:bg-gold hover:text-gold-foreground">{{ $m('steps_link') }} <x-icon name="arrow-right" /></a>
                 </div>
             @endif
         </div>
@@ -206,8 +206,8 @@
                 @if ($m('cta_text'))<p class="measure mt-2 opacity-80">{{ $m('cta_text') }}</p>@endif
             </div>
             <div class="flex flex-wrap gap-3">
-                @if ($m('cta_primary'))<a href="{{ page_url('submit') }}" class="inline-flex h-12 items-center gap-2 border border-primary bg-primary px-6 text-sm font-semibold text-primary-foreground hover:bg-primary/90">{{ $m('cta_primary') }} <x-icon name="arrow-right" /></a>@endif
-                @if ($m('cta_secondary'))<a href="{{ page_url('plagiarism_checker') }}" class="inline-flex h-12 items-center gap-2 border border-background/40 px-6 text-sm font-semibold hover:bg-background/10"><x-icon name="scan-search" /> {{ $m('cta_secondary') }}</a>@endif
+                @if ($m('cta_primary'))<a href="{{ page_url('submit') }}" class="inline-flex h-10 items-center gap-2 border border-primary bg-primary px-4 text-xs font-semibold sm:h-12 sm:px-6 sm:text-sm text-primary-foreground hover:bg-primary/90">{{ $m('cta_primary') }} <x-icon name="arrow-right" /></a>@endif
+                @if ($m('cta_secondary'))<a href="{{ page_url('plagiarism_checker') }}" class="inline-flex h-10 items-center gap-2 border border-background/40 px-4 text-xs font-semibold sm:h-12 sm:px-6 sm:text-sm hover:bg-background/10"><x-icon name="scan-search" /> {{ $m('cta_secondary') }}</a>@endif
             </div>
         </div>
     </section>

@@ -7,7 +7,7 @@
         'danger' => 'border-destructive/40 bg-card text-destructive hover:bg-destructive hover:text-destructive-foreground',
         default => 'border-border bg-card text-foreground hover:border-gold',
     };
-    $sizes = $size === 'sm' ? 'h-9 px-3 text-[0.7rem]' : 'h-11 px-5 text-xs';
+    $sizes = $size === 'sm' ? 'h-8 px-3 text-[0.65rem] sm:h-9 sm:text-[0.7rem]' : 'h-9 px-4 text-[0.7rem] sm:h-11 sm:px-5 sm:text-xs';
     $classes = "label-caps inline-flex shrink-0 items-center justify-center gap-2 border whitespace-nowrap transition-colors disabled:cursor-not-allowed disabled:opacity-50 {$sizes} {$styles}";
 @endphp
 @if ($href)
