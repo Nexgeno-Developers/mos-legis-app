@@ -81,11 +81,11 @@
                 <div class="gold-rule mx-auto mt-6 max-w-xs"></div>
             </div>
             <div x-data="{ i: 0 }" class="mt-6 sm:mt-14">
-            <ol x-ref="track" @scroll.passive="i = Math.round($refs.track.scrollLeft / ($refs.track.scrollWidth / {{ $steps->count() }}))" class="-mx-4 flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 pb-2 [scrollbar-width:none] sm:mx-0 sm:grid sm:snap-none sm:grid-cols-2 sm:gap-10 sm:overflow-visible sm:px-0 sm:pb-0 lg:grid-cols-5 lg:gap-0 [&::-webkit-scrollbar]:hidden">
+            <ol x-ref="track" @scroll.passive="i = Math.round($refs.track.scrollLeft / ($refs.track.scrollWidth / {{ $steps->count() }}))" class="-mx-4 flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 pb-2 [scrollbar-width:none] md:mx-0 md:grid md:snap-none md:grid-cols-5 md:gap-0 md:overflow-visible md:px-0 md:pb-0 [&::-webkit-scrollbar]:hidden">
                 @foreach ($steps as $step)
-                    <li class="group relative w-[78%] shrink-0 snap-center border border-gold/30 bg-background/5 px-4 py-8 text-center sm:w-auto sm:border-0 sm:bg-transparent sm:px-2 sm:py-0 lg:px-5">
+                    <li class="group relative w-[78%] shrink-0 snap-center border border-gold/30 bg-background/5 px-4 py-8 text-center md:w-auto md:border-0 md:bg-transparent md:px-2 md:py-0 lg:px-5">
                         @unless ($loop->last)
-                            <span aria-hidden="true" class="absolute left-1/2 top-7 hidden h-px w-full bg-gradient-to-r from-gold via-gold/50 to-gold/50 lg:block"></span>
+                            <span aria-hidden="true" class="absolute left-1/2 top-7 hidden h-px w-full bg-gradient-to-r from-gold via-gold/50 to-gold/50 md:block"></span>
                         @endunless
                         <span class="relative z-10 mx-auto grid h-14 w-14 place-items-center rounded-full border-2 border-gold bg-foreground font-display text-2xl text-gold shadow-[0_0_0_6px_var(--color-foreground)] transition duration-300 group-hover:scale-110 group-hover:bg-primary group-hover:text-primary-foreground {{ $loop->last ? '!bg-gold !text-gold-foreground' : '' }}">{{ $loop->iteration }}</span>
                         @if (filled($step['title'] ?? null))<p class="mt-6 font-display text-xl text-background">{{ $fill($step['title']) }}</p>@endif
@@ -93,7 +93,7 @@
                     </li>
                 @endforeach
             </ol>
-            <div class="mt-5 flex justify-center gap-2 sm:hidden">
+            <div class="mt-5 flex justify-center gap-2 md:hidden">
                 @foreach ($steps as $step)
                     <button type="button" aria-label="Go to step {{ $loop->iteration }}" @click="$refs.track.children[{{ $loop->index }}].scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' })" class="h-2 rounded-full transition-all duration-300" :class="i === {{ $loop->index }} ? 'w-6 bg-gold' : 'w-2 bg-gold/30'"></button>
                 @endforeach
@@ -199,7 +199,7 @@
     {{-- 9. Call to action --}}
     @if ($m('cta_heading') || $m('cta_text') || $m('cta_primary') || $m('cta_secondary'))
     <section class="bg-foreground text-background">
-        <div class="mx-auto grid max-w-[1200px] items-center gap-8 px-4 py-[30px] md:py-[70px] sm:px-6 md:grid-cols-[1fr_auto]">
+        <div class="mx-auto grid max-w-[1200px] items-center gap-8 px-4 py-[30px] md:py-[70px] sm:px-6 lg:grid-cols-[1fr_auto] lg:gap-12">
             <div>
                 @if ($m('cta_label'))<p class="label-caps text-sm text-gold">{{ $m('cta_label') }}</p>@endif
                 @if ($m('cta_heading'))<h2 class="mt-2 font-display text-3xl">{{ $m('cta_heading') }}</h2>@endif

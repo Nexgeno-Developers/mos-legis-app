@@ -54,8 +54,8 @@
                     array_unshift($columns, ['label' => null, 'children' => $looseLinks]);
                 }
             @endphp
-            <div class="grid grid-cols-2 gap-x-6 gap-y-10 md:flex md:flex-wrap md:gap-x-10">
-                <div class="col-span-2 md:w-64 md:shrink-0">
+            <div class="grid grid-cols-2 gap-x-6 gap-y-10 md:flex md:flex-nowrap md:gap-x-8 lg:gap-x-10">
+                <div class="col-span-2 md:w-56 md:shrink-0 lg:w-64">
                     <img src="{{ asset('images/logo-mark.png') }}" alt="" class="h-20 w-20 object-contain">
                     <p class="mt-4 font-display text-lg text-primary">{{ $appName }}</p>
                     <p class="mt-1 text-sm text-muted-foreground italic">Rooted in Tradition. Driven by Justice.</p>
@@ -72,7 +72,7 @@
                 </div>
                 @foreach ($columns as $column)
                     @php $wide = count($column['children']) > 7; @endphp
-                    <div @class(['min-w-0 md:min-w-40 md:flex-1', 'md:flex-[2]' => $wide])>
+                    <div @class(['min-w-0 md:flex-1', 'md:flex-[2]' => $wide])>
                         <h3 class="label-caps text-sm text-foreground">{{ $column['label'] ?? 'Links' }}</h3>
                         <div class="gold-rule mt-3"></div>
                         <ul @class(['mt-4 gap-2 text-sm', 'grid grid-cols-1 md:grid-cols-2' => $wide, 'space-y-2' => ! $wide])>
