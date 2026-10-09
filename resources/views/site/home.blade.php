@@ -113,11 +113,11 @@
         <section class="border-b border-border bg-card">
             <div class="mx-auto max-w-[1200px] px-4 py-[30px] md:py-[70px] sm:px-6">
             <x-section-heading :eyebrow="$m('categories_label')" :title="$m('categories_heading')" />
-            <div class="mt-10 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            <div class="lg:mt-10 mt-6 grid gap-3 sm:grid-cols-2 grid-cols-2 lg:grid-cols-4">
                 @foreach ($categories as $category)
-                    <a href="{{ route('archive.index', ['category' => $category->id]) }}" class="group flex flex-col justify-between border border-border bg-background p-5 transition hover:-translate-y-0.5 hover:border-gold hover:shadow-md">
-                        <span class="font-display text-lg leading-snug group-hover:text-primary">{{ $category->name }}</span>
-                        <span class="mt-4 flex items-center justify-between text-xs text-muted-foreground">
+                    <a href="{{ route('archive.index', ['category' => $category->id]) }}" class="group flex flex-col justify-between border border-border bg-background lg:p-5 p-3 transition hover:-translate-y-0.5 hover:border-gold hover:shadow-md">
+                        <span class="font-display lg:text-lg text-[16px] leading-snug group-hover:text-primary">{{ $category->name }}</span>
+                        <span class="mt-4 flex flex-wrap items-center justify-between text-xs text-muted-foreground">
                             <span>{{ $category->wordLimitLabel() }}</span>
                             <span class="rounded-full bg-secondary px-2 py-0.5">{{ $category->submissions_count }} {{ Str::plural('article', $category->submissions_count) }}</span>
                         </span>
